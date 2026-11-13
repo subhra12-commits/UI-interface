@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mother's Hut | Heritage Dining & Drive-Through</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        bengali: ['"Noto Sans Bengali"', '"Plus Jakarta Sans"', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            500: '#ea580c',
+                            600: '#c84c1c', // Heritage Terracotta
+                            700: '#9a3412',
+                            dark: '#181513', // Deep Roasted Charcoal
+                            warm: '#faf7f2', // Linen Culinary Paper Canvas
+                            cream: '#f4ede2',
+                            border: '#e8e1d5'
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 3px 16px -2px rgba(24, 21, 19, 0.06), 0 1px 4px -1px rgba(24, 21, 19, 0.04)',
+                        'hover': '0 14px 30px -4px rgba(200, 76, 28, 0.12), 0 4px 10px -2px rgba(24, 21, 19, 0.06)',
+                        'glow': '0 0 20px -2px rgba(234, 88, 12, 0.35)',
+                        'drawer': '-12px 0 36px rgba(0, 0, 0, 0.2)'
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animated Steam Wisps for Hot Fresh Dishes */
+        @keyframes steam-rise {
+            0% { transform: translateY(0) scaleX(1); opacity: 0; }
+            40% { opacity: 0.7; }
+            80% { transform: translateY(-10px) scaleX(1.3); opacity: 0.2; }
+            100% { transform: translateY(-16px) scaleX(1.6); opacity: 0; }
+        }
+        .steam-line-1 { animation: steam-rise 2.2s infinite ease-out; }
+        .steam-line-2 { animation: steam-rise 2.2s infinite 0.7s ease-out; }
+        .steam-line-3 { animation: steam-rise 2.2s infinite 1.4s ease-out; }
+
+        /* Ticker Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: inline-flex;
+            white-space: nowrap;
+            animation: marquee 28s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        /* Flying particle to cart */
+        .flying-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            width: 22px;
+            height: 22px;
+            background: #ea580c;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.6);
+            transition: all 0.65s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        /* SENIOR / EASY READING MODE STYLES */
+        body.senior-mode {
+            font-size: 115% !important;
+        }
+        body.senior-mode .senior-scale-up {
+            transform: scale(1.08);
+            transform-origin: left center;
+        }
+        body.senior-mode .dish-title {
+            font-size: 1.15rem !important;
+            font-weight: 800 !important;
+            line-height: 1.3 !important;
+        }
+        body.senior-mode .dish-desc {
+            font-size: 0.95rem !important;
+            color: #292524 !important;
+            line-height: 1.5 !important;
+        }
+        body.senior-mode .dish-price {
+            font-size: 1.25rem !important;
+            color: #9a3412 !important;
+        }
+        body.senior-mode .action-btn {
+            min-height: 48px !important;
+            font-size: 0.95rem !important;
+        }
+        body.senior-mode .senior-banner {
+            display: flex !important;
+        }
+
+        /* Pulse aura for voice listening */
+        @keyframes voice-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 16px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+        .voice-listening {
+            animation: voice-pulse 1.3s infinite;
+        }
+    </style>
+</head>
+<body class="bg-brand-warm text-brand-dark font-sans antialiased min-h-screen flex flex-col selection:bg-brand-100 selection:text-brand-700">
+
+    <!-- ============================================================ -->
+    <!-- 1. LIVE HIGHWAY SPECIALS TICKER (ZERO DEAD SPACE HEADER) -->
+    <!-- ============================================================ -->
+    <div class="bg-brand-dark text-amber-100 text-xs py-1.5 px-4 border-b border-stone-800 overflow-hidden flex items-center justify-between gap-4">
+        <div class="flex items-center gap-2 shrink-0">
+            <span class="flex h-2.5 w-2.5 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span class="font-bold text-[11px] uppercase tracking-wider text-amber-300">Live Kitchen:</span>
+        </div>
+        
+        <!-- Continuous Ticker -->
+        <div class="flex-1 overflow-hidden relative">
+            <div class="animate-marquee text-xs font-medium space-x-8 text-stone-200">
+                <span>🔥 Golden Bengali Luchi & Alur Dum fresh from the Kadai</span>
+                <span>•</span>
+                <span>🍗 Kolkata Style Mutton Kosha with Rich Slow-Cooked Gravy</span>
+                <span>•</span>
+                <span>☕ Piping Hot Masala Chai in Clay Matka</span>
+                <span>•</span>
+                <span>🍚 Fragrant Basmati Kacchi Mutton Biryani Ready</span>
+                <span>•</span>
+                <span>⚡ 100% Pure Ghee & Halal/Jhatka Separation Practiced</span>
+                <!-- Repeat for seamless looping -->
+                <span>•</span>
+                <span>🔥 Golden Bengali Luchi & Alur Dum fresh from the Kadai</span>
+                <span>•</span>
+                <span>🍗 Kolkata Style Mutton Kosha with Rich Slow-Cooked Gravy</span>
+                <span>•</span>
+                <span>☕ Piping Hot Masala Chai in Clay Matka</span>
+                <span>•</span>
+                <span>🍚 Fragrant Basmati Kacchi Mutton Biryani Ready</span>
+            </div>
+        </div>
+
+        <!-- Quick Help & Senior Assistance Pill -->
+        <div class="shrink-0 flex items-center gap-2">
+            <button onclick="toggleSeniorMode()" id="seniorModeToggleBtn" class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-900 font-bold text-[11px] hover:bg-amber-300 shadow-sm transition-all active:scale-95" title="Easier to read with larger text and voice guides">
+                <span>👓</span>
+                <span id="seniorBtnLabel">Easy Senior Mode: OFF</span>
+            </button>
+            <button onclick="callWaiterPrompt()" class="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] shadow-sm transition-all active:scale-95">
+                <span>🔔</span>
+                <span class="hidden sm:inline">Call Waiter</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 2. HIGH ACCESSIBILITY NOTIFICATION BANNER (FOR SENIORS) -->
+    <!-- ============================================================ -->
+    <div id="seniorWelcomeBanner" class="hidden senior-banner bg-amber-100 border-b-2 border-amber-300 px-6 py-2.5 text-stone-900 flex items-center justify-between text-xs sm:text-sm font-semibold">
+        <div class="flex items-center gap-3">
+            <span class="text-xl">👵👴</span>
+            <div>
+                <p class="font-bold text-brand-700">সহজ মোড চালু আছে (Senior & Easy Mode Active)</p>
+                <p class="text-xs text-stone-700">বড় অক্ষর, স্পষ্ট ছবি এবং কথা বলার বোতাম প্রস্তুত। কোনো অসুবিধা হলে লাল "বেয়ারা ডাকুন" বোতাম টিপুন।</p>
+            </div>
+        </div>
+        <button onclick="toggleSeniorMode()" class="px-3 py-1 bg-white border border-amber-400 rounded-lg text-xs font-bold text-stone-800 hover:bg-amber-50">
+            সাধারণ মোড (Normal)
+        </button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 3. STICKY TOP BRAND BAR -->
+    <!-- ============================================================ -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-brand-border sticky top-0 z-40 transition-all shadow-sm">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
+            
+            <!-- Brand Logo & Identity with Steam Icon -->
+            <div class="flex items-center gap-3 cursor-pointer select-none" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 via-brand-500 to-amber-600 flex items-center justify-center text-white font-serif font-black text-2xl shadow-md shadow-brand-600/30 ring-2 ring-brand-100 overflow-visible group">
+                    <!-- Rising steam animation over logo -->
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 flex gap-1 pointer-events-none opacity-80">
+                        <span class="w-1 h-3 bg-brand-500/70 rounded-full steam-line-1"></span>
+                        <span class="w-1 h-4 bg-amber-500/70 rounded-full steam-line-2"></span>
+                        <span class="w-1 h-3 bg-brand-500/70 rounded-full steam-line-3"></span>
+                    </div>
+                    M
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-brand-dark leading-none">Mother's Hut</span>
+                        <span class="hidden sm:inline-block text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-amber-100 text-brand-700 tracking-wider">Heritage Highway</span>
+                    </div>
+                    <p class="text-xs text-stone-500 font-medium tracking-wide mt-0.5 flex items-center gap-1.5">
+                        <span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200" id="tableStatusBadge">Table #4</span>
+                        <span>•</span>
+                        <span class="font-bengali text-stone-700 font-semibold">খাঁটি স্বাদ ও আতিথেয়তা</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Voice-Enabled Smart Search Bar -->
+            <div class="flex-1 max-w-xl mx-2 hidden md:block">
+                <div class="relative flex items-center">
+                    <svg class="w-4 h-4 text-stone-400 absolute left-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z"/></svg>
+                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Search or speak dish name (e.g. Luchi, Kosha, Chai)..." class="w-full pl-11 pr-24 py-2.5 bg-stone-50 hover:bg-white focus:bg-white border-2 border-stone-200 focus:border-brand-500 rounded-2xl text-xs sm:text-sm font-medium focus:outline-none transition-all placeholder:text-stone-400 shadow-inner" />
+                    
+                    <!-- Voice Speak Button inside Search -->
+                    <div class="absolute right-2 flex items-center gap-1">
+                        <button id="voiceSearchBtn" onclick="startVoiceSearch()" class="p-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-brand-700 transition-all active:scale-95 flex items-center gap-1 px-2 text-xs font-bold" title="Click and speak the dish name">
+                            <svg class="w-4 h-4 text-brand-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                            <span class="text-[11px] hidden lg:inline">Speak</span>
+                        </button>
+                        <button id="clearSearchBtn" onclick="clearSearch()" class="hidden text-stone-400 hover:text-stone-600 p-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Header Right Actions -->
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                
+                <!-- Font Size Zoom Controls (A- / A+) -->
+                <div class="hidden sm:flex items-center bg-stone-100 border border-stone-200 rounded-xl p-0.5 text-xs font-bold text-stone-700">
+                    <button onclick="changeFontSize(-1)" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white transition-colors" title="Smaller Font">A-</button>
+                    <button onclick="changeFontSize(1)" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white text-brand-700 transition-colors" title="Larger Font">A+</button>
+                </div>
+
+                <!-- Language Toggle -->
+                <div class="flex items-center bg-stone-100 rounded-xl p-0.5 border border-stone-200 text-xs font-bold">
+                    <button id="lang-en" onclick="setLanguage('en')" class="px-2.5 py-1.5 rounded-lg bg-white text-stone-800 shadow-sm">EN</button>
+                    <button id="lang-bn" onclick="setLanguage('bn')" class="px-2.5 py-1.5 rounded-lg text-stone-500 hover:text-stone-800 font-bengali">বাংলা</button>
+                </div>
+
+                <!-- Call Steward Bell Button -->
+                <button onclick="callWaiterPrompt()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 text-xs font-bold shadow-sm transition-all active:scale-95">
+                    <span class="text-base leading-none">🔔</span>
+                    <span class="hidden md:inline" id="callWaiterHeaderLabel">Call Waiter</span>
+                </button>
+
+                <!-- AI Assistant Trigger -->
+                <button onclick="toggleChat(true)" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 text-brand-700 border border-amber-200 hover:bg-amber-100 transition-colors text-xs font-bold shadow-sm">
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-500 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-600"></span>
+                    </span>
+                    <span id="aiTriggerText">AI Steward</span>
+                </button>
+
+                <!-- Header Cart Trigger (Synchronized with Right Panel) -->
+                <button onclick="toggleCartDrawer(true)" id="headerCartBtn" class="lg:hidden flex items-center gap-2 bg-brand-dark hover:bg-stone-800 text-white px-3.5 py-2 rounded-xl font-bold text-xs shadow-md transition-all active:scale-95 relative">
+                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <span id="cartCountBadge" class="hidden absolute -top-2 -right-2 bg-brand-600 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center ring-2 ring-white">0</span>
+                    <span id="cartTotalHeader" class="text-amber-300 font-bold ml-0.5">₹0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3-STEP ORDERING ROADMAP (ASSISTS ELDERLY & FIRST-TIMERS) -->
+        <div class="bg-amber-50/60 border-t border-b border-brand-border py-2 px-4">
+            <div class="max-w-[1600px] mx-auto flex items-center justify-between text-xs font-semibold text-stone-700">
+                <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto hide-scrollbar w-full">
+                    <div class="flex items-center gap-1.5 shrink-0 text-brand-700">
+                        <span class="w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                        <span>১. খাবার নির্বাচন (Pick Dish)</span>
+                    </div>
+                    <span class="text-stone-300">→</span>
+                    <div class="flex items-center gap-1.5 shrink-0 text-stone-500" id="stepIndicator2">
+                        <span class="w-5 h-5 rounded-full bg-stone-200 text-stone-700 flex items-center justify-center text-[10px] font-bold">2</span>
+                        <span>২. পরিমাণ ঠিক করুন (Set Qty)</span>
+                    </div>
+                    <span class="text-stone-300">→</span>
+                    <div class="flex items-center gap-1.5 shrink-0 text-stone-500" id="stepIndicator3">
+                        <span class="w-5 h-5 rounded-full bg-stone-200 text-stone-700 flex items-center justify-center text-[10px] font-bold">3</span>
+                        <span>৩. রান্নাঘরে পাঠান (Send to Cook)</span>
+                    </div>
+                </div>
+                <!-- Table changer -->
+                <button onclick="openTableModal()" class="shrink-0 text-brand-600 font-bold underline ml-2 text-xs hover:text-brand-700">
+                    Change Table #
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================ -->
+    <!-- 4. THREE-COLUMN FULL-PIXEL DESKTOP LAYOUT (NO DEAD GUTTERS) -->
+    <!-- ============================================================ -->
+    <div class="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-5 flex-1 flex gap-6 w-full">
+        
+        <!-- LEFT COLUMN: STICKY VISUAL CATEGORY RAIL & ACCESSIBILITY TOOLS (260px) -->
+        <aside class="hidden xl:flex flex-col w-64 shrink-0 gap-4 sticky top-36 h-[calc(100vh-160px)]">
+            
+            <!-- Category Navigation Card -->
+            <div class="bg-white rounded-2xl border border-brand-border p-3.5 shadow-soft flex-1 flex flex-col overflow-hidden">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-100">
+                    <span class="font-serif font-bold text-sm text-stone-900 flex items-center gap-1.5">
+                        <span>📑</span> Menu Sections
+                    </span>
+                    <span class="text-[10px] font-extrabold bg-stone-100 px-2 py-0.5 rounded-full text-stone-600" id="leftRailCatCount">0 Sections</span>
+                </div>
+                
+                <!-- Scrollable Category List with Handcrafted Icons & Counts -->
+                <div class="flex-1 overflow-y-auto space-y-1 pr-1" id="leftCategoryRail">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Quick Service Assistance Card for Seniors -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/90 rounded-2xl p-4 shadow-soft text-xs text-stone-800">
+                <div class="flex items-center gap-2 font-bold text-brand-700 mb-1">
+                    <span class="text-base">🤝</span>
+                    <span>Need Help Ordering?</span>
+                </div>
+                <p class="text-[11px] text-stone-600 mb-3 leading-snug">
+                    Don't worry about technology. Press below and our floor steward will come to help you in person.
+                </p>
+                <button onclick="callWaiterPrompt()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5">
+                    <span>🔔</span>
+                    <span>বেয়ারা ডাকুন (Call Waiter)</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- CENTER COLUMN: MAIN DINING CATALOG & SEARCH (EXPANDS TO USE EVERY PIXEL) -->
+        <main class="flex-1 min-w-0">
+            
+            <!-- Mobile Search Bar (Only visible on mobile) -->
+            <div class="mb-4 md:hidden">
+                <div class="relative flex items-center">
+                    <input type="text" id="mobileSearchInput" oninput="handleSearch(this.value)" placeholder="Search dishes or use voice..." class="w-full pl-4 pr-20 py-3 bg-white border-2 border-stone-200 rounded-xl text-sm font-medium focus:outline-none focus:border-brand-500 shadow-sm" />
+                    <button onclick="startVoiceSearch()" class="absolute right-2.5 px-2.5 py-1.5 rounded-lg bg-amber-100 text-brand-700 font-bold text-xs flex items-center gap-1">
+                        🎤 Speak
+                    </button>
+                </div>
+            </div>
+
+            <!-- Horizontal Scrollspy Bar (For Tablet & Mobile screens) -->
+            <div class="xl:hidden bg-white/95 backdrop-blur-md rounded-2xl border border-brand-border p-2 mb-4 shadow-sm overflow-x-auto hide-scrollbar sticky top-32 z-30">
+                <div id="categoryChipsContainer" class="flex items-center gap-2">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Quick Diet & Availability Filters -->
+            <div class="bg-white rounded-2xl border border-brand-border p-3 mb-6 shadow-soft flex flex-wrap items-center justify-between gap-3 text-xs font-semibold">
+                <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar">
+                    <button id="filter-diet-all" onclick="setDietFilter('all')" class="px-3.5 py-1.5 rounded-xl bg-brand-dark text-white shadow-sm transition-all whitespace-nowrap">
+                        All Items (<span id="totalItemsCount">0</span>)
+                    </button>
+
+                    <button id="filter-diet-veg" onclick="setDietFilter('veg')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-50 border border-stone-200 text-stone-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all whitespace-nowrap">
+                        <span class="w-3.5 h-3.5 border-2 border-emerald-600 rounded-[3px] flex items-center justify-center p-0.5 bg-white">
+                            <span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
+                        </span>
+                        <span>নিরামিষ (Veg)</span>
+                    </button>
+
+                    <button id="filter-diet-non-veg" onclick="setDietFilter('non-veg')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-50 border border-stone-200 text-stone-700 hover:bg-rose-50 hover:border-rose-300 transition-all whitespace-nowrap">
+                        <span class="w-3.5 h-3.5 border-2 border-rose-600 rounded-[3px] flex items-center justify-center p-0.5 bg-white">
+                            <span class="w-0 h-0 border-l-[3.5px] border-r-[3.5px] border-b-[5px] border-l-transparent border-r-transparent border-b-rose-600"></span>
+                        </span>
+                        <span>আমিষ (Non-Veg)</span>
+                    </button>
+
+                    <button id="filter-available" onclick="toggleAvailableOnly()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-50 border border-stone-200 text-stone-700 hover:bg-amber-50 hover:border-amber-300 transition-all whitespace-nowrap">
+                        <span id="availCheck" class="w-3.5 h-3.5 rounded border border-stone-300 flex items-center justify-center bg-white text-brand-600 text-[10px]"></span>
+                        <span>এখন প্রস্তুত (In Stock)</span>
+                    </button>
+                </div>
+
+                <!-- Voice status indicator when listening -->
+                <div id="voiceStatusIndicator" class="hidden items-center gap-2 px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-bold border border-rose-300 voice-listening">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping"></span>
+                    <span>Listening... বলুন কী খাবেন</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Catalog Container -->
+            <div id="menuContainer" class="space-y-10">
+                <!-- Populated via JS -->
+                <div class="py-20 text-center" id="catalogLoading">
+                    <div class="inline-block animate-spin rounded-full h-9 w-9 border-4 border-brand-500 border-t-transparent"></div>
+                    <p class="text-sm font-semibold text-stone-600 mt-3">Loading authentic Mother's Hut menu...</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- RIGHT COLUMN: INTEGRATED "LIVE DINING TRAY" (DESKTOP PERSISTENT - ZERO EMPTY PIXELS) -->
+        <aside class="hidden lg:flex flex-col w-80 xl:w-96 shrink-0 sticky top-36 h-[calc(100vh-160px)]">
+            <div class="bg-white rounded-2xl border-2 border-brand-border shadow-soft flex-1 flex flex-col overflow-hidden">
+                
+                <!-- Tray Header -->
+                <div class="p-4 bg-gradient-to-r from-stone-900 to-amber-950 text-white flex items-center justify-between">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">🍽️</span>
+                            <h3 class="font-serif font-bold text-base tracking-wide">Your Dining Table</h3>
+                        </div>
+                        <p class="text-[11px] text-amber-200/90 font-medium mt-0.5">Table #<span class="liveTableNum">4</span> • Dine-In Service</p>
+                    </div>
+                    <span id="liveTrayItemCount" class="text-xs font-bold bg-amber-400 text-stone-950 px-2.5 py-1 rounded-full shadow-sm">0 items</span>
+                </div>
+
+                <!-- Scrollable Order Items List -->
+                <div id="desktopTrayItems" class="flex-1 overflow-y-auto p-4 space-y-3">
+                    <!-- Populated by JS -->
+                    <div class="h-full flex flex-col items-center justify-center text-center text-stone-400 py-10">
+                        <div class="w-16 h-16 rounded-2xl bg-stone-100 flex items-center justify-center text-2xl mb-2">
+                            🍲
+                        </div>
+                        <p class="font-bold text-stone-700 text-sm">Your plate is currently empty</p>
+                        <p class="text-xs text-stone-400 mt-1 max-w-[200px]">Click "+ ADD" on any dish to place it on your dining tray.</p>
+                    </div>
+                </div>
+
+                <!-- Cooking Note / Special Instructions -->
+                <div class="px-4 py-2 bg-stone-50 border-t border-stone-200">
+                    <label class="block text-[11px] font-bold text-stone-600 uppercase tracking-wider mb-1 flex items-center gap-1">
+                        <span>📝</span> Chef Cooking Instructions
+                    </label>
+                    <input type="text" id="desktopOrderNote" placeholder="E.g., Less spicy, no onion, extra lemon..." class="w-full text-xs px-3 py-2 bg-white border border-stone-200 rounded-lg focus:outline-none focus:border-brand-500" />
+                </div>
+
+                <!-- Live Subtotal & Kitchen Dispatch CTA -->
+                <div class="p-4 bg-stone-50 border-t border-stone-200 space-y-2.5">
+                    <div class="space-y-1 text-xs text-stone-600">
+                        <div class="flex justify-between">
+                            <span>Dishes Subtotal</span>
+                            <span id="traySubtotal" class="font-semibold text-stone-800">₹0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>GST Taxes (5%)</span>
+                            <span id="trayTaxes">₹0</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-sm text-stone-900 border-t border-stone-200 pt-1.5">
+                            <span>Payable Amount</span>
+                            <span id="trayGrandTotal" class="text-brand-600 font-extrabold text-base">₹0</span>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Order CTA -->
+                    <button onclick="placeOrderSimulation()" id="desktopPlaceOrderBtn" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-md text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none">
+                        <span>🔥 Send to Kitchen (রান্নাঘরে পাঠান)</span>
+                    </button>
+
+                    <button onclick="callWaiterPrompt()" class="w-full py-2 bg-white border border-rose-300 text-rose-700 hover:bg-rose-50 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors">
+                        <span>🔔 Need help? Call steward to table</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 5. FLOATING MOBILE CART BAR -->
+    <!-- ============================================================ -->
+    <aside id="floatingCartBar" class="hidden lg:hidden fixed bottom-4 left-4 right-4 z-40 bg-stone-900 text-white rounded-2xl shadow-2xl p-3.5 border border-stone-700 backdrop-blur-md flex items-center justify-between max-w-lg mx-auto">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center font-bold text-white shadow-md text-sm">
+                <span id="floatingCartCount">0</span>
+            </div>
+            <div>
+                <p class="text-[11px] text-stone-400 font-medium leading-none">Your Selection</p>
+                <p class="text-sm font-bold text-white mt-0.5"><span id="floatingCartTotal">₹0</span> <span class="text-xs font-normal text-stone-400">+ taxes</span></p>
+            </div>
+        </div>
+        <button onclick="toggleCartDrawer(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg transition-transform active:scale-95">
+            <span>View Plate</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+    </aside>
+
+    <!-- ============================================================ -->
+    <!-- 6. MOBILE SLIDE-OVER DRAWER -->
+    <!-- ============================================================ -->
+    <div id="cartDrawerBackdrop" onclick="toggleCartDrawer(false)" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 transition-opacity"></div>
+    <div id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white z-50 shadow-drawer flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
+        <div class="px-5 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+            <div>
+                <h3 class="font-serif font-bold text-lg text-stone-900 flex items-center gap-2">
+                    <span>Order Summary</span>
+                    <span id="cartDrawerBadge" class="text-xs font-sans font-bold bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">0 items</span>
+                </h3>
+                <p class="text-xs text-stone-500">Table #<span class="liveTableNum">4</span></p>
+            </div>
+            <button onclick="toggleCartDrawer(false)" class="p-2 text-stone-400 hover:text-stone-700 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div id="cartDrawerItems" class="flex-1 overflow-y-auto p-4 space-y-3">
+            <!-- Dynamic Mobile Items -->
+        </div>
+        <div class="p-4 bg-stone-50 border-t border-stone-200 space-y-2">
+            <div class="flex justify-between text-sm font-bold text-stone-900">
+                <span>Grand Total</span>
+                <span id="mobileGrandTotal" class="text-brand-600 font-extrabold text-base">₹0</span>
+            </div>
+            <button onclick="placeOrderSimulation()" class="w-full py-3.5 bg-brand-600 text-white font-bold rounded-xl shadow-lg text-sm">
+                Confirm & Send to Kitchen
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 7. ORDER PROGRESS TRACKER MODAL (ELDER CONFIRMATION) -->
+    <!-- ============================================================ -->
+    <div id="orderSuccessBackdrop" class="hidden fixed inset-0 bg-stone-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-stone-200 text-center animate-in zoom-in-95 duration-200">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 text-3xl mx-auto flex items-center justify-center mb-3">
+                🍳
+            </div>
+            <h3 class="font-serif font-black text-2xl text-stone-900">Order Sent to Kitchen!</h3>
+            <p class="text-xs text-stone-500 mt-1 mb-5">রান্নাঘরে নির্দেশ পৌঁছে গেছে (Table #<span class="liveTableNum">4</span>)</p>
+
+            <!-- Animated Kitchen Status Timeline -->
+            <div class="space-y-4 text-left border-t border-b border-stone-100 py-4 mb-6 text-xs">
+                <div class="flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">✓</span>
+                    <div>
+                        <p class="font-bold text-stone-900">Order Confirmed by Steward</p>
+                        <p class="text-stone-400 text-[10px]">Your dishes are routed directly to Kadai chefs</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-bold animate-spin">⏳</span>
+                    <div>
+                        <p class="font-bold text-stone-900">Fresh Preparation in Progress</p>
+                        <p class="text-stone-400 text-[10px]">Estimated time: 12–15 minutes</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 opacity-50">
+                    <span class="w-6 h-6 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center text-xs font-bold">3</span>
+                    <div>
+                        <p class="font-bold text-stone-900">Serving Hot at Table #<span class="liveTableNum">4</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="closeOrderSuccessModal()" class="w-full py-3 bg-brand-dark text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-stone-800">
+                Close & Return to Menu
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 8. TABLE SELECTION MODAL -->
+    <!-- ============================================================ -->
+    <div id="tableModalBackdrop" onclick="closeTableModal()" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50"></div>
+    <div id="tableModal" class="hidden fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-sm mx-auto bg-white rounded-2xl shadow-2xl z-50 p-6 border border-stone-200 text-center">
+        <h3 class="font-serif font-bold text-lg text-stone-900 mb-1">Select Dine-In Table</h3>
+        <p class="text-xs text-stone-500 mb-4">Choose your table number so our floor stewards bring food to the right seat.</p>
+        <div class="grid grid-cols-4 gap-2 mb-4" id="tableNumberGrid"></div>
+        <button onclick="closeTableModal()" class="w-full py-2.5 bg-brand-dark text-white rounded-xl text-xs font-bold">Done</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 9. AI WAITIER CHAT ASSISTANT -->
+    <!-- ============================================================ -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="chatWindow" class="hidden w-[360px] sm:w-[400px] h-[520px] bg-white border border-stone-200 shadow-2xl rounded-2xl flex flex-col mb-4 overflow-hidden animate-in fade-in duration-200">
+            <div class="bg-gradient-to-r from-stone-900 to-amber-950 text-white px-5 py-4 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg">🤖</span>
+                    <div>
+                        <h4 class="font-serif font-bold text-sm">Mother's Hut AI Waiter</h4>
+                        <p class="text-[10px] text-amber-200">Voice-ready local dining steward</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat(false)" class="text-stone-400 hover:text-white">✕</button>
+            </div>
+            
+            <div class="p-2 bg-stone-50 border-b border-stone-200 flex items-center gap-1.5 overflow-x-auto hide-scrollbar text-[11px]">
+                <button onclick="askPrompt('What are your most popular breakfast dishes?')" class="px-2.5 py-1 bg-white border border-stone-200 rounded-full shrink-0">☕ Breakfast</button>
+                <button onclick="askPrompt('Show me pure veg dishes under ₹150')" class="px-2.5 py-1 bg-white border border-stone-200 rounded-full shrink-0">🥬 Veg &lt; ₹150</button>
+                <button onclick="askPrompt('What mutton dishes do you have?')" class="px-2.5 py-1 bg-white border border-stone-200 rounded-full shrink-0">🍗 Mutton Kosha</button>
+            </div>
+
+            <div id="chatHistory" class="flex-1 bg-[#FAF8F5] p-4 overflow-y-auto flex flex-col gap-3 text-xs">
+                <div class="max-w-[88%] p-3.5 bg-white border border-stone-200 text-stone-800 rounded-2xl rounded-tl-sm self-start shadow-sm leading-relaxed">
+                    <p class="font-bold text-stone-900 mb-1">Namaskar! 🙏 Welcome to Mother's Hut.</p>
+                    <p>I can help you find prices, dietary recommendations, or add items directly to your table tray.</p>
+                </div>
+            </div>
+
+            <div class="p-3 bg-white border-t border-stone-200 flex items-center gap-2">
+                <input type="text" id="chatInput" class="flex-1 bg-stone-100 border border-transparent rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:bg-white focus:border-stone-300" placeholder="Ask about dishes..." />
+                <button id="sendBtn" onclick="sendChatMessage()" class="w-9 h-9 bg-brand-dark hover:bg-stone-800 text-white rounded-xl flex items-center justify-center">
+                    ➤
+                </button>
+            </div>
+        </div>
+
+        <button id="chatToggleBtn" onclick="toggleChat()" class="h-14 px-4 bg-gradient-to-r from-stone-900 to-amber-950 text-white rounded-2xl shadow-xl flex items-center gap-2.5 hover:scale-105 active:scale-95 transition-all border border-amber-600/30">
+            <span class="text-xl">🤖</span>
+            <span class="font-serif font-bold text-sm">Ask AI Waiter</span>
+        </button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 10. CLIENT CONTROLLER & AUDIO/VOICE ENGINE -->
+    <!-- ============================================================ -->
+    <script>
+        const BACKEND_URL = "http://127.0.0.1:8000";
+        const IMAGE_BASE_URL = "https://mothershut.com/uploads/menu/";
+
+        // State Machine
+        let fullCatalog = [];
+        let filteredCatalog = [];
+        let activeDiet = "all";
+        let availableOnly = false;
+        let searchQuery = "";
+        let currentLanguage = "en";
+        let currentTable = "4";
+        let seniorModeActive = false;
+        let baseFontSize = 16;
+
+        // Shopping Cart State: { [itemId]: { item: {...}, qty: number } }
+        let cart = {};
+
+        // Category icons mapping
+        const categoryIcons = {
+            "Breakfast": "☕",
+            "Biryani": "🍚",
+            "Thali": "🍱",
+            "Main Course- Mutton": "🍗",
+            "Main Course- Chicken": "🍗",
+            "Main Course- Fish": "🐟",
+            "Main Course- Veg": "🥦",
+            "Hot Beverage": "🍵",
+            "Cold Beverage": "🥤",
+            "Snacks": "🥟",
+            "Sweets": "🍯",
+            "Dal": "🥣",
+            "Rice": "🍚",
+            "Roti": "🫓",
+            "Paratha": "🫓",
+            "Momo": "🥟",
+            "Noodles": "🍜",
+            "Chaat": "🥘",
+            "Dosa": "🥞",
+            "Fish Starters": "🍤",
+            "Chicken Starters": "🍗",
+            "Dessert": "🍰",
+            "Ice Cream": "🍨"
+        };
+
+        // Category Bengali names mapping
+        const categoryBengaliNames = {
+            "Breakfast": "সকালের জলখাবার",
+            "Biryani": "বিরিয়ানি",
+            "Thali": "থালা ও থালি",
+            "Main Course- Mutton": "খাসির মাংসের পদ",
+            "Main Course- Chicken": "মুরগির মাংসের পদ",
+            "Main Course- Fish": "মাছের স্পেশাল",
+            "Main Course- Veg": "নিরামিষ পদ",
+            "Hot Beverage": "গরম চা ও কফি",
+            "Cold Beverage": "ঠান্ডা পানীয়",
+            "Snacks": "চমৎকার স্ন্যাকস",
+            "Sweets": "খাঁটি মিষ্টি",
+            "Dal": "ডাল ও তরকারি",
+            "Rice": "ভাত ও পোলাও",
+            "Roti": "রুটি ও নান",
+            "Paratha": "পরোটা",
+            "Momo": "মোমো",
+            "Noodles": "নুডুলস ও চাউমিন"
+        };
+
+        // Dish Name Bengali Translation Helper
+        function getBengaliSubtitle(name) {
+            const lower = name.toLowerCase();
+            if (lower.includes("luchi")) return "গরম লুচি ও তরকারি";
+            if (lower.includes("karaishutir")) return "কড়াইশুঁটির কচুরি ও আলুর দম";
+            if (lower.includes("chole bhature")) return "ছোলে ভাটুরে";
+            if (lower.includes("mutton kosha")) return "কষা খাসির মাংস";
+            if (lower.includes("biryani")) return "দম বিরিয়ানি";
+            if (lower.includes("chai") || lower.includes("tea")) return "মাটির ভাঁড়ের স্পেশাল চা";
+            if (lower.includes("coffee")) return "গরম ফিল্টার কফি";
+            if (lower.includes("paratha")) return "গরম পরোটা ও আচার";
+            return "";
+        }
+
+        // Web Audio Synthesizer (Zero External Audio Files)
+        const AudioFX = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) this.ctx = new AudioContext();
+                }
+            },
+            playPop() {
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(540, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(840, this.ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.08);
+                } catch (e) {}
+            },
+            playChime() {
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = "triangle";
+                    osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.09);
+                    osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.18);
+                    gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.35);
+                } catch (e) {}
+            }
+        };
+
+        // Text-to-Speech Reader for Elders
+        function readDishAloud(title, price, desc) {
+            AudioFX.playPop();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const speechText = `${title}. Price: ${price} Rupees. ${desc || ''}`;
+                const utterance = new SpeechSynthesisUtterance(speechText);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert(`Reading aloud: ${title} - ₹${price}`);
+            }
+        }
+
+        // Voice Search Recognition
+        function startVoiceSearch() {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                alert("Voice search is supported in Google Chrome, Microsoft Edge, and Android devices.");
+                return;
+            }
+
+            AudioFX.playPop();
+            const rec = new SpeechRec();
+            rec.lang = currentLanguage === 'bn' ? 'bn-IN' : 'en-IN';
+            rec.interimResults = false;
+
+            const indicator = document.getElementById("voiceStatusIndicator");
+            indicator.classList.remove("hidden");
+            indicator.classList.add("flex");
+
+            rec.onresult = (event) => {
+                const spoken = event.results[0][0].transcript;
+                document.getElementById("searchInput").value = spoken;
+                if (document.getElementById("mobileSearchInput")) {
+                    document.getElementById("mobileSearchInput").value = spoken;
+                }
+                handleSearch(spoken);
+                indicator.classList.add("hidden");
+                indicator.classList.remove("flex");
+
+                // Friendly speak confirmation
+                if ('speechSynthesis' in window) {
+                    const confirmUtterance = new SpeechSynthesisUtterance(`Showing dishes for ${spoken}`);
+                    confirmUtterance.rate = 1.0;
+                    window.speechSynthesis.speak(confirmUtterance);
+                }
+            };
+
+            rec.onerror = () => {
+                indicator.classList.add("hidden");
+                indicator.classList.remove("flex");
+            };
+
+            rec.onend = () => {
+                indicator.classList.add("hidden");
+                indicator.classList.remove("flex");
+            };
+
+            rec.start();
+        }
+
+        // Senior Mode Switcher
+        function toggleSeniorMode() {
+            seniorModeActive = !seniorModeActive;
+            document.body.classList.toggle("senior-mode", seniorModeActive);
+            
+            const btnLabel = document.getElementById("seniorBtnLabel");
+            const welcomeBanner = document.getElementById("seniorWelcomeBanner");
+
+            if (seniorModeActive) {
+                btnLabel.innerText = "Easy Senior Mode: ON";
+                welcomeBanner.classList.remove("hidden");
+                AudioFX.playChime();
+            } else {
+                btnLabel.innerText = "Easy Senior Mode: OFF";
+                welcomeBanner.classList.add("hidden");
+                AudioFX.playPop();
+            }
+
+            // Re-render catalog with prominent Bengali text & enlarged buttons
+            renderMenuCatalog(filteredCatalog);
+        }
+
+        // Font Size Adjuster
+        function changeFontSize(delta) {
+            baseFontSize = Math.max(14, Math.min(22, baseFontSize + delta));
+            document.documentElement.style.fontSize = `${baseFontSize}px`;
+            AudioFX.playPop();
+        }
+
+        // Call Waiter Button Handler
+        function callWaiterPrompt() {
+            AudioFX.playChime();
+            alert(`🔔 Steward Called!\nFloor Steward Sourav has been notified and is coming directly to Table #${currentTable}.\nPlease sit back and relax.`);
+        }
+
+        // ============================================================
+        // BOOTSTRAP DATA
+        // ============================================================
+        async function fetchMenuData() {
+            try {
+                let response = null;
+                try {
+                    response = await fetch(`${BACKEND_URL}/menu`, { cache: "no-store" });
+                } catch (e) {
+                    console.warn("Backend /menu unreachable, reading local menu.json directly...");
+                }
+
+                if (!response || !response.ok) {
+                    response = await fetch("menu.json");
+                }
+
+                const rawItems = await response.json();
+                
+                fullCatalog = rawItems.map((raw, index) => {
+                    const id = raw.id || `item_${index}`;
+                    const name = (raw.name || "").trim() || "Delicious Dish";
+                    const description = (raw.description || "").trim();
+                    const category = (raw.category || raw.metadata?.category || "Specialties").trim();
+                    const price = Number(raw.price) || 0;
+                    
+                    let foodType = raw.food_type || raw.metadata?.food_type || "unknown";
+                    if (foodType === "unknown") {
+                        const checkText = `${name} ${description}`.toLowerCase();
+                        if (checkText.match(/\b(chicken|mutton|fish|egg|prawn|katla|pomfret|ilish|meat)\b/)) {
+                            foodType = "non-veg";
+                        } else {
+                            foodType = "veg";
+                        }
+                    }
+
+                    const availability = (raw.availability || raw.metadata?.availability || "available").toLowerCase();
+                    const isAvailable = availability === "available";
+
+                    let img = raw.image_filename || "";
+                    if (img) {
+                        if (!img.startsWith("http://") && !img.startsWith("https://")) {
+                            img = `${IMAGE_BASE_URL}${img}`;
+                        }
+                    } else {
+                        img = "";
+                    }
+
+                    return {
+                        id,
+                        name,
+                        description,
+                        category,
+                        price,
+                        foodType,
+                        availability,
+                        isAvailable,
+                        image: img,
+                        bengaliName: getBengaliSubtitle(name)
+                    };
+                });
+
+                document.getElementById("totalItemsCount").innerText = fullCatalog.length;
+                renderCategoryNav();
+                applyFilters();
+
+            } catch (err) {
+                console.error("Failed to load catalog:", err);
+                document.getElementById("menuContainer").innerHTML = `
+                    <div class="p-8 bg-red-50 text-red-800 rounded-2xl border border-red-200 text-center max-w-lg mx-auto">
+                        <p class="font-bold text-base mb-1">Unable to Load Menu</p>
+                        <p class="text-xs mb-4">Please ensure menu.json is present or start the Python backend.</p>
+                        <button onclick="fetchMenuData()" class="px-4 py-2 bg-red-700 text-white rounded-xl text-xs font-semibold">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // CATEGORY NAVIGATION (LEFT RAIL & TOP CHIPS)
+        // ============================================================
+        function renderCategoryNav() {
+            const categories = [...new Set(fullCatalog.map(item => item.category))];
+            
+            // 1. Populate Left Rail
+            const leftRail = document.getElementById("leftCategoryRail");
+            leftRail.innerHTML = "";
+            document.getElementById("leftRailCatCount").innerText = `${categories.length} Sections`;
+
+            categories.forEach(cat => {
+                const count = fullCatalog.filter(i => i.category === cat).length;
+                const safeCatId = `section-${cat.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`;
+                const icon = categoryIcons[cat] || "🍲";
+                const bnName = categoryBengaliNames[cat] || "";
+
+                const row = document.createElement("button");
+                row.id = `rail-${safeCatId}`;
+                row.onclick = () => scrollToCategory(safeCatId);
+                row.className = "w-full text-left p-2 rounded-xl text-xs font-semibold hover:bg-amber-50 hover:text-brand-700 transition-all flex items-center justify-between group border border-transparent";
+                row.innerHTML = `
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-base group-hover:scale-110 transition-transform">${icon}</span>
+                        <div class="truncate">
+                            <p class="truncate text-stone-800 group-hover:text-brand-700 font-bold">${cat}</p>
+                            ${bnName ? `<p class="text-[10px] text-stone-500 font-bengali truncate">${bnName}</p>` : ''}
+                        </div>
+                    </div>
+                    <span class="text-[10px] bg-stone-100 group-hover:bg-amber-100 text-stone-600 px-1.5 py-0.5 rounded-md font-bold">${count}</span>
+                `;
+                leftRail.appendChild(row);
+            });
+
+            // 2. Populate Tablet / Mobile Chips
+            const chips = document.getElementById("categoryChipsContainer");
+            chips.innerHTML = `
+                <button onclick="scrollToCategory('all')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white shrink-0">
+                    All Sections
+                </button>
+            `;
+            categories.forEach(cat => {
+                const safeCatId = `section-${cat.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`;
+                const icon = categoryIcons[cat] || "🍲";
+                const btn = document.createElement("button");
+                btn.onclick = () => scrollToCategory(safeCatId);
+                btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-100 text-stone-700 hover:bg-amber-100 shrink-0 flex items-center gap-1.5";
+                btn.innerHTML = `<span>${icon}</span> <span>${cat}</span>`;
+                chips.appendChild(btn);
+            });
+        }
+
+        function scrollToCategory(catId) {
+            AudioFX.playPop();
+            if (catId === 'all') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+            const el = document.getElementById(catId);
+            if (el) {
+                const yOffset = -140;
+                const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        }
+
+        // ============================================================
+        // FILTERS & SEARCH
+        // ============================================================
+        function applyFilters() {
+            filteredCatalog = fullCatalog.filter(item => {
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    const nameMatch = item.name.toLowerCase().includes(q);
+                    const descMatch = item.description.toLowerCase().includes(q);
+                    const catMatch = item.category.toLowerCase().includes(q);
+                    const bnMatch = item.bengaliName.toLowerCase().includes(q);
+                    if (!nameMatch && !descMatch && !catMatch && !bnMatch) return false;
+                }
+
+                if (activeDiet === 'veg' && item.foodType !== 'veg') return false;
+                if (activeDiet === 'non-veg' && item.foodType !== 'non-veg') return false;
+                if (availableOnly && !item.isAvailable) return false;
+
+                return true;
+            });
+
+            renderMenuCatalog(filteredCatalog);
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.trim();
+            const clearBtn = document.getElementById("clearSearchBtn");
+            if (clearBtn) clearBtn.classList.toggle("hidden", !searchQuery);
+            applyFilters();
+        }
+
+        function clearSearch() {
+            document.getElementById("searchInput").value = "";
+            if (document.getElementById("mobileSearchInput")) document.getElementById("mobileSearchInput").value = "";
+            searchQuery = "";
+            document.getElementById("clearSearchBtn").classList.add("hidden");
+            applyFilters();
+        }
+
+        function setDietFilter(diet) {
+            AudioFX.playPop();
+            activeDiet = diet;
+            applyFilters();
+        }
+
+        function toggleAvailableOnly() {
+            AudioFX.playPop();
+            availableOnly = !availableOnly;
+            const check = document.getElementById("availCheck");
+            check.innerHTML = availableOnly ? "✓" : "";
+            applyFilters();
+        }
+
+        // ============================================================
+        // MENU CATALOG RENDERING WITH AUDIO & FLYING PARTICLES
+        // ============================================================
+        function renderMenuCatalog(items) {
+            const container = document.getElementById("menuContainer");
+            container.innerHTML = "";
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="py-20 text-center max-w-md mx-auto bg-white rounded-3xl border border-stone-200 p-8 shadow-soft">
+                        <div class="text-4xl mb-3">🔍</div>
+                        <h3 class="font-serif font-bold text-lg text-stone-800">No dishes matched</h3>
+                        <p class="text-xs text-stone-500 mt-1 mb-4">Try clearing your search or voice phrase.</p>
+                        <button onclick="clearSearch()" class="px-4 py-2 bg-brand-600 text-white text-xs font-bold rounded-xl shadow-sm">
+                            Reset Search
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const grouped = items.reduce((acc, item) => {
+                if (!acc[item.category]) acc[item.category] = [];
+                acc[item.category].push(item);
+                return acc;
+            }, {});
+
+            for (const [category, catItems] of Object.entries(grouped)) {
+                const safeCatId = `section-${category.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`;
+                const icon = categoryIcons[category] || "🍲";
+                const bnCategory = categoryBengaliNames[category] || "";
+
+                const section = document.createElement("section");
+                section.id = safeCatId;
+                section.className = "mb-10 scroll-mt-36";
+
+                section.innerHTML = `
+                    <div class="flex items-center justify-between border-b-2 border-brand-border/80 pb-2.5 mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-2xl">${icon}</span>
+                            <div>
+                                <h2 class="font-serif text-xl sm:text-2xl font-bold text-stone-900 tracking-tight leading-none">${category}</h2>
+                                ${bnCategory ? `<p class="text-xs text-brand-700 font-bengali font-bold mt-0.5">${bnCategory}</p>` : ''}
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-stone-600 bg-amber-100/70 px-3 py-1 rounded-full">${catItems.length} items</span>
+                    </div>
+                `;
+
+                const grid = document.createElement("div");
+                grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-4";
+
+                catItems.forEach(item => {
+                    const card = createDishCard(item);
+                    grid.appendChild(card);
+                });
+
+                section.appendChild(grid);
+                container.appendChild(section);
+            }
+        }
+
+        function createDishCard(item) {
+            const card = document.createElement("div");
+            const inCartQty = cart[item.id]?.qty || 0;
+            const isAvailable = item.isAvailable;
+            
+            const badge = item.foodType === 'veg' 
+                ? `<span class="inline-flex items-center justify-center w-4 h-4 border-2 border-emerald-600 rounded-[3px] bg-white shrink-0 p-0.5" title="Pure Veg"><span class="w-2 h-2 bg-emerald-600 rounded-full"></span></span>`
+                : `<span class="inline-flex items-center justify-center w-4 h-4 border-2 border-rose-600 rounded-[3px] bg-white shrink-0 p-0.5" title="Non-Veg"><span class="w-0 h-0 border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-rose-600"></span></span>`;
+
+            card.className = `bg-white rounded-2xl p-4 border border-brand-border shadow-soft hover:shadow-hover transition-all flex gap-3 relative overflow-hidden group ${!isAvailable ? 'opacity-60 bg-stone-50' : ''}`;
+
+            card.innerHTML = `
+                <!-- Left Details -->
+                <div class="flex-1 min-w-0 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            ${badge}
+                            <!-- Audio Read Button for Elders -->
+                            <button onclick="readDishAloud('${item.name.replace(/'/g, "\\'")}', '${item.price}', '${item.description.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded-md bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-brand-700 text-[11px] font-bold flex items-center gap-1 transition-colors" title="Listen to dish name and price spoken aloud">
+                                <span>🔊</span>
+                                <span>শুনুন</span>
+                            </button>
+                        </div>
+                        <h3 class="dish-title font-sans font-bold text-stone-900 text-sm sm:text-base leading-snug line-clamp-2 group-hover:text-brand-600 transition-colors">
+                            ${item.name}
+                        </h3>
+                        ${item.bengaliName ? `<p class="text-xs font-bengali font-bold text-brand-700 mt-0.5">${item.bengaliName}</p>` : ''}
+                        <div class="dish-price font-extrabold text-stone-900 text-base mt-1">
+                            ₹${item.price}
+                        </div>
+                        ${item.description ? `<p class="dish-desc text-xs text-stone-500 font-normal mt-1 line-clamp-2 leading-relaxed">${item.description}</p>` : ''}
+                    </div>
+                </div>
+
+                <!-- Right Action & Image -->
+                <div class="w-28 shrink-0 flex flex-col items-center justify-between relative">
+                    <div class="w-full h-24 rounded-xl overflow-hidden bg-stone-100 border border-stone-200 shadow-inner relative">
+                        <img 
+                            src="${item.image || 'https://mothershut.com/uploads/menu/ITEM_2665_1778771060.webp'}" 
+                            alt="${item.name}" 
+                            loading="lazy"
+                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            onerror="this.onerror=null; this.src='https://mothershut.com/uploads/menu/ITEM_2665_1778771060.webp';"
+                        />
+                    </div>
+
+                    <!-- Animated Add Button / Stepper -->
+                    <div class="absolute -bottom-1 z-10 w-24">
+                        ${renderActionStepper(item, inCartQty, isAvailable)}
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function renderActionStepper(item, qty, isAvailable) {
+            if (!isAvailable) {
+                return `<button disabled class="w-full py-1 bg-stone-200 text-stone-400 font-bold text-xs rounded-lg uppercase">Closed</button>`;
+            }
+
+            if (qty > 0) {
+                return `
+                    <div class="w-full bg-white border-2 border-brand-500 text-brand-600 rounded-lg shadow-md flex items-center justify-between p-0.5">
+                        <button onclick="updateQty('${item.id}', -1, event)" class="w-7 h-7 flex items-center justify-center font-bold text-stone-800 hover:bg-stone-100 rounded text-sm">-</button>
+                        <span class="font-extrabold text-xs text-stone-900">${qty}</span>
+                        <button onclick="updateQty('${item.id}', 1, event)" class="w-7 h-7 flex items-center justify-center font-bold text-brand-600 hover:bg-brand-50 rounded text-sm">+</button>
+                    </div>
+                `;
+            }
+
+            return `
+                <button onclick="updateQty('${item.id}', 1, event)" class="action-btn w-full py-1.5 px-2 bg-white hover:bg-brand-50 border-2 border-brand-600 text-brand-600 font-extrabold text-xs rounded-lg shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-1 uppercase tracking-wider">
+                    <span>+ ADD</span>
+                </button>
+            `;
+        }
+
+        // ============================================================
+        // SHOPPING CART ENGINE & PARTICLES
+        // ============================================================
+        function updateQty(itemId, delta, event = null) {
+            const item = fullCatalog.find(i => i.id === itemId);
+            if (!item) return;
+
+            if (delta > 0) {
+                AudioFX.playPop();
+                if (event) spawnFlyingParticle(event);
+            }
+
+            if (!cart[itemId]) {
+                if (delta > 0) cart[itemId] = { item, qty: delta };
+            } else {
+                cart[itemId].qty += delta;
+                if (cart[itemId].qty <= 0) delete cart[itemId];
+            }
+
+            syncCartUI();
+        }
+
+        // Flying Particle Animation to Cart
+        function spawnFlyingParticle(event) {
+            const btn = event.currentTarget || event.target;
+            const rect = btn.getBoundingClientRect();
+            
+            const particle = document.createElement("div");
+            particle.className = "flying-particle";
+            particle.innerText = "+1";
+            particle.style.left = `${rect.left + rect.width / 2 - 11}px`;
+            particle.style.top = `${rect.top}px`;
+            document.body.appendChild(particle);
+
+            // Target header cart or desktop tray
+            const target = document.getElementById("headerCartBtn") || document.getElementById("liveTrayItemCount");
+            const targetRect = target.getBoundingClientRect();
+
+            requestAnimationFrame(() => {
+                particle.style.left = `${targetRect.left + targetRect.width / 2 - 11}px`;
+                particle.style.top = `${targetRect.top + targetRect.height / 2 - 11}px`;
+                particle.style.transform = "scale(0.5)";
+                particle.style.opacity = "0";
+            });
+
+            setTimeout(() => {
+                if (particle.parentNode) particle.parentNode.removeChild(particle);
+            }, 700);
+        }
+
+        function syncCartUI() {
+            const items = Object.values(cart);
+            const totalCount = items.reduce((sum, e) => sum + e.qty, 0);
+            
+            let subtotal = 0;
+            items.forEach(e => subtotal += e.item.price * e.qty);
+            const taxes = Math.round(subtotal * 0.05);
+            const grandTotal = subtotal + taxes;
+
+            // Sync step indicator in header
+            const step2 = document.getElementById("stepIndicator2");
+            const step3 = document.getElementById("stepIndicator3");
+            if (totalCount > 0) {
+                step2.className = "flex items-center gap-1.5 shrink-0 text-brand-700 font-bold";
+                step3.className = "flex items-center gap-1.5 shrink-0 text-stone-700";
+            }
+
+            // Sync Desktop Tray
+            document.getElementById("liveTrayItemCount").innerText = `${totalCount} item${totalCount === 1 ? '' : 's'}`;
+            document.getElementById("traySubtotal").innerText = `₹${subtotal}`;
+            document.getElementById("trayTaxes").innerText = `₹${taxes}`;
+            document.getElementById("trayGrandTotal").innerText = `₹${grandTotal}`;
+            document.getElementById("desktopPlaceOrderBtn").disabled = totalCount === 0;
+
+            renderDesktopTray(items);
+
+            // Sync Mobile Elements
+            const countBadge = document.getElementById("cartCountBadge");
+            countBadge.innerText = totalCount;
+            countBadge.classList.toggle("hidden", totalCount === 0);
+
+            document.getElementById("cartTotalHeader").innerText = `₹${grandTotal}`;
+            document.getElementById("floatingCartCount").innerText = totalCount;
+            document.getElementById("floatingCartTotal").innerText = `₹${grandTotal}`;
+            document.getElementById("floatingCartBar").classList.toggle("hidden", totalCount === 0);
+            
+            renderMobileDrawer(items, grandTotal);
+            renderMenuCatalog(filteredCatalog);
+        }
+
+        function renderDesktopTray(items) {
+            const container = document.getElementById("desktopTrayItems");
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center text-stone-400 py-10">
+                        <div class="w-16 h-16 rounded-2xl bg-stone-100 flex items-center justify-center text-2xl mb-2">🍲</div>
+                        <p class="font-bold text-stone-700 text-sm">Your plate is currently empty</p>
+                        <p class="text-xs text-stone-400 mt-1 max-w-[200px]">Click "+ ADD" on any dish to place it on your dining tray.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(e => `
+                <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 flex items-center justify-between gap-2">
+                    <div class="min-w-0 flex-1">
+                        <p class="font-bold text-xs text-stone-900 truncate">${e.item.name}</p>
+                        <p class="text-[11px] text-brand-600 font-bold">₹${e.item.price} × ${e.qty} = ₹${e.item.price * e.qty}</p>
+                    </div>
+                    <div class="flex items-center gap-1 bg-white border border-stone-300 rounded-lg p-0.5">
+                        <button onclick="updateQty('${e.item.id}', -1)" class="w-6 h-6 flex items-center justify-center text-stone-700 font-bold hover:bg-stone-100 rounded text-xs">-</button>
+                        <span class="text-xs font-bold w-4 text-center">${e.qty}</span>
+                        <button onclick="updateQty('${e.item.id}', 1)" class="w-6 h-6 flex items-center justify-center text-brand-600 font-bold hover:bg-brand-50 rounded text-xs">+</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderMobileDrawer(items, grandTotal) {
+            const container = document.getElementById("cartDrawerItems");
+            document.getElementById("cartDrawerBadge").innerText = `${items.reduce((s, i) => s + i.qty, 0)} items`;
+            document.getElementById("mobileGrandTotal").innerText = `₹${grandTotal}`;
+
+            if (items.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs text-stone-400 py-10">Your plate is empty.</p>`;
+                return;
+            }
+
+            container.innerHTML = items.map(e => `
+                <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 flex items-center justify-between">
+                    <div>
+                        <p class="font-bold text-xs text-stone-900">${e.item.name}</p>
+                        <p class="text-xs font-bold text-brand-600">₹${e.item.price * e.qty}</p>
+                    </div>
+                    <div class="flex items-center gap-1 bg-white border border-stone-300 rounded-lg p-0.5">
+                        <button onclick="updateQty('${e.item.id}', -1)" class="w-6 h-6 font-bold">-</button>
+                        <span class="text-xs font-bold w-4 text-center">${e.qty}</span>
+                        <button onclick="updateQty('${e.item.id}', 1)" class="w-6 h-6 font-bold text-brand-600">+</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById("cartDrawer");
+            const backdrop = document.getElementById("cartDrawerBackdrop");
+            drawer.classList.toggle("translate-x-full", !open);
+            backdrop.classList.toggle("hidden", !open);
+        }
+
+        // ============================================================
+        // ORDER SIMULATION & ELDER REASSURANCE
+        // ============================================================
+        function placeOrderSimulation() {
+            const items = Object.values(cart);
+            if (items.length === 0) return;
+
+            AudioFX.playChime();
+            document.querySelectorAll(".liveTableNum").forEach(el => el.innerText = currentTable);
+            document.getElementById("orderSuccessBackdrop").classList.remove("hidden");
+            
+            // Clear Cart
+            cart = {};
+            syncCartUI();
+            toggleCartDrawer(false);
+        }
+
+        function closeOrderSuccessModal() {
+            document.getElementById("orderSuccessBackdrop").classList.add("hidden");
+        }
+
+        // Table Picker
+        function openTableModal() {
+            const grid = document.getElementById("tableNumberGrid");
+            grid.innerHTML = "";
+            for (let i = 1; i <= 8; i++) {
+                const btn = document.createElement("button");
+                btn.className = `p-3 rounded-xl border text-sm font-bold ${currentTable == i ? 'bg-brand-600 text-white' : 'bg-stone-50 border-stone-200'}`;
+                btn.innerText = `Table ${i}`;
+                btn.onclick = () => {
+                    currentTable = i.toString();
+                    document.getElementById("tableStatusBadge").innerText = `Table #${currentTable}`;
+                    document.querySelectorAll(".liveTableNum").forEach(el => el.innerText = currentTable);
+                    closeTableModal();
+                    AudioFX.playPop();
+                };
+                grid.appendChild(btn);
+            }
+            document.getElementById("tableModal").classList.remove("hidden");
+            document.getElementById("tableModalBackdrop").classList.remove("hidden");
+        }
+
+        function closeTableModal() {
+            document.getElementById("tableModal").classList.add("hidden");
+            document.getElementById("tableModalBackdrop").classList.add("hidden");
+        }
+
+        // Language Switcher
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.getElementById("lang-en").className = lang === 'en' ? "px-2.5 py-1.5 rounded-lg bg-white text-stone-800 shadow-sm" : "px-2.5 py-1.5 rounded-lg text-stone-500";
+            document.getElementById("lang-bn").className = lang === 'bn' ? "px-2.5 py-1.5 rounded-lg bg-white text-stone-800 shadow-sm font-bold" : "px-2.5 py-1.5 rounded-lg text-stone-500";
+            applyFilters();
+        }
+
+        // Chatbot Widget
+        function toggleChat(forceOpen) {
+            const chat = document.getElementById("chatWindow");
+            if (typeof forceOpen === "boolean") {
+                chat.classList.toggle("hidden", !forceOpen);
+            } else {
+                chat.classList.toggle("hidden");
+            }
+        }
+
+        function askPrompt(q) {
+            document.getElementById("chatInput").value = q;
+            sendChatMessage();
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById("chatInput");
+            const q = input.value.trim();
+            if (!q) return;
+
+            const history = document.getElementById("chatHistory");
+            const userMsg = document.createElement("div");
+            userMsg.className = "max-w-[85%] px-3.5 py-2.5 bg-stone-900 text-white rounded-2xl rounded-tr-sm self-end";
+            userMsg.innerText = q;
+            history.appendChild(userMsg);
+            input.value = "";
+
+            const loading = document.createElement("div");
+            loading.className = "text-stone-400 italic text-[11px]";
+            loading.innerText = "Checking Mother's Hut menu...";
+            history.appendChild(loading);
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/ask`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question: q })
+                });
+                const data = await res.json();
+                history.removeChild(loading);
+                
+                const botMsg = document.createElement("div");
+                botMsg.className = "max-w-[88%] p-3 bg-white border border-stone-200 text-stone-800 rounded-2xl rounded-tl-sm self-start shadow-sm";
+                botMsg.innerText = data.answer || "Here are recommendations from our kitchen.";
+                history.appendChild(botMsg);
+            } catch (e) {
+                history.removeChild(loading);
+                const botMsg = document.createElement("div");
+                botMsg.className = "max-w-[88%] p-3 bg-white border border-stone-200 text-stone-800 rounded-2xl rounded-tl-sm self-start shadow-sm";
+                botMsg.innerText = "I am ready to help. You can also tap dishes above or call the steward.";
+                history.appendChild(botMsg);
+            }
+            history.scrollTop = history.scrollHeight;
+        }
+
+        // Initialize
+        window.addEventListener("DOMContentLoaded", () => {
+            fetchMenuData();
+        });
+    </script>
+</body>
+</html>

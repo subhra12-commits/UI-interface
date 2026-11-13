@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mother's Hut | Heritage Dining & Drive-Through Order</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:wght@600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        bengali: ['"Noto Sans Bengali"', '"Plus Jakarta Sans"', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#ea580c',
+                            600: '#c84c1c', // Heritage Terracotta
+                            700: '#9a3412',
+                            dark: '#1c1917', // Roasted Charcoal
+                            warm: '#faf8f5', // Soft warm linen canvas
+                            border: '#ede8e1',
+                            card: '#ffffff'
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 14px -2px rgba(28, 25, 23, 0.06), 0 1px 4px -1px rgba(28, 25, 23, 0.04)',
+                        'hover': '0 12px 28px -4px rgba(28, 25, 23, 0.1), 0 4px 8px -2px rgba(28, 25, 23, 0.04)',
+                        'drawer': '-10px 0 30px rgba(0, 0, 0, 0.15)'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        /* Smooth scrolling and scrollbar refinement */
+        html {
+            scroll-behavior: smooth;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Custom subtle badge animation */
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-cart-pop {
+            animation: pulse-subtle 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-brand-warm text-brand-dark font-sans antialiased min-h-screen flex flex-col selection:bg-brand-100 selection:text-brand-700">
+
+    <!-- TOP ANNOUNCEMENT & BRAND BANNER -->
+    <div class="bg-brand-dark text-amber-100/90 text-xs py-1.5 px-4 text-center border-b border-stone-800 flex items-center justify-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="announcementText">Kitchen is Open • Dine-In, Highway Takeaway & Rapid Drive-Thru Available</span>
+        <span class="text-amber-300 font-semibold underline cursor-pointer ml-1" onclick="openTableModal()">Set Table #</span>
+    </div>
+
+    <!-- PRIMARY HEADER -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-brand-border sticky top-0 z-40 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Brand Logo & Identity -->
+            <div class="flex items-center gap-3.5 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-amber-600 flex items-center justify-center text-white font-serif font-bold text-xl shadow-md shadow-brand-600/20 ring-2 ring-brand-100">
+                    M
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-brand-dark leading-none">Mother's Hut</span>
+                        <span class="hidden sm:inline-block text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-amber-100 text-brand-700 tracking-wider">Est. Highway Heritage</span>
+                    </div>
+                    <p class="text-xs text-stone-500 font-medium tracking-wide mt-0.5 flex items-center gap-1.5">
+                        <span class="text-emerald-600 font-semibold" id="tableStatusBadge">Table #4</span>
+                        <span>•</span>
+                        <span class="font-bengali text-stone-600">খাঁটি স্বাদ ও আতিথেয়তা</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Service Mode Switcher (Dine-In / Takeaway / Delivery) -->
+            <div class="hidden md:flex items-center p-1 bg-stone-100 rounded-xl border border-stone-200/80 shadow-inner text-xs font-semibold">
+                <button id="mode-dine-in" onclick="setServiceMode('dine-in')" class="px-3.5 py-1.5 rounded-lg bg-white text-brand-600 shadow-sm transition-all flex items-center gap-1.5 font-bold">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    <span>Dine-In</span>
+                </button>
+                <button id="mode-takeaway" onclick="setServiceMode('takeaway')" class="px-3.5 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 transition-all flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <span>Takeaway</span>
+                </button>
+                <button id="mode-delivery" onclick="setServiceMode('delivery')" class="px-3.5 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 transition-all flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span>Delivery</span>
+                </button>
+            </div>
+
+            <!-- Right Actions: Language, AI Waiter Trigger, and Cart -->
+            <div class="flex items-center gap-2.5 sm:gap-4">
+                
+                <!-- Language Toggle -->
+                <div class="flex items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 text-xs font-semibold">
+                    <button id="lang-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-md bg-white text-stone-800 shadow-sm">EN</button>
+                    <button id="lang-bn" onclick="setLanguage('bn')" class="px-2.5 py-1 rounded-md text-stone-500 hover:text-stone-800">বাং</button>
+                </div>
+
+                <!-- AI Concierge Quick Trigger Button -->
+                <button onclick="toggleChat(true)" class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-50 text-brand-700 border border-amber-200/80 hover:bg-amber-100 transition-colors text-xs font-semibold shadow-sm">
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-500 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-600"></span>
+                    </span>
+                    <span id="aiTriggerText">Ask AI Waiter</span>
+                </button>
+
+                <!-- Cart Button -->
+                <button onclick="toggleCartDrawer(true)" id="headerCartBtn" class="flex items-center gap-2.5 bg-brand-dark hover:bg-stone-800 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm shadow-md transition-all active:scale-95 group">
+                    <div class="relative">
+                        <svg class="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <span id="cartCountBadge" class="hidden absolute -top-2.5 -right-2.5 bg-brand-600 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center ring-2 ring-white">0</span>
+                    </div>
+                    <span class="hidden sm:inline" id="cartLabelText">Order</span>
+                    <span id="cartTotalHeader" class="text-amber-300 font-bold ml-0.5">₹0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SEARCH & ACTIVE FILTER BAR -->
+        <div class="border-t border-stone-100 bg-white/70 py-3 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+                
+                <!-- Search Box -->
+                <div class="relative flex-1 max-w-xl">
+                    <svg class="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z"/></svg>
+                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Search Luchi, Mutton Kosha, Biryani, Chai..." class="w-full pl-10 pr-9 py-2 bg-stone-50 hover:bg-white focus:bg-white border border-stone-200 focus:border-brand-500 rounded-xl text-sm focus:outline-none transition-all placeholder:text-stone-400 focus:ring-2 focus:ring-brand-500/10" />
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 p-0.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <!-- Dietary & Availability Toggles -->
+                <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1 md:pb-0 text-xs font-semibold">
+                    
+                    <!-- All -->
+                    <button id="filter-diet-all" onclick="setDietFilter('all')" class="px-3.5 py-1.5 rounded-lg bg-brand-dark text-white shadow-sm transition-all whitespace-nowrap">
+                        All Items (<span id="totalItemsCount">0</span>)
+                    </button>
+
+                    <!-- Pure Veg (FSSAI green badge) -->
+                    <button id="filter-diet-veg" onclick="setDietFilter('veg')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-stone-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all whitespace-nowrap">
+                        <span class="w-3.5 h-3.5 border-2 border-emerald-600 rounded-[3px] flex items-center justify-center p-0.5 bg-white">
+                            <span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
+                        </span>
+                        <span>Veg Only</span>
+                    </button>
+
+                    <!-- Non Veg (FSSAI red badge) -->
+                    <button id="filter-diet-non-veg" onclick="setDietFilter('non-veg')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-stone-700 hover:bg-rose-50 hover:border-rose-300 transition-all whitespace-nowrap">
+                        <span class="w-3.5 h-3.5 border-2 border-rose-600 rounded-[3px] flex items-center justify-center p-0.5 bg-white">
+                            <span class="w-0 h-0 border-l-[3.5px] border-r-[3.5px] border-b-[5px] border-l-transparent border-r-transparent border-b-rose-600"></span>
+                        </span>
+                        <span>Non-Veg</span>
+                    </button>
+
+                    <!-- In-Stock Only Toggle -->
+                    <button id="filter-available" onclick="toggleAvailableOnly()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-stone-700 hover:bg-amber-50 hover:border-amber-300 transition-all whitespace-nowrap">
+                        <span id="availCheck" class="w-3.5 h-3.5 rounded border border-stone-300 flex items-center justify-center bg-white text-brand-600 text-[10px]"></span>
+                        <span>Available Now</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STICKY HORIZONTAL CATEGORY SCROLLSPY BAR -->
+        <nav id="categoryNav" class="bg-brand-warm/95 border-b border-brand-border py-2 px-4 sm:px-6 lg:px-8 overflow-x-auto hide-scrollbar sticky top-[138px] z-30">
+            <div id="categoryChipsContainer" class="max-w-7xl mx-auto flex items-center gap-2">
+                <!-- Dynamically rendered category buttons -->
+                <span class="text-xs text-stone-400 py-1">Loading sections...</span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO RESTAURANT INTRO CALLOUT -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <div class="bg-gradient-to-r from-stone-900 via-stone-800 to-amber-950 text-white rounded-2xl p-6 sm:p-8 shadow-soft relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="relative z-10 max-w-2xl">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-3">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Authentic Highway Recipes & Freshly Prepared
+                </span>
+                <h1 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white mb-2 leading-tight">
+                    Mother's Hut Kitchen & Dining
+                </h1>
+                <p class="text-stone-300 text-xs sm:text-sm leading-relaxed font-light">
+                    From our famous golden Bengali Luchis and Karaishutir Kochuris to fragrant Biryanis and rich Kosha gravies. Prepared fresh with zero shortcuts.
+                </p>
+                <!-- Quick features -->
+                <div class="flex flex-wrap gap-4 mt-4 text-xs text-amber-200/90 font-medium">
+                    <span class="flex items-center gap-1.5">✓ 100% Halal & Jhatka Separation Available</span>
+                    <span class="flex items-center gap-1.5">✓ Quick 15-Minute Dining Service</span>
+                    <span class="flex items-center gap-1.5">✓ Pure Mustard Oil & Ghee Specials</span>
+                </div>
+            </div>
+
+            <!-- Quick AI Assistant Action Callout -->
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-xs flex flex-col gap-2.5 w-full md:w-72 shrink-0">
+                <div class="flex items-center justify-between">
+                    <span class="font-semibold text-amber-300 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span> AI Order Assistant
+                    </span>
+                    <span class="text-[10px] text-stone-300">Live Ollama RAG</span>
+                </div>
+                <p class="text-stone-200 text-[11px] leading-snug">
+                    Not sure what to try? Ask for dietary needs, prices, or spicy recommendations!
+                </p>
+                <button onclick="toggleChat(true)" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2 px-3 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm">
+                    <span>Talk to Assistant</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CATALOG CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full" id="menuContainer">
+        <!-- Loading State -->
+        <div class="py-16 text-center" id="catalogLoading">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-500 border-t-transparent"></div>
+            <p class="text-sm font-semibold text-stone-600 mt-3">Loading authentic Mother's Hut menu...</p>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-brand-border mt-16 py-8 text-center text-xs text-stone-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="font-serif font-bold text-base text-stone-800 mb-1">Mother's Hut Restaurant</p>
+            <p class="mb-3">Highway Gourmet • Authentic Bengali Delicacies • Family Friendly</p>
+            <p class="text-[11px] text-stone-400">All prices inclusive of applicable taxes. Customizations subject to availability.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================================ -->
+    <!-- FLOATING CART BOTTOM BAR (MOBILE/TABLET) -->
+    <!-- ============================================================ -->
+    <aside id="floatingCartBar" class="hidden fixed bottom-4 left-4 right-4 z-40 bg-brand-dark text-white rounded-2xl shadow-2xl p-4 border border-stone-700/80 backdrop-blur-md flex items-center justify-between max-w-xl mx-auto transform transition-all duration-300">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center font-bold text-white shadow-md">
+                <span id="floatingCartCount">0</span>
+            </div>
+            <div>
+                <p class="text-xs text-stone-400 font-medium leading-none">Your Selection</p>
+                <p class="text-base font-bold text-white mt-1"><span id="floatingCartTotal">₹0</span> <span class="text-xs font-normal text-stone-400">+ taxes</span></p>
+            </div>
+        </div>
+        <button onclick="toggleCartDrawer(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg transition-transform active:scale-95">
+            <span>View Order</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+    </aside>
+
+    <!-- ============================================================ -->
+    <!-- SLIDE-OVER CART DRAWER & BILL SUMMARY -->
+    <!-- ============================================================ -->
+    <div id="cartDrawerBackdrop" onclick="toggleCartDrawer(false)" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 transition-opacity"></div>
+    <div id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white z-50 shadow-drawer flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
+        
+        <!-- Drawer Header -->
+        <div class="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+            <div>
+                <h3 class="font-serif font-bold text-lg text-stone-900 flex items-center gap-2">
+                    <span>Order Summary</span>
+                    <span id="cartDrawerBadge" class="text-xs font-sans font-bold bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">0 items</span>
+                </h3>
+                <p class="text-xs text-stone-500" id="drawerServiceMode">Dine-In • Table #4</p>
+            </div>
+            <button onclick="toggleCartDrawer(false)" class="p-2 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-200 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Items Scroll Area -->
+        <div id="cartDrawerItems" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Populated via JS -->
+            <div class="h-full flex flex-col items-center justify-center text-center text-stone-400 py-12">
+                <div class="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center text-stone-300 mb-3">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                </div>
+                <p class="font-semibold text-stone-700 text-sm">Your order is empty</p>
+                <p class="text-xs text-stone-400 mt-1">Explore our breakfast, starters and main courses to add items.</p>
+            </div>
+        </div>
+
+        <!-- Cooking Instruction / Special Note Box -->
+        <div class="px-6 py-2 bg-stone-50/50 border-t border-stone-100">
+            <label class="block text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1">Cooking Note / Instructions</label>
+            <input type="text" id="orderSpecialNote" placeholder="E.g., Less spicy, no onion, extra lemon..." class="w-full text-xs px-3 py-2 bg-white border border-stone-200 rounded-lg focus:outline-none focus:border-brand-500" />
+        </div>
+
+        <!-- Bill Breakdown & CTA -->
+        <div class="p-6 bg-stone-50 border-t border-stone-200 space-y-3">
+            <div class="space-y-1.5 text-xs text-stone-600">
+                <div class="flex justify-between">
+                    <span>Item Subtotal</span>
+                    <span id="billSubtotal" class="font-semibold text-stone-800">₹0</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>GST & Restaurant Taxes (5%)</span>
+                    <span id="billTaxes">₹0</span>
+                </div>
+                <div class="flex justify-between" id="packagingRow">
+                    <span>Packaging / Dining Service</span>
+                    <span id="billPackaging">₹15</span>
+                </div>
+                <div class="border-t border-stone-200 pt-2 flex justify-between text-sm font-bold text-stone-900">
+                    <span>Grand Total</span>
+                    <span id="billGrandTotal" class="text-brand-600 font-extrabold text-base">₹0</span>
+                </div>
+            </div>
+
+            <!-- Order Button -->
+            <button onclick="placeOrderSimulation()" id="placeOrderBtn" class="w-full py-3.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30 text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none">
+                <span>Confirm & Place Order</span>
+                <span id="orderBtnTotal">₹0</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CUSTOMIZATION / OPTIONS MODAL -->
+    <!-- ============================================================ -->
+    <div id="optionsModalBackdrop" onclick="closeOptionsModal()" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50"></div>
+    <div id="optionsModal" class="hidden fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-lg mx-auto bg-white rounded-2xl shadow-2xl z-50 overflow-hidden border border-stone-200">
+        <div class="p-5 border-b border-stone-100 flex items-start justify-between bg-stone-50">
+            <div>
+                <span id="optBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Customizable</span>
+                <h3 id="optItemTitle" class="font-serif font-bold text-lg text-stone-900 mt-1">Item Title</h3>
+                <p id="optItemPrice" class="text-sm font-bold text-brand-600">₹0</p>
+            </div>
+            <button onclick="closeOptionsModal()" class="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <div class="p-5 space-y-4 max-h-[60vh] overflow-y-auto text-xs">
+            <!-- Portion Size -->
+            <div>
+                <p class="font-bold text-stone-800 uppercase text-[11px] tracking-wider mb-2">Choose Portion / Size</p>
+                <div class="grid grid-cols-2 gap-2" id="optPortionGroup">
+                    <label class="border border-brand-500 bg-brand-50/50 p-2.5 rounded-xl flex items-center justify-between cursor-pointer">
+                        <div class="flex items-center gap-2">
+                            <input type="radio" name="optPortion" value="Standard" checked class="text-brand-600" />
+                            <span class="font-semibold text-stone-800">Standard Serving</span>
+                        </div>
+                        <span class="font-bold text-stone-700">+₹0</span>
+                    </label>
+                    <label class="border border-stone-200 p-2.5 rounded-xl flex items-center justify-between cursor-pointer hover:bg-stone-50">
+                        <div class="flex items-center gap-2">
+                            <input type="radio" name="optPortion" value="Special Large" class="text-brand-600" />
+                            <span class="font-semibold text-stone-800">Special Large</span>
+                        </div>
+                        <span class="font-bold text-stone-700">+₹40</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Preparation Preference -->
+            <div>
+                <p class="font-bold text-stone-800 uppercase text-[11px] tracking-wider mb-2">Spice & Preparation</p>
+                <div class="grid grid-cols-3 gap-2">
+                    <label class="border border-stone-200 p-2.5 rounded-xl text-center cursor-pointer hover:bg-stone-50">
+                        <input type="radio" name="optSpice" value="Mild" class="hidden peer" />
+                        <span class="block peer-checked:text-brand-600 peer-checked:font-bold">Mild</span>
+                    </label>
+                    <label class="border border-brand-500 bg-brand-50/40 p-2.5 rounded-xl text-center cursor-pointer">
+                        <input type="radio" name="optSpice" value="Medium" checked class="hidden peer" />
+                        <span class="block peer-checked:text-brand-600 peer-checked:font-bold">Authentic</span>
+                    </label>
+                    <label class="border border-stone-200 p-2.5 rounded-xl text-center cursor-pointer hover:bg-stone-50">
+                        <input type="radio" name="optSpice" value="Spicy" class="hidden peer" />
+                        <span class="block peer-checked:text-brand-600 peer-checked:font-bold">Extra Spicy 🔥</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 bg-stone-50 border-t border-stone-100 flex items-center justify-between">
+            <div>
+                <span class="text-[11px] text-stone-500">Calculated item total</span>
+                <p id="optModalTotalPrice" class="text-base font-extrabold text-stone-900">₹0</p>
+            </div>
+            <button onclick="confirmOptionsAndAdd()" class="bg-brand-600 hover:bg-brand-500 text-white font-bold px-6 py-2.5 rounded-xl shadow-md text-xs uppercase tracking-wider">
+                Add to Order
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TABLE SELECTOR MODAL -->
+    <!-- ============================================================ -->
+    <div id="tableModalBackdrop" onclick="closeTableModal()" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50"></div>
+    <div id="tableModal" class="hidden fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-sm mx-auto bg-white rounded-2xl shadow-2xl z-50 p-6 border border-stone-200 text-center">
+        <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-600 mx-auto flex items-center justify-center font-bold mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        </div>
+        <h3 class="font-serif font-bold text-lg text-stone-900">Dine-In Table Number</h3>
+        <p class="text-xs text-stone-500 mt-1 mb-4">Orders will be delivered directly to your seated table by our stewards.</p>
+        
+        <div class="grid grid-cols-4 gap-2 mb-4" id="tableNumberGrid">
+            <!-- 1 to 8 buttons -->
+        </div>
+
+        <button onclick="closeTableModal()" class="w-full py-2.5 bg-brand-dark text-white rounded-xl text-xs font-semibold">Done</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- AI ASSISTANT / CONCIERGE CHAT WIDGET -->
+    <!-- ============================================================ -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        
+        <!-- Chat Window Panel -->
+        <div id="chatWindow" class="hidden w-[360px] sm:w-[400px] h-[540px] bg-white border border-stone-200 shadow-2xl rounded-2xl flex flex-col mb-4 overflow-hidden ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-200">
+            
+            <!-- Concierge Header -->
+            <div class="bg-gradient-to-r from-stone-900 to-amber-950 text-white px-5 py-4 flex items-center justify-between shrink-0 border-b border-stone-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-serif font-bold tracking-wide">Mother's Hut AI Waiter</span>
+                            <span class="text-[9px] bg-emerald-500 text-white px-1.5 py-0.2 rounded-full font-sans font-semibold">ONLINE</span>
+                        </div>
+                        <p class="text-[11px] text-stone-300 font-light">Powered by Local RAG • Instant answers</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat(false)" class="text-stone-400 hover:text-white p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Quick Suggestion Starter Chips -->
+            <div class="p-2.5 bg-stone-50 border-b border-stone-200/80 flex items-center gap-1.5 overflow-x-auto hide-scrollbar text-[11px]">
+                <button onclick="askPrompt('What are your most popular breakfast dishes?')" class="px-2.5 py-1 bg-white hover:bg-amber-50 hover:border-amber-300 border border-stone-200 rounded-full shrink-0 text-stone-700 transition-colors">
+                    ☕ Breakfast Specials
+                </button>
+                <button onclick="askPrompt('Show me pure veg dishes under ₹150')" class="px-2.5 py-1 bg-white hover:bg-emerald-50 hover:border-emerald-300 border border-stone-200 rounded-full shrink-0 text-stone-700 transition-colors">
+                    🥬 Veg Under ₹150
+                </button>
+                <button onclick="askPrompt('What mutton dishes do you have?')" class="px-2.5 py-1 bg-white hover:bg-rose-50 hover:border-rose-300 border border-stone-200 rounded-full shrink-0 text-stone-700 transition-colors">
+                    🍗 Mutton Dishes
+                </button>
+            </div>
+            
+            <!-- Chat History -->
+            <div id="chatHistory" class="flex-1 bg-[#FAF8F5] p-4 overflow-y-auto flex flex-col gap-3.5 text-xs">
+                <div class="max-w-[88%] p-3.5 bg-white border border-stone-200/90 text-stone-800 rounded-2xl rounded-tl-sm self-start shadow-sm leading-relaxed">
+                    <p class="font-semibold text-stone-900 mb-1">Namaskar! 🙏 Welcome to Mother's Hut.</p>
+                    <p>I'm your digital table steward. Ask me about any dish, ingredients, Bengali breakfast combos, spicy preparations, or prices. I can also help you add items directly to your order!</p>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-3 bg-white border-t border-stone-200 flex items-center gap-2 shrink-0">
+                <input type="text" id="chatInput" class="flex-1 bg-stone-100 border border-transparent focus:border-stone-300 focus:bg-white rounded-xl px-3.5 py-2.5 text-xs focus:outline-none transition-all placeholder:text-stone-400" placeholder="Ask e.g. 'Price of Karaishutir Kochuri'..." />
+                <button id="sendBtn" onclick="sendChatMessage()" class="w-9 h-9 bg-brand-dark hover:bg-stone-800 text-white rounded-xl flex items-center justify-center transition-all shrink-0 disabled:opacity-50 active:scale-95">
+                    <svg class="w-4 h-4 translate-x-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19V6m0 0l-7 7m7-7l7 7"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Widget Toggle FAB -->
+        <button id="chatToggleBtn" onclick="toggleChat()" class="h-14 px-4 bg-gradient-to-r from-stone-900 to-amber-950 text-white rounded-2xl shadow-xl flex items-center gap-2.5 hover:scale-105 active:scale-95 transition-all border border-amber-600/30">
+            <div class="relative">
+                <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-stone-900"></span>
+            </div>
+            <span class="font-serif font-bold text-sm tracking-wide">AI Waiter</span>
+        </button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CORE CLIENT JAVASCRIPT STATE ENGINE -->
+    <!-- ============================================================ -->
+    <script>
+        const BACKEND_URL = "http://127.0.0.1:8000";
+        const IMAGE_BASE_URL = "https://mothershut.com/uploads/menu/";
+
+        // State Machine
+        let fullCatalog = [];
+        let filteredCatalog = [];
+        let activeCategory = "all";
+        let activeDiet = "all"; // 'all' | 'veg' | 'non-veg'
+        let availableOnly = false;
+        let searchQuery = "";
+        let currentLanguage = "en"; // 'en' | 'bn'
+        let currentTable = "4";
+        let currentServiceMode = "dine-in";
+
+        // Shopping Cart State: { [itemId]: { item: {...}, qty: number, options: {...} } }
+        let cart = {};
+
+        // Currently configured option item
+        let modalActiveItem = null;
+
+        // Bengali Translations Dictionary
+        const i18n = {
+            en: {
+                announcement: "Kitchen is Open • Dine-In, Highway Takeaway & Rapid Drive-Thru Available",
+                setTable: "Set Table #",
+                dineIn: "Dine-In",
+                takeaway: "Takeaway",
+                delivery: "Delivery",
+                searchPlaceholder: "Search Luchi, Mutton Kosha, Biryani, Chai...",
+                all: "All Items",
+                vegOnly: "Veg Only",
+                nonVeg: "Non-Veg",
+                availableNow: "Available Now",
+                askAi: "Ask AI Waiter",
+                order: "Order",
+                add: "ADD",
+                customizable: "Customizable",
+                unavailable: "Unavailable",
+                outOfStock: "Out of Stock"
+            },
+            bn: {
+                announcement: "রান্নাঘর প্রস্তুত • ডাইন-ইন, হাইওয়ে টেকঅ্যাওয়ে ও দ্রুত ড্রাইভ-থ্রু উপলব্ধ",
+                setTable: "টেবিল নং নির্বাচন করুন",
+                dineIn: "ডাইন-ইন",
+                takeaway: "টেকঅ্যাওয়ে",
+                delivery: "ডেলিভারি",
+                searchPlaceholder: "লুচি, মাটন কষা, বিরিয়ানি, চা খুঁজুন...",
+                all: "সকল পদ",
+                vegOnly: "নিরামিষ",
+                nonVeg: "আমিষ",
+                availableNow: "এখন উপলব্ধ",
+                askAi: "এআই পরিচারক",
+                order: "অর্ডার",
+                add: "যোগ করুন",
+                customizable: "পছন্দমতো",
+                unavailable: "অনুপলব্ধ",
+                outOfStock: "শেষ হয়ে গেছে"
+            }
+        };
+
+        // DOM Element Caches
+        const menuContainer = document.getElementById("menuContainer");
+        const categoryChipsContainer = document.getElementById("categoryChipsContainer");
+        const searchInput = document.getElementById("searchInput");
+        const clearSearchBtn = document.getElementById("clearSearchBtn");
+        const cartCountBadge = document.getElementById("cartCountBadge");
+        const cartTotalHeader = document.getElementById("cartTotalHeader");
+        const floatingCartBar = document.getElementById("floatingCartBar");
+        const floatingCartCount = document.getElementById("floatingCartCount");
+        const floatingCartTotal = document.getElementById("floatingCartTotal");
+        const cartDrawer = document.getElementById("cartDrawer");
+        const cartDrawerBackdrop = document.getElementById("cartDrawerBackdrop");
+        const cartDrawerItems = document.getElementById("cartDrawerItems");
+        const cartDrawerBadge = document.getElementById("cartDrawerBadge");
+        const billSubtotal = document.getElementById("billSubtotal");
+        const billTaxes = document.getElementById("billTaxes");
+        const billPackaging = document.getElementById("billPackaging");
+        const billGrandTotal = document.getElementById("billGrandTotal");
+        const orderBtnTotal = document.getElementById("orderBtnTotal");
+        const placeOrderBtn = document.getElementById("placeOrderBtn");
+        const tableStatusBadge = document.getElementById("tableStatusBadge");
+        const drawerServiceMode = document.getElementById("drawerServiceMode");
+
+        // Options Modal Elements
+        const optionsModal = document.getElementById("optionsModal");
+        const optionsModalBackdrop = document.getElementById("optionsModalBackdrop");
+        const optItemTitle = document.getElementById("optItemTitle");
+        const optItemPrice = document.getElementById("optItemPrice");
+        const optModalTotalPrice = document.getElementById("optModalTotalPrice");
+
+        // Chat Elements
+        const chatWindow = document.getElementById("chatWindow");
+        const chatHistory = document.getElementById("chatHistory");
+        const chatInput = document.getElementById("chatInput");
+        const sendBtn = document.getElementById("sendBtn");
+
+        // FSSAI Badges SVGs
+        const vegBadgeSVG = `
+            <span class="inline-flex items-center justify-center w-3.5 h-3.5 border-2 border-emerald-600 rounded-[3px] bg-white shrink-0 p-0.5" title="Pure Veg">
+                <span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
+            </span>
+        `;
+        const nonVegBadgeSVG = `
+            <span class="inline-flex items-center justify-center w-3.5 h-3.5 border-2 border-rose-600 rounded-[3px] bg-white shrink-0 p-0.5" title="Non-Veg">
+                <span class="w-0 h-0 border-l-[3.5px] border-r-[3.5px] border-b-[5px] border-l-transparent border-r-transparent border-b-rose-600"></span>
+            </span>
+        `;
+
+        // SVG Fallback for dishes when images fail to load
+        const dishFallbackSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="%23f5f2eb"><rect width="200" height="200" fill="%23FAF8F5"/><circle cx="100" cy="100" r="60" fill="%23F0ECE4" stroke="%23E2DDD3" stroke-width="4"/><circle cx="100" cy="100" r="42" fill="%23FAF8F5" stroke="%23E2DDD3" stroke-width="2" stroke-dasharray="4 4"/><path d="M75 100c0-14 11-25 25-25s25 11 25 25" stroke="%23c84c1c" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="100" cy="100" r="6" fill="%23c84c1c"/></svg>`;
+
+        // ============================================================
+        // 1. DATA BOOTSTRAP & NORMALIZATION
+        // ============================================================
+        async function fetchMenuData() {
+            try {
+                // Try backend API first; fallback cleanly to static menu.json
+                let response = null;
+                try {
+                    response = await fetch(`${BACKEND_URL}/menu`, { cache: "no-store" });
+                } catch (e) {
+                    console.warn("Backend /menu unreachable, reading local menu.json directly...");
+                }
+
+                if (!response || !response.ok) {
+                    response = await fetch("menu.json");
+                }
+
+                const rawItems = await response.json();
+                
+                // Normalize and clean catalog objects
+                fullCatalog = rawItems.map((raw, index) => {
+                    const id = raw.id || `item_${index}`;
+                    const name = (raw.name || "").trim() || "Delicious Dish";
+                    const description = (raw.description || "").trim();
+                    const category = (raw.category || raw.metadata?.category || "Specialties").trim();
+                    const price = Number(raw.price) || 0;
+                    
+                    // Food Type determination
+                    let foodType = raw.food_type || raw.metadata?.food_type || "unknown";
+                    if (foodType === "unknown") {
+                        const checkText = `${name} ${description}`.toLowerCase();
+                        if (checkText.match(/\b(chicken|mutton|fish|egg|prawn|katla|pomfret|ilish|meat)\b/)) {
+                            foodType = "non-veg";
+                        } else {
+                            foodType = "veg";
+                        }
+                    }
+
+                    // Availability
+                    const availability = (raw.availability || raw.metadata?.availability || "available").toLowerCase();
+                    const isAvailable = availability === "available";
+
+                    // Image URL construction
+                    let img = raw.image_filename || "";
+                    if (img) {
+                        if (!img.startsWith("http://") && !img.startsWith("https://")) {
+                            img = `${IMAGE_BASE_URL}${img}`;
+                        }
+                    } else {
+                        img = dishFallbackSVG;
+                    }
+
+                    const hasOptions = Boolean(raw.has_options || raw.metadata?.has_options);
+
+                    return {
+                        id,
+                        name,
+                        description,
+                        category,
+                        price,
+                        foodType,
+                        availability,
+                        isAvailable,
+                        image: img,
+                        hasOptions
+                    };
+                });
+
+                document.getElementById("totalItemsCount").innerText = fullCatalog.length;
+                renderCategoryNav();
+                applyFilters();
+
+            } catch (err) {
+                console.error("Failed to load catalog:", err);
+                menuContainer.innerHTML = `
+                    <div class="p-8 bg-red-50 text-red-800 rounded-2xl border border-red-200 text-center max-w-lg mx-auto">
+                        <p class="font-bold text-base mb-1">Unable to Load Menu</p>
+                        <p class="text-xs mb-4">Please ensure menu.json is located in the root folder or start the Python backend.</p>
+                        <button onclick="fetchMenuData()" class="px-4 py-2 bg-red-700 text-white rounded-xl text-xs font-semibold">Retry Loading</button>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // 2. STICKY CATEGORY NAV & SCROLLSPY
+        // ============================================================
+        function renderCategoryNav() {
+            // Extract unique categories preserving order
+            const categories = [...new Set(fullCatalog.map(item => item.category))];
+            
+            categoryChipsContainer.innerHTML = `
+                <button onclick="scrollToCategory('all')" id="cat-chip-all" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-brand-600 text-white shadow-sm shrink-0 transition-all">
+                    All Sections
+                </button>
+            `;
+
+            categories.forEach(cat => {
+                const count = fullCatalog.filter(i => i.category === cat).length;
+                const safeCatId = `section-${cat.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`;
+                const btn = document.createElement("button");
+                btn.id = `cat-chip-${safeCatId}`;
+                btn.onclick = () => scrollToCategory(safeCatId);
+                btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-stone-200/90 text-stone-700 hover:text-stone-900 hover:border-stone-300 shadow-sm shrink-0 transition-all flex items-center gap-1.5";
+                btn.innerHTML = `<span>${cat}</span> <span class="text-[10px] text-stone-400 font-normal">(${count})</span>`;
+                categoryChipsContainer.appendChild(btn);
+            });
+
+            setupScrollspy();
+        }
+
+        function scrollToCategory(catId) {
+            if (catId === 'all') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+            const el = document.getElementById(catId);
+            if (el) {
+                const yOffset = -190; // accounts for double sticky header
+                const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        }
+
+        function setupScrollspy() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.id;
+                        highlightCategoryChip(`cat-chip-${id}`);
+                    }
+                });
+            }, { rootMargin: "-200px 0px -60% 0px" });
+
+            document.querySelectorAll(".menu-category-section").forEach(sec => observer.observe(sec));
+        }
+
+        function highlightCategoryChip(activeChipId) {
+            document.querySelectorAll("#categoryChipsContainer button").forEach(b => {
+                b.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-stone-200/90 text-stone-700 hover:text-stone-900 hover:border-stone-300 shadow-sm shrink-0 transition-all flex items-center gap-1.5";
+            });
+            const activeBtn = document.getElementById(activeChipId);
+            if (activeBtn) {
+                activeBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-brand-600 text-white shadow-sm shrink-0 transition-all flex items-center gap-1.5";
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        // ============================================================
+        // 3. CATALOG FILTERING & RENDERING ENGINE
+        // ============================================================
+        function applyFilters() {
+            filteredCatalog = fullCatalog.filter(item => {
+                // Search query match
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    const nameMatch = item.name.toLowerCase().includes(q);
+                    const descMatch = item.description.toLowerCase().includes(q);
+                    const catMatch = item.category.toLowerCase().includes(q);
+                    if (!nameMatch && !descMatch && !catMatch) return false;
+                }
+
+                // Dietary filter
+                if (activeDiet === 'veg' && item.foodType !== 'veg') return false;
+                if (activeDiet === 'non-veg' && item.foodType !== 'non-veg') return false;
+
+                // Availability filter
+                if (availableOnly && !item.isAvailable) return false;
+
+                return true;
+            });
+
+            renderMenuCatalog(filteredCatalog);
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.trim();
+            clearSearchBtn.classList.toggle("hidden", !searchQuery);
+            applyFilters();
+        }
+
+        function clearSearch() {
+            searchInput.value = "";
+            searchQuery = "";
+            clearSearchBtn.classList.add("hidden");
+            applyFilters();
+        }
+
+        function setDietFilter(diet) {
+            activeDiet = diet;
+            
+            // Toggle active pill styling
+            document.getElementById("filter-diet-all").className = diet === 'all' 
+                ? "px-3.5 py-1.5 rounded-lg bg-brand-dark text-white shadow-sm transition-all whitespace-nowrap" 
+                : "px-3.5 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-stone-700 hover:bg-stone-100 transition-all whitespace-nowrap";
+            
+            document.getElementById("filter-diet-veg").className = diet === 'veg'
+                ? "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-700 text-white shadow-sm transition-all whitespace-nowrap"
+                : "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-stone-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all whitespace-nowrap";
+            
+            document.getElementById("filter-diet-non-veg").className = diet === 'non-veg'
+                ? "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-700 text-white shadow-sm transition-all whitespace-nowrap"
+                : "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-stone-700 hover:bg-rose-50 hover:border-rose-300 transition-all whitespace-nowrap";
+
+            applyFilters();
+        }
+
+        function toggleAvailableOnly() {
+            availableOnly = !availableOnly;
+            const btn = document.getElementById("filter-available");
+            const check = document.getElementById("availCheck");
+            if (availableOnly) {
+                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-700 text-white shadow-sm transition-all whitespace-nowrap";
+                check.innerHTML = "✓";
+                check.className = "w-3.5 h-3.5 rounded border border-white flex items-center justify-center bg-transparent text-white text-[10px]";
+            } else {
+                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-stone-700 hover:bg-amber-50 hover:border-amber-300 transition-all whitespace-nowrap";
+                check.innerHTML = "";
+                check.className = "w-3.5 h-3.5 rounded border border-stone-300 flex items-center justify-center bg-white text-brand-600 text-[10px]";
+            }
+            applyFilters();
+        }
+
+        function renderMenuCatalog(items) {
+            menuContainer.innerHTML = "";
+
+            if (items.length === 0) {
+                menuContainer.innerHTML = `
+                    <div class="py-20 text-center max-w-md mx-auto">
+                        <div class="w-16 h-16 mx-auto rounded-full bg-stone-100 flex items-center justify-center text-stone-400 mb-3">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <h3 class="font-serif font-bold text-lg text-stone-800">No dishes matched your criteria</h3>
+                        <p class="text-xs text-stone-500 mt-1 mb-4">Try clearing dietary filters or checking your spelling.</p>
+                        <button onclick="clearSearch(); setDietFilter('all'); if (availableOnly) toggleAvailableOnly();" class="px-4 py-2 bg-brand-600 text-white text-xs font-semibold rounded-xl shadow-sm">
+                            Reset All Filters
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by Category
+            const grouped = items.reduce((acc, item) => {
+                if (!acc[item.category]) acc[item.category] = [];
+                acc[item.category].push(item);
+                return acc;
+            }, {});
+
+            for (const [category, catItems] of Object.entries(grouped)) {
+                const safeCatId = `section-${category.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`;
+
+                const section = document.createElement("section");
+                section.id = safeCatId;
+                section.className = "menu-category-section mb-12 scroll-mt-48";
+
+                // Section Header
+                section.innerHTML = `
+                    <div class="flex items-end justify-between border-b border-stone-200 pb-3 mb-6">
+                        <div>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-brand-600">Heritage Menu</span>
+                            <h2 class="font-serif text-2xl font-bold text-stone-900 tracking-tight">${category}</h2>
+                        </div>
+                        <span class="text-xs font-medium text-stone-500 bg-stone-100 px-3 py-1 rounded-full">${catItems.length} items</span>
+                    </div>
+                `;
+
+                // 2-Col or 3-Col Responsive Grid
+                const grid = document.createElement("div");
+                grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5";
+
+                catItems.forEach(item => {
+                    const card = createDishCard(item);
+                    grid.appendChild(card);
+                });
+
+                section.appendChild(grid);
+                menuContainer.appendChild(section);
+            }
+        }
+
+        // ============================================================
+        // 4. DISH CARD COMPONENT GENERATOR
+        // ============================================================
+        function createDishCard(item) {
+            const card = document.createElement("div");
+            const inCartQty = cart[item.id]?.qty || 0;
+            const isAvailable = item.isAvailable;
+
+            card.className = `bg-white rounded-2xl p-4 border border-stone-200/90 shadow-soft hover:shadow-hover transition-all flex gap-4 relative overflow-hidden group ${!isAvailable ? 'opacity-70 bg-stone-50' : ''}`;
+            
+            const badgeSVG = item.foodType === 'veg' ? vegBadgeSVG : nonVegBadgeSVG;
+
+            // Customization pill
+            const customBadge = item.hasOptions 
+                ? `<span class="text-[10px] font-semibold text-brand-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md">${currentLanguage === 'bn' ? i18n.bn.customizable : i18n.en.customizable}</span>` 
+                : '';
+
+            // Availability notice
+            let availabilityTag = '';
+            if (!isAvailable) {
+                availabilityTag = `<span class="text-[10px] font-bold text-stone-500 bg-stone-200 px-2 py-0.5 rounded-md uppercase">${item.availability === 'out_of_stock' ? 'Out of Stock' : 'Unavailable'}</span>`;
+            }
+
+            card.innerHTML = `
+                <!-- Left Details -->
+                <div class="flex-1 flex flex-col justify-between min-w-0">
+                    <div>
+                        <div class="flex items-center gap-1.5 mb-1.5">
+                            ${badgeSVG}
+                            ${customBadge}
+                            ${availabilityTag}
+                        </div>
+                        <h3 class="font-sans font-bold text-stone-900 text-sm leading-snug line-clamp-2 group-hover:text-brand-600 transition-colors">
+                            ${item.name}
+                        </h3>
+                        <div class="font-extrabold text-stone-900 text-sm mt-1">
+                            ₹${item.price}
+                        </div>
+                        ${item.description ? `<p class="text-xs text-stone-500 font-normal mt-1.5 line-clamp-2 leading-relaxed">${item.description}</p>` : ''}
+                    </div>
+                </div>
+
+                <!-- Right Image & Action Button -->
+                <div class="w-28 h-28 shrink-0 flex flex-col items-center justify-between relative">
+                    <div class="w-full h-24 rounded-xl overflow-hidden bg-stone-100 border border-stone-200/80 shadow-inner relative">
+                        <img 
+                            src="${item.image}" 
+                            alt="${item.name}" 
+                            loading="lazy"
+                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            onerror="this.onerror=null; this.src='${dishFallbackSVG}';"
+                        />
+                    </div>
+
+                    <!-- Action Button / Stepper -->
+                    <div class="absolute -bottom-1 z-10 w-24">
+                        ${renderCardActionButton(item, inCartQty, isAvailable)}
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function renderCardActionButton(item, qty, isAvailable) {
+            if (!isAvailable) {
+                return `
+                    <button disabled class="w-full py-1 px-2 bg-stone-200 text-stone-400 font-bold text-[11px] rounded-lg shadow-sm cursor-not-allowed uppercase">
+                        Closed
+                    </button>
+                `;
+            }
+
+            if (qty > 0) {
+                return `
+                    <div class="w-full bg-white border border-brand-500 text-brand-600 rounded-lg shadow-md flex items-center justify-between p-0.5">
+                        <button onclick="updateItemQuantity('${item.id}', -1)" class="w-6 h-6 flex items-center justify-center font-bold text-stone-700 hover:bg-stone-100 rounded text-sm">-</button>
+                        <span class="font-bold text-xs text-stone-900">${qty}</span>
+                        <button onclick="updateItemQuantity('${item.id}', 1)" class="w-6 h-6 flex items-center justify-center font-bold text-brand-600 hover:bg-brand-50 rounded text-sm">+</button>
+                    </div>
+                `;
+            }
+
+            // Normal Add Button (Checks if options exist)
+            const addAction = item.hasOptions 
+                ? `openOptionsModal('${item.id}')` 
+                : `updateItemQuantity('${item.id}', 1)`;
+
+            const addText = currentLanguage === 'bn' ? i18n.bn.add : i18n.en.add;
+
+            return `
+                <button onclick="${addAction}" class="w-full py-1 px-2 bg-white hover:bg-brand-50 border border-brand-600 text-brand-600 font-bold text-[11px] rounded-lg shadow-md hover:shadow transition-all active:scale-95 flex items-center justify-center gap-1 uppercase tracking-wide">
+                    <span>${addText}</span>
+                    <span class="text-xs">+</span>
+                </button>
+            `;
+        }
+
+        // ============================================================
+        // 5. SHOPPING CART ENGINE & QUANTITY HANDLERS
+        // ============================================================
+        function updateItemQuantity(itemId, delta, customOptions = null) {
+            const item = fullCatalog.find(i => i.id === itemId);
+            if (!item) return;
+
+            if (!cart[itemId]) {
+                if (delta > 0) {
+                    cart[itemId] = {
+                        item: item,
+                        qty: delta,
+                        options: customOptions || { portion: "Standard", spice: "Authentic" }
+                    };
+                }
+            } else {
+                cart[itemId].qty += delta;
+                if (customOptions) cart[itemId].options = customOptions;
+                if (cart[itemId].qty <= 0) {
+                    delete cart[itemId];
+                }
+            }
+
+            syncCartUI();
+        }
+
+        function syncCartUI() {
+            const items = Object.values(cart);
+            const totalCount = items.reduce((sum, entry) => sum + entry.qty, 0);
+            
+            // Subtotal calculation
+            let subtotal = 0;
+            items.forEach(entry => {
+                let unitPrice = entry.item.price;
+                if (entry.options?.portion === "Special Large") unitPrice += 40;
+                subtotal += unitPrice * entry.qty;
+            });
+
+            const taxes = Math.round(subtotal * 0.05); // 5% GST
+            const packaging = items.length > 0 ? 15 : 0;
+            const grandTotal = subtotal + taxes + packaging;
+
+            // Sync Header Badges
+            cartCountBadge.innerText = totalCount;
+            cartCountBadge.classList.toggle("hidden", totalCount === 0);
+            cartCountBadge.classList.add("animate-cart-pop");
+            setTimeout(() => cartCountBadge.classList.remove("animate-cart-pop"), 300);
+
+            cartTotalHeader.innerText = `₹${grandTotal}`;
+
+            // Sync Floating Bar
+            floatingCartCount.innerText = totalCount;
+            floatingCartTotal.innerText = `₹${grandTotal}`;
+            floatingCartBar.classList.toggle("hidden", totalCount === 0);
+
+            // Sync Drawer Elements
+            cartDrawerBadge.innerText = `${totalCount} item${totalCount === 1 ? '' : 's'}`;
+            billSubtotal.innerText = `₹${subtotal}`;
+            billTaxes.innerText = `₹${taxes}`;
+            billPackaging.innerText = `₹${packaging}`;
+            billGrandTotal.innerText = `₹${grandTotal}`;
+            orderBtnTotal.innerText = `₹${grandTotal}`;
+            placeOrderBtn.disabled = totalCount === 0;
+
+            renderCartDrawerItems(items);
+            // Refresh card stepper buttons on catalog
+            renderMenuCatalog(filteredCatalog);
+        }
+
+        function renderCartDrawerItems(items) {
+            if (items.length === 0) {
+                cartDrawerItems.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center text-stone-400 py-12">
+                        <div class="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center text-stone-300 mb-3">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        </div>
+                        <p class="font-semibold text-stone-700 text-sm">Your order is empty</p>
+                        <p class="text-xs text-stone-400 mt-1">Select authentic breakfast, thalis or main courses to add.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            cartDrawerItems.innerHTML = items.map(entry => {
+                const item = entry.item;
+                const optText = entry.options ? `${entry.options.portion || ''} • ${entry.options.spice || ''}` : '';
+                let unitPrice = item.price;
+                if (entry.options?.portion === "Special Large") unitPrice += 40;
+                const lineTotal = unitPrice * entry.qty;
+
+                return `
+                    <div class="flex items-center justify-between gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200/70">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-stone-900 text-xs truncate">${item.name}</h4>
+                            <p class="text-[11px] text-stone-500 font-medium">${optText}</p>
+                            <p class="text-xs font-bold text-stone-800 mt-0.5">₹${unitPrice} × ${entry.qty} = <span class="text-brand-600">₹${lineTotal}</span></p>
+                        </div>
+
+                        <!-- Stepper -->
+                        <div class="flex items-center gap-1.5 bg-white border border-stone-300 rounded-lg p-0.5 shadow-sm">
+                            <button onclick="updateItemQuantity('${item.id}', -1)" class="w-6 h-6 flex items-center justify-center text-stone-600 hover:bg-stone-100 rounded text-xs font-bold">-</button>
+                            <span class="text-xs font-bold w-4 text-center text-stone-900">${entry.qty}</span>
+                            <button onclick="updateItemQuantity('${item.id}', 1)" class="w-6 h-6 flex items-center justify-center text-brand-600 hover:bg-brand-50 rounded text-xs font-bold">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function toggleCartDrawer(open) {
+            if (open) {
+                cartDrawer.classList.remove("translate-x-full");
+                cartDrawerBackdrop.classList.remove("hidden");
+            } else {
+                cartDrawer.classList.add("translate-x-full");
+                cartDrawerBackdrop.classList.add("hidden");
+            }
+        }
+
+        // ============================================================
+        // 6. CUSTOMIZATION / OPTIONS MODAL LOGIC
+        // ============================================================
+        function openOptionsModal(itemId) {
+            modalActiveItem = fullCatalog.find(i => i.id === itemId);
+            if (!modalActiveItem) return;
+
+            optItemTitle.innerText = modalActiveItem.name;
+            optItemPrice.innerText = `₹${modalActiveItem.price}`;
+            optModalTotalPrice.innerText = `₹${modalActiveItem.price}`;
+
+            optionsModal.classList.remove("hidden");
+            optionsModalBackdrop.classList.remove("hidden");
+        }
+
+        function closeOptionsModal() {
+            modalActiveItem = null;
+            optionsModal.classList.add("hidden");
+            optionsModalBackdrop.classList.add("hidden");
+        }
+
+        function confirmOptionsAndAdd() {
+            if (!modalActiveItem) return;
+            const portion = document.querySelector('input[name="optPortion"]:checked')?.value || "Standard";
+            const spice = document.querySelector('input[name="optSpice"]:checked')?.value || "Authentic";
+
+            updateItemQuantity(modalActiveItem.id, 1, { portion, spice });
+            closeOptionsModal();
+        }
+
+        // ============================================================
+        // 7. ORDER MODE & TABLE MANAGEMENT
+        // ============================================================
+        function setServiceMode(mode) {
+            currentServiceMode = mode;
+            ['dine-in', 'takeaway', 'delivery'].forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if (btn) {
+                    btn.className = m === mode 
+                        ? "px-3.5 py-1.5 rounded-lg bg-white text-brand-600 shadow-sm transition-all flex items-center gap-1.5 font-bold"
+                        : "px-3.5 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 transition-all flex items-center gap-1.5";
+                }
+            });
+
+            const modeLabel = mode === 'dine-in' ? `Dine-In • Table #${currentTable}` : (mode === 'takeaway' ? 'Highway Drive-Thru / Takeaway' : 'Direct Home Delivery');
+            drawerServiceMode.innerText = modeLabel;
+            tableStatusBadge.innerText = mode === 'dine-in' ? `Table #${currentTable}` : mode.toUpperCase();
+        }
+
+        function openTableModal() {
+            const grid = document.getElementById("tableNumberGrid");
+            grid.innerHTML = "";
+            for (let i = 1; i <= 8; i++) {
+                const btn = document.createElement("button");
+                btn.className = `p-3 rounded-xl border text-sm font-bold transition-all ${currentTable == i ? 'bg-brand-600 text-white border-brand-600 shadow-md' : 'bg-stone-50 border-stone-200 text-stone-800 hover:bg-stone-100'}`;
+                btn.innerText = `T-${i}`;
+                btn.onclick = () => {
+                    currentTable = i.toString();
+                    setServiceMode('dine-in');
+                    closeTableModal();
+                };
+                grid.appendChild(btn);
+            }
+            document.getElementById("tableModal").classList.remove("hidden");
+            document.getElementById("tableModalBackdrop").classList.remove("hidden");
+        }
+
+        function closeTableModal() {
+            document.getElementById("tableModal").classList.add("hidden");
+            document.getElementById("tableModalBackdrop").classList.add("hidden");
+        }
+
+        function placeOrderSimulation() {
+            const count = Object.values(cart).reduce((sum, e) => sum + e.qty, 0);
+            if (count === 0) return;
+
+            const note = document.getElementById("orderSpecialNote").value.trim();
+            const orderSummaryText = `Order confirmed for Table #${currentTable}!\n${count} items sent straight to the kitchen.\nNote: ${note || 'None'}`;
+            
+            alert(orderSummaryText);
+            
+            // Reset
+            cart = {};
+            document.getElementById("orderSpecialNote").value = "";
+            syncCartUI();
+            toggleCartDrawer(false);
+        }
+
+        // ============================================================
+        // 8. LANGUAGE LOCALIZATION (EN / BENGALI)
+        // ============================================================
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.getElementById("lang-en").className = lang === 'en' 
+                ? "px-2.5 py-1 rounded-md bg-white text-stone-800 shadow-sm"
+                : "px-2.5 py-1 rounded-md text-stone-500 hover:text-stone-800";
+            
+            document.getElementById("lang-bn").className = lang === 'bn' 
+                ? "px-2.5 py-1 rounded-md bg-white text-stone-800 shadow-sm font-bold"
+                : "px-2.5 py-1 rounded-md text-stone-500 hover:text-stone-800";
+
+            document.getElementById("announcementText").innerText = i18n[lang].announcement;
+            searchInput.placeholder = i18n[lang].searchPlaceholder;
+            document.getElementById("aiTriggerText").innerText = i18n[lang].askAi;
+            document.getElementById("cartLabelText").innerText = i18n[lang].order;
+
+            applyFilters();
+        }
+
+        // ============================================================
+        // 9. AI CONCIERGE CHAT ENGINE (CONNECTED TO BACKEND / RAG)
+        // ============================================================
+        function toggleChat(forceOpen) {
+            if (typeof forceOpen === "boolean") {
+                chatWindow.classList.toggle("hidden", !forceOpen);
+            } else {
+                chatWindow.classList.toggle("hidden");
+            }
+            if (!chatWindow.classList.contains("hidden")) {
+                chatInput.focus();
+            }
+        }
+
+        function askPrompt(text) {
+            chatInput.value = text;
+            sendChatMessage();
+        }
+
+        function appendMessage(text, sender = 'bot', relatedItems = []) {
+            const msg = document.createElement("div");
+            if (sender === 'user') {
+                msg.className = "max-w-[85%] px-4 py-2.5 bg-stone-900 text-white rounded-2xl rounded-tr-sm self-end shadow-sm leading-relaxed text-xs";
+                msg.innerText = text;
+            } else if (sender === 'loading') {
+                msg.className = "max-w-[85%] px-3.5 py-2.5 bg-white border border-stone-200 text-stone-500 rounded-2xl rounded-tl-sm self-start text-xs flex items-center gap-2";
+                msg.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-brand-500 animate-ping"></span> Checking Mother's Hut menu...`;
+            } else {
+                msg.className = "max-w-[88%] p-3.5 bg-white border border-stone-200/90 text-stone-800 rounded-2xl rounded-tl-sm self-start shadow-sm leading-relaxed text-xs space-y-2";
+                // Format markdown-like newlines and bold
+                let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                msg.innerHTML = `<div>${formatted}</div>`;
+
+                // If any menu items match, display interactive mini-cards inside chat!
+                if (relatedItems.length > 0) {
+                    const cardsWrap = document.createElement("div");
+                    cardsWrap.className = "mt-2 pt-2 border-t border-stone-100 space-y-1.5";
+                    relatedItems.slice(0, 3).forEach(dish => {
+                        const miniCard = document.createElement("div");
+                        miniCard.className = "p-2 bg-stone-50 rounded-lg flex items-center justify-between gap-2 border border-stone-200";
+                        miniCard.innerHTML = `
+                            <div class="min-w-0">
+                                <p class="font-bold text-[11px] text-stone-900 truncate">${dish.name}</p>
+                                <p class="text-[10px] text-brand-600 font-semibold">₹${dish.price}</p>
+                            </div>
+                            <button onclick="updateItemQuantity('${dish.id}', 1)" class="px-2.5 py-1 bg-brand-600 hover:bg-brand-500 text-white font-bold text-[10px] rounded-md uppercase shrink-0 transition-all">
+                                + Add
+                            </button>
+                        `;
+                        cardsWrap.appendChild(miniCard);
+                    });
+                    msg.appendChild(cardsWrap);
+                }
+            }
+
+            chatHistory.appendChild(msg);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            return msg;
+        }
+
+        async function sendChatMessage() {
+            const question = chatInput.value.trim();
+            if (!question || sendBtn.disabled) return;
+
+            appendMessage(question, 'user');
+            chatInput.value = "";
+            sendBtn.disabled = true;
+
+            const loadingNode = appendMessage("", 'loading');
+
+            try {
+                // Call live backend
+                const response = await fetch(`${BACKEND_URL}/ask`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question })
+                });
+
+                if (!response.ok) throw new Error("API responded with error");
+                const data = await response.json();
+                chatHistory.removeChild(loadingNode);
+
+                // Match suggested dishes in response to fullCatalog
+                const answerText = data.answer || "Here are some recommendations from our menu.";
+                const matchedDishes = fullCatalog.filter(d => 
+                    answerText.toLowerCase().includes(d.name.toLowerCase())
+                );
+
+                appendMessage(answerText, 'bot', matchedDishes);
+
+            } catch (err) {
+                chatHistory.removeChild(loadingNode);
+                
+                // Smart client-side fallback if Python backend is offline
+                const clientMatches = fullCatalog.filter(item => 
+                    question.toLowerCase().split(" ").some(word => word.length > 3 && item.name.toLowerCase().includes(word))
+                );
+
+                if (clientMatches.length > 0) {
+                    appendMessage(
+                        `Here are dishes matching "${question}" from our live catalog:`, 
+                        'bot', 
+                        clientMatches
+                    );
+                } else {
+                    appendMessage(
+                        "I am having trouble connecting to the local Ollama backend on port 8000. However, you can still browse the full interactive menu above!", 
+                        'bot'
+                    );
+                }
+            } finally {
+                sendBtn.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        chatInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendChatMessage();
+        });
+
+        // Initialize application on page load
+        window.addEventListener("DOMContentLoaded", () => {
+            fetchMenuData();
+        });
+    </script>
+</body>
+</html>
