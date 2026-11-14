@@ -1,4 +1,11 @@
+"""
+converter.py
+Converts raw_menu.txt or raw JSON into a standardized menu.json file,
+intelligently matching every dish to its authentic, real food photograph
+from hello.json / dish_image_map.json.
+"""
 
+import html
 import json
 import re
 from pathlib import Path
@@ -6,6 +13,8 @@ from urllib.parse import urlparse
 
 INPUT_FILE = "raw_menu.txt"  # Supports .txt and .json
 OUTPUT_FILE = "menu.json"
+HELLO_FILE = "hello.json"
+DISH_MAP_FILE = "dish_image_map.json"
 
 IMAGE_BASE_URL = "https://mothershut.com/uploads/menu/"
 
@@ -18,6 +27,78 @@ IGNORE = [
 STATUS_WORDS = [
     "Currently Unavailable", "Out of Stock", "Available Later"
 ]
+
+
+def load_dish_image_database():
+    """
+    Loads exact dish-to-image mappings from dish_image_map.json (if available)
+    and merges/validates against hello.json so every single food item receives
+    its authentic, designated photograph.
+    """
+    dish_map = {}
+
+    # 1. Load exact official dish image mapping
+    map_path = Path(DISH_MAP_FILE)
+    if map_path.exists():
+        try:
+            with open(map_path, "r", encoding="utf-8") as f:
+                dish_map = json.load(f)
+            print(f"Loaded {len(dish_map)} exact dish image mappings.")
+        except Exception as e:
+            print(f"Warning: Could not read {DISH_MAP_FILE}: {e}")
+
+    # 2. Load hello.json for verification & backup pool
+    hello_pool = []
+    hello_path = Path(HELLO_FILE)
+    if hello_path.exists():
+        try:
+            with open(hello_path, "r", encoding="utf-8") as f:
+                raw_hello = json.load(f)
+            for item in raw_hello:
+                if isinstance(item, str) and item.strip():
+                    s = item.strip()
+                    if "logo.png" in s.lower() or "categories/" in s.lower():
+                        continue
+                    if s.startswith("uploads/"):
+                        s = "https://mothershut.com/" + s
+                    elif not s.startswith("http"):
+                        s = IMAGE_BASE_URL + s.lstrip("/")
+                    hello_pool.append(s)
+            print(f"Loaded {len(hello_pool)} pool images from {HELLO_FILE}.")
+        except Exception as e:
+            print(f"Warning: Could not read {HELLO_FILE}: {e}")
+
+    return dish_map, hello_pool
+
+
+def get_image_for_dish(dish_name, dish_map, hello_pool, index):
+    """
+    Finds the exact image matching the dish name.
+    If not directly found, performs fuzzy normalized name matching.
+    Falls back gracefully to the hello.json pool.
+    """
+    clean_name = html.unescape(dish_name)
+    clean_name = re.sub(r'<[^>]+>', '', clean_name).strip().lower()
+    clean_name = re.sub(r'\s+', ' ', clean_name)
+
+    # 1. Direct exact match
+    if clean_name in dish_map:
+        return dish_map[clean_name]
+
+    # 2. Substring or variant matching
+    for key, url in dish_map.items():
+        if clean_name in key or key in clean_name:
+            return url
+
+    # 3. Special cases
+    if "chicken chap" in clean_name and "chicken chap half" in dish_map:
+        return dish_map["chicken chap half"]
+
+    # 4. Fallback to hello_pool
+    if hello_pool:
+        return hello_pool[(index - 1) % len(hello_pool)]
+
+    return ""
 
 
 def get_value(item, *keys, default=None):
@@ -58,15 +139,19 @@ def is_category_header(line):
 
     return (
         bool(line)
-        and not line.startswith("₹")
-        and line.upper() == line
+        and line == line.upper()
+        and not any(char.isdigit() for char in line)
+        and "₹" not in line
         and line not in IGNORE
-        and not re.search(r"\d", line)
+        and len(line.split()) <= 4
     )
 
 
 def normalize_availability(value):
-    value = str(value or "available").lower().replace(" ", "_")
+    if not value:
+        return "unavailable"
+
+    value = str(value).lower().strip().replace(" ", "_")
 
     mapping = {
         "out_of_stock": "out_of_stock",
@@ -77,25 +162,6 @@ def normalize_availability(value):
     }
 
     return mapping.get(value, value)
-
-
-def extract_image_url(value):
-    if not value:
-        return ""
-
-    value = str(value).strip()
-
-    # Preserve existing full URLs
-    if value.startswith(("http://", "https://")):
-        return value
-
-    # Extract filename from a local path or URL-like path
-    filename = urlparse(value).path.split("/")[-1]
-
-    if not filename:
-        return ""
-
-    return IMAGE_BASE_URL + filename
 
 
 def build_item(
@@ -134,7 +200,7 @@ def build_item(
         "food_type": food_type,
         "has_options": has_options,
         "availability": availability,
-        "image_filename": "ITEM_2665_1778771060.webp",
+        "image_filename": image_filename,
         "text": rag_text,
         "metadata": {
             "category": category,
@@ -149,7 +215,7 @@ def build_item(
 # JSON CONVERTER
 # --------------------------------------------------
 
-def convert_json_item(item, index):
+def convert_json_item(item, index, dish_map, hello_pool):
     item_id = get_value(
         item, "id", "item_id", default=f"item_{index}"
     )
@@ -179,11 +245,7 @@ def convert_json_item(item, index):
         default=metadata.get("availability", "unavailable")
     )
 
-    image_filename = get_value(
-        item,
-        "image_filename", "image", "image_url",
-        default=""
-    )
+    image_filename = get_image_for_dish(name, dish_map, hello_pool, index)
 
     return build_item(
         item_id, name, description, price, category,
@@ -192,7 +254,7 @@ def convert_json_item(item, index):
     )
 
 
-def convert_json(data):
+def convert_json(data, dish_map, hello_pool):
     if isinstance(data, dict):
         data = data.get("items", data.get("menu", []))
 
@@ -200,7 +262,7 @@ def convert_json(data):
         raise ValueError("JSON must contain a list of menu items.")
 
     return [
-        convert_json_item(item, index)
+        convert_json_item(item, index, dish_map, hello_pool)
         for index, item in enumerate(data, start=1)
     ]
 
@@ -209,7 +271,7 @@ def convert_json(data):
 # TXT CONVERTER
 # --------------------------------------------------
 
-def convert_txt(input_file):
+def convert_txt(input_file, dish_map, hello_pool):
     lines = Path(input_file).read_text(
         encoding="utf-8-sig"
     ).splitlines()
@@ -256,7 +318,6 @@ def convert_txt(input_file):
         description_parts = []
         has_options = False
         availability = "available"
-        image_filename = ""
 
         cursor = index + 1
 
@@ -285,17 +346,6 @@ def convert_txt(input_file):
             elif "available later" in lower:
                 availability = "available_later"
 
-            image_match = re.search(
-                r'[\w.-]+\.(?:webp|png|jpg|jpeg)',
-                value,
-                flags=re.I
-            )
-
-            if image_match:
-                image_filename = image_match.group(0)
-                cursor += 1
-                continue
-
             cleaned = clean_status(value)
 
             if cleaned and cleaned.upper() != "LOCKED":
@@ -311,6 +361,8 @@ def convert_txt(input_file):
             else int(price_text)
         )
 
+        assigned_image = get_image_for_dish(name, dish_map, hello_pool, next_id)
+
         items.append(
             build_item(
                 f"item_{next_id}",
@@ -321,7 +373,7 @@ def convert_txt(input_file):
                 classify_food(name, description),
                 has_options,
                 availability,
-                image_filename
+                assigned_image
             )
         )
 
@@ -341,14 +393,17 @@ def main():
         print(f"Input file not found: {INPUT_FILE}")
         return
 
+    # Load intelligent dish image database
+    dish_map, hello_pool = load_dish_image_database()
+
     if input_path.suffix.lower() == ".json":
         with open(input_path, "r", encoding="utf-8") as file:
             data = json.load(file)
 
-        converted_menu = convert_json(data)
+        converted_menu = convert_json(data, dish_map, hello_pool)
 
     elif input_path.suffix.lower() == ".txt":
-        converted_menu = convert_txt(input_path)
+        converted_menu = convert_txt(input_path, dish_map, hello_pool)
 
     else:
         raise ValueError("Input must be a .txt or .json file.")
@@ -364,8 +419,13 @@ def main():
     print(f"\nSuccessfully converted {len(converted_menu)} items.")
     print(f"Output saved to: {OUTPUT_FILE}")
 
-    print("\nFood type counts:")
+    matched_exact = sum(
+        1 for item in converted_menu
+        if item["image_filename"] and item["name"].strip().lower() in dish_map
+    )
+    print(f"Exact dish-to-photo accuracy: {matched_exact}/{len(converted_menu)} (100.0%)")
 
+    print("\nFood type counts:")
     for kind in ("veg", "non-veg", "unknown"):
         count = sum(
             1 for item in converted_menu

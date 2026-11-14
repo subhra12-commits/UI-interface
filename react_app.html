@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Mother's Hut | React Heritage Dining</title>
+    <!-- High-Speed Image & Asset Preconnects -->
+    <link rel="dns-prefetch" href="//mothershut.com" />
+    <link rel="preconnect" href="https://mothershut.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Noto+Sans+Bengali:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Leaflet.js Interactive Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Roboto"', 'system-ui', 'sans-serif'],
+                        bengali: ['"Noto Sans Bengali"', '"Roboto"', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#ea580c',
+                            600: '#c84c1c',
+                            700: '#9a3412',
+                            dark: '#141210',
+                            warm: '#faf7f2',
+                            border: '#e8e1d5'
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 14px -2px rgba(28, 25, 23, 0.06), 0 1px 4px -1px rgba(28, 25, 23, 0.04)',
+                        'sheet': '0 -4px 32px 0 rgba(0, 0, 0, 0.18)',
+                        'float': '0 6px 20px 0 rgba(200, 76, 28, 0.25)'
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- React 18 & ReactDOM & Babel Standalone (No Node Build Step Required) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        html, body {
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: manipulation;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton-img {
+            background: linear-gradient(90deg, #f5f5f4 25%, #e7e5e4 50%, #f5f5f4 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+        }
+
+        @keyframes cart-pop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+        }
+        .animate-cart-pop {
+            animation: cart-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        body.modal-open {
+            overflow: hidden !important;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="bg-brand-warm text-stone-800 font-sans antialiased min-h-screen selection:bg-brand-500 selection:text-white">
+    <div id="root"></div>
+
+    <!-- React Application Component -->
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef, useCallback } = React;
+
+        const BACKEND_URL = window.location.origin.startsWith("http") ? window.location.origin : "http://127.0.0.1:8000";
+        const IMAGE_BASE_URL = "https://mothershut.com/uploads/menu/";
+        const dishFallbackSVG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23ea580c' stroke-width='1.5'><path d='M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'/></svg>";
+
+        function App() {
+            // Service state
+            const [view, setView] = useState("service"); // 'service', 'delivery', 'menu'
+            const [serviceMode, setServiceMode] = useState("dine-in");
+            const [language, setLanguage] = useState("en");
+            const [bengaliDict, setBengaliDict] = useState(null);
+
+            // Catalog & Filters
+            const [catalog, setCatalog] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [search, setSearch] = useState("");
+            const [dietFilter, setDietFilter] = useState("all"); // 'all', 'veg', 'non-veg'
+            const [availableOnly, setAvailableOnly] = useState(false);
+            const [activeCategory, setActiveCategory] = useState("all");
+            const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
+
+            // Cart state { [id]: { item, qty } }
+            const [cart, setCart] = useState({});
+            const [cartModalOpen, setCartModalOpen] = useState(false);
+            const [spotlightDish, setSpotlightDish] = useState(null);
+            const [aiModalOpen, setAiModalOpen] = useState(false);
+
+            // Chat state
+            const [chatMessages, setChatMessages] = useState([
+                { sender: "bot", text: "Namaskar! Welcome to Mother's Hut. Ask me about authentic recipes, dietary options, or dish recommendations!" }
+            ]);
+            const [chatInput, setChatInput] = useState("");
+            const [chatLoading, setChatLoading] = useState(false);
+
+            // Delivery Map & Slot
+            const [deliveryDate, setDeliveryDate] = useState(() => new Date().toISOString().split("T")[0]);
+            const [deliverySlot, setDeliverySlot] = useState("12:30 PM - 01:00 PM");
+            const [deliveryCoords, setDeliveryCoords] = useState({ lat: 22.5726, lng: 88.3639 });
+            const [locationSavedText, setLocationSavedText] = useState("Confirm Location");
+
+            // Load menu & dictionary
+            useEffect(() => {
+                fetch(`${BACKEND_URL}/menu`, { cache: "no-store" })
+                    .then(res => res.ok ? res.json() : fetch("menu.json").then(r => r.json()))
+                    .then(rawItems => {
+                        const items = rawItems.map((raw, idx) => ({
+                            id: raw.id || `item_${idx}`,
+                            name: (raw.name || "").trim(),
+                            description: (raw.description || "").trim(),
+                            category: (raw.category || "Specialties").trim(),
+                            price: Number(raw.price) || 0,
+                            foodType: raw.food_type || (raw.name.toLowerCase().match(/\b(chicken|mutton|fish|egg|prawn)\b/) ? "non-veg" : "veg"),
+                            isAvailable: (raw.availability || "available").toLowerCase() === "available",
+                            image: raw.image_filename ? (raw.image_filename.startsWith("http") ? raw.image_filename : `${IMAGE_BASE_URL}${raw.image_filename}`) : dishFallbackSVG,
+                            hasOptions: Boolean(raw.has_options)
+                        }));
+                        setCatalog(items);
+                        setLoading(false);
+                    })
+                    .catch(err => {
+                        console.error("Failed loading menu:", err);
+                        setLoading(false);
+                    });
+
+                fetch("/bengali.json")
+                    .then(r => r.ok ? r.json() : fetch("bengali.json").then(r => r.json()))
+                    .then(dict => setBengaliDict(dict))
+                    .catch(e => console.warn("bengali.json not loaded:", e));
+            }, []);
+
+            // Cart updates with pinpoint React state
+            const updateCart = useCallback((dishId, delta, e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                if (window.navigator && window.navigator.vibrate) {
+                    try { window.navigator.vibrate(delta > 0 ? [30] : [20]); } catch(err){}
+                }
+
+                setCart(prev => {
+                    const item = catalog.find(d => d.id === dishId);
+                    if (!item) return prev;
+                    const existing = prev[dishId] ? prev[dishId].qty : 0;
+                    const nextQty = existing + delta;
+                    const nextCart = { ...prev };
+                    if (nextQty <= 0) {
+                        delete nextCart[dishId];
+                    } else {
+                        nextCart[dishId] = { item, qty: nextQty };
+                    }
+                    return nextCart;
+                });
+            }, [catalog]);
+
+            // Cart calculations
+            const cartItems = useMemo(() => Object.values(cart), [cart]);
+            const totalQty = useMemo(() => cartItems.reduce((sum, i) => sum + i.qty, 0), [cartItems]);
+            const subtotal = useMemo(() => cartItems.reduce((sum, i) => sum + (i.item.price * i.qty), 0), [cartItems]);
+            const taxes = useMemo(() => Math.round(subtotal * 0.05), [subtotal]);
+            const grandTotal = useMemo(() => subtotal + taxes, [subtotal, taxes]);
+
+            // Categories
+            const categories = useMemo(() => [...new Set(catalog.map(i => i.category))], [catalog]);
+
+            // Filtered catalog
+            const filteredCatalog = useMemo(() => {
+                return catalog.filter(item => {
+                    if (search) {
+                        const q = search.toLowerCase();
+                        if (!item.name.toLowerCase().includes(q) && !item.category.toLowerCase().includes(q)) return false;
+                    }
+                    if (dietFilter === "veg" && item.foodType !== "veg") return false;
+                    if (dietFilter === "non-veg" && item.foodType !== "non-veg") return false;
+                    if (availableOnly && !item.isAvailable) return false;
+                    return true;
+                });
+            }, [catalog, search, dietFilter, availableOnly]);
+
+            // Grouped filtered catalog
+            const groupedCatalog = useMemo(() => {
+                return filteredCatalog.reduce((acc, item) => {
+                    if (!acc[item.category]) acc[item.category] = [];
+                    acc[item.category].push(item);
+                    return acc;
+                }, {});
+            }, [filteredCatalog]);
+
+            // Send chat
+            const sendChat = async (question) => {
+                const q = question || chatInput.trim();
+                if (!q) return;
+                setChatMessages(prev => [...prev, { sender: "user", text: q }]);
+                setChatInput("");
+                setChatLoading(true);
+
+                try {
+                    const res = await fetch(`${BACKEND_URL}/ask`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ question: q })
+                    });
+                    const data = await res.json();
+                    setChatMessages(prev => [...prev, { sender: "bot", text: data.answer || "No response" }]);
+                } catch (e) {
+                    setChatMessages(prev => [...prev, { sender: "bot", text: "Error connecting to AI Waiter. Please try again." }]);
+                } finally {
+                    setChatLoading(false);
+                }
+            };
+
+            // Leaflet Map Init on Delivery View
+            const mapRef = useRef(null);
+            useEffect(() => {
+                if (view === "delivery" && typeof L !== "undefined") {
+                    setTimeout(() => {
+                        const el = document.getElementById("react-osm-map");
+                        if (el && !mapRef.current) {
+                            const map = L.map('react-osm-map', { zoomControl: false }).setView([deliveryCoords.lat, deliveryCoords.lng], 13);
+                            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                                maxZoom: 20,
+                                subdomains: 'abcd',
+                                attribution: '© OpenStreetMap © CARTO'
+                            }).addTo(map);
+
+                            const marker = L.marker([deliveryCoords.lat, deliveryCoords.lng], { draggable: true }).addTo(map);
+                            marker.on('dragend', (e) => {
+                                const pos = e.target.getLatLng();
+                                setDeliveryCoords({ lat: pos.lat, lng: pos.lng });
+                            });
+                            map.on('click', (e) => {
+                                marker.setLatLng(e.latlng);
+                                setDeliveryCoords({ lat: e.latlng.lat, lng: e.latlng.lng });
+                            });
+                            mapRef.current = map;
+                        }
+                    }, 100);
+                }
+            }, [view]);
+
+            return (
+                <div className={`min-h-screen flex flex-col pb-24 relative overflow-x-hidden ${language === 'bn' ? 'font-bengali' : 'font-sans'}`}>
+                    
+                    {/* Ambient Glow */}
+                    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+                        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-gradient-to-br from-amber-400/15 via-orange-500/10 to-brand-600/15 blur-3xl"></div>
+                        <div className="absolute top-1/3 -right-28 w-80 h-80 rounded-full bg-gradient-to-bl from-emerald-400/10 via-teal-500/10 to-transparent blur-3xl"></div>
+                    </div>
+
+                    {/* VIEW 1: SERVICE DISCOVERY */}
+                    {view === "service" && (
+                        <div className="min-h-screen flex flex-col justify-between relative z-10">
+                            <header className="w-full bg-white/95 backdrop-blur-md border-b border-brand-border py-3.5 px-4 flex items-center justify-between sticky top-0 z-20">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-9 h-9 rounded-xl overflow-hidden bg-white shadow-xs border border-stone-200/80 p-0.5 shrink-0 flex items-center justify-center">
+                                        <img src="logo.png" alt="Logo" className="w-full h-full object-contain" />
+                                    </div>
+                                    <div>
+                                        <span className="font-black text-lg text-brand-dark tracking-tight leading-none block">Mother's Hut</span>
+                                        <span className="text-[10px] text-brand-600 font-bold tracking-wide">Heritage Dining</span>
+                                    </div>
+                                </div>
+                                <button type="button" onClick={() => setView("menu")} className="min-h-[44px] px-3.5 py-2 rounded-xl bg-rose-50 text-rose-700 font-black active:scale-95 transition-transform flex items-center">
+                                    Menu
+                                </button>
+                            </header>
+
+                            <main className="flex-1 px-4 py-8 flex flex-col items-center justify-center text-center">
+                                <div className="w-20 h-20 mb-3 rounded-2xl bg-white p-2 shadow-soft border border-stone-200/90 flex items-center justify-center">
+                                    <img src="logo.png" alt="Logo" className="w-full h-full object-contain drop-shadow-sm" />
+                                </div>
+                                <h1 className="text-2xl font-black text-stone-900 tracking-tight mb-1">
+                                    {language === 'bn' && bengaliDict?.brand ? bengaliDict.brand.welcome_title : "Welcome to Mother's Hut"}
+                                </h1>
+                                <p className="text-stone-600 text-xs font-normal mb-6 max-w-xs leading-relaxed">
+                                    {language === 'bn' && bengaliDict?.brand ? bengaliDict.brand.welcome_subtitle : "Authentic Highway Kitchen Delicacies • Krishnanagar NH-12"}
+                                </p>
+
+                                <div className="space-y-3.5 w-full max-w-sm">
+                                    <button type="button" onClick={() => { setServiceMode("dine-in"); setView("menu"); }} className="w-full min-h-[58px] p-4 bg-white rounded-2xl border-2 border-brand-500/20 active:border-brand-500 shadow-soft text-left flex items-center gap-3.5 transition-all">
+                                        <div className="w-11 h-11 rounded-xl bg-rose-50 text-brand-600 flex items-center justify-center shrink-0">
+                                            <svg className="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h2 className="text-sm font-bold text-stone-900">Dine-In</h2>
+                                            <p className="text-[11px] text-stone-500 truncate">Browse menu & order directly to your table</p>
+                                        </div>
+                                    </button>
+
+                                    <button type="button" onClick={() => { setServiceMode("delivery"); setView("delivery"); }} className="w-full min-h-[58px] p-4 bg-white rounded-2xl border-2 border-stone-200 active:border-brand-500 shadow-soft text-left flex items-center gap-3.5 transition-all">
+                                        <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+                                            <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h2 className="text-sm font-bold text-stone-900">Home Delivery</h2>
+                                            <p className="text-[11px] text-stone-500 truncate">Pin location & pick convenient 30-min slot</p>
+                                        </div>
+                                    </button>
+
+                                    <button type="button" onClick={() => { setServiceMode("takeaway"); setView("menu"); }} className="w-full min-h-[58px] p-4 bg-white rounded-2xl border-2 border-stone-200 active:border-brand-500 shadow-soft text-left flex items-center gap-3.5 transition-all">
+                                        <div className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
+                                            <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h2 className="text-sm font-bold text-stone-900">Pickup / Takeaway</h2>
+                                            <p className="text-[11px] text-stone-500 truncate">Skip the queue & pick up hot food at counter</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </main>
+
+                            <footer className="text-center py-4 text-[11px] text-stone-400 font-medium border-t border-brand-border/60">
+                                Mother's Hut Heritage Kitchen & Highway Dining • Krishnanagar NH-12
+                            </footer>
+                        </div>
+                    )}
+
+                    {/* VIEW 2: DELIVERY SCHEDULER & MAP */}
+                    {view === "delivery" && (
+                        <div className="min-h-screen flex flex-col justify-between relative z-10">
+                            <header className="w-full bg-white/95 backdrop-blur-md border-b border-brand-border py-3 px-4 flex items-center justify-between sticky top-0 z-20">
+                                <div className="flex items-center gap-2">
+                                    <button type="button" onClick={() => setView("service")} className="min-w-[44px] min-h-[44px] p-2 text-stone-600 flex items-center justify-center">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                                    </button>
+                                    <span className="font-black text-sm text-stone-900">Delivery Details</span>
+                                </div>
+                            </header>
+
+                            <main className="flex-1 px-4 py-4 space-y-4 max-w-lg mx-auto w-full">
+                                <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft space-y-3">
+                                    <h3 className="text-xs font-bold text-stone-900">Pin Exact Delivery Location</h3>
+                                    <div id="react-osm-map" className="w-full h-44 rounded-xl border border-stone-200 overflow-hidden bg-stone-100"></div>
+                                    <div className="flex items-center justify-between pt-1">
+                                        <span className="text-[10px] text-stone-500 font-mono">Lat: <strong>{deliveryCoords.lat.toFixed(4)}</strong> | Lng: <strong>{deliveryCoords.lng.toFixed(4)}</strong></span>
+                                        <button type="button" onClick={async () => {
+                                            setLocationSavedText("Sending...");
+                                            try {
+                                                await fetch(`${BACKEND_URL}/location`, {
+                                                    method: "POST",
+                                                    headers: { "Content-Type": "application/json" },
+                                                    body: JSON.stringify({ latitude: deliveryCoords.lat, longitude: deliveryCoords.lng })
+                                                });
+                                                setLocationSavedText("Confirmed ✓");
+                                            } catch(e) {
+                                                setLocationSavedText("Saved Locally");
+                                            }
+                                        }} className="min-h-[44px] px-3.5 py-1.5 bg-stone-900 text-white text-[11px] font-black rounded-xl">
+                                            {locationSavedText}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft space-y-3">
+                                    <h3 className="text-xs font-bold text-stone-900">Select Date & Time Slot</h3>
+                                    <input type="date" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} className="w-full text-xs font-bold px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl" />
+                                    <span className="text-[11px] text-brand-600 font-bold block">{deliverySlot}</span>
+                                </div>
+
+                                <button type="button" onClick={() => setView("menu")} className="w-full min-h-[50px] py-3.5 bg-brand-600 text-white rounded-2xl font-black text-sm shadow-float flex items-center justify-center gap-2">
+                                    <span>View Full Menu</span>
+                                </button>
+                            </main>
+                        </div>
+                    )}
+
+                    {/* VIEW 3: MAIN MENU EXPERIENCE (REACT STATE POWERED) */}
+                    {view === "menu" && (
+                        <div className="flex flex-col min-h-screen">
+                            {/* Sticky Header */}
+                            <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-xs border-b border-brand-border">
+                                <div className="bg-brand-dark text-amber-100/90 text-[10px] py-1.5 px-3.5 border-b border-stone-800 flex items-center justify-between">
+                                    <div className="flex items-center gap-1.5 truncate">
+                                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                                        <span className="truncate"><strong className="text-amber-300 font-black uppercase text-[9px] mr-1">Kitchen Open:</strong> Dine-In, Highway Takeaway & Rapid Delivery</span>
+                                    </div>
+                                    <span className="text-stone-400 shrink-0 text-[10px]">Krishnanagar NH-12</span>
+                                </div>
+
+                                <div className="px-3.5 py-2.5 flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <button type="button" onClick={() => setView("service")} className="min-w-[44px] min-h-[44px] -ml-2 text-stone-600 flex items-center justify-center shrink-0">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                                        </button>
+                                        <div className="w-8 h-8 rounded-lg overflow-hidden bg-white shadow-xs border border-stone-200/80 p-0.5 shrink-0 flex items-center justify-center">
+                                            <img src="logo.png" alt="Logo" className="w-full h-full object-contain" />
+                                        </div>
+                                        <div className="truncate">
+                                            <span className="font-black text-sm text-stone-900 truncate block">Mother's Hut</span>
+                                            <span className="text-[10px] text-emerald-700 font-extrabold uppercase tracking-wide">
+                                                {serviceMode === 'delivery' ? `Delivery • ${deliverySlot}` : 'Dine-In • Table #4'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 shrink-0">
+                                        <div className="flex items-center text-xs font-bold text-stone-600 bg-stone-100 rounded-lg p-1">
+                                            <button type="button" onClick={() => setLanguage("en")} className={`px-1.5 py-0.5 ${language === 'en' ? 'text-stone-900 font-black' : 'text-stone-500'}`}>EN</button>
+                                            <span className="text-stone-300">/</span>
+                                            <button type="button" onClick={() => setLanguage("bn")} className={`px-1.5 py-0.5 ${language === 'bn' ? 'text-stone-900 font-black font-bengali' : 'text-stone-500 font-bengali'}`}>বাং</button>
+                                        </div>
+                                        <button type="button" onClick={() => alert("Steward notified to your table!")} className="min-w-[44px] min-h-[44px] p-2 text-rose-600 flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Search Bar & Menu Drawer Button */}
+                                <div className="px-3.5 pb-2.5 pt-0.5 flex items-center gap-2">
+                                    <div className="relative flex-1">
+                                        <svg className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z"/></svg>
+                                        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={language === 'bn' && bengaliDict?.menu_filters ? bengaliDict.menu_filters.search_placeholder : "Search dishes, desserts..."} className="w-full pl-9 pr-8 py-2 bg-stone-100 border border-stone-200 focus:border-brand-500 focus:bg-white rounded-xl text-xs focus:outline-none transition-all placeholder:text-stone-400" />
+                                        {search && (
+                                            <button type="button" onClick={() => setSearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 p-1">
+                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className="relative shrink-0">
+                                        <button type="button" onClick={() => setCategoryMenuOpen(!categoryMenuOpen)} className="min-h-[44px] px-3 py-2 bg-stone-900 active:bg-stone-800 text-white font-black text-xs rounded-xl flex items-center gap-1.5 uppercase tracking-wider">
+                                            <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                                            <span>Menu</span>
+                                        </button>
+
+                                        {categoryMenuOpen && (
+                                            <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-stone-200 p-3 z-50">
+                                                <div className="flex items-center justify-between pb-2 mb-2 border-b border-stone-100">
+                                                    <span className="font-black text-xs uppercase tracking-wider text-stone-900">Categories</span>
+                                                    <button type="button" onClick={() => setCategoryMenuOpen(false)} className="p-1 text-stone-400 hover:text-stone-600">
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                    </button>
+                                                </div>
+                                                <div className="max-h-72 overflow-y-auto space-y-1 pr-1">
+                                                    {categories.map(cat => (
+                                                        <button type="button" key={cat} onClick={() => {
+                                                            setCategoryMenuOpen(false);
+                                                            const el = document.getElementById(`react-sec-${cat.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`);
+                                                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                                        }} className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-stone-700 hover:bg-stone-100 flex justify-between">
+                                                            <span>{language === 'bn' && bengaliDict?.categories?.[cat] ? bengaliDict.categories[cat] : cat}</span>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Dietary Filter Strip */}
+                                <div className="px-3.5 pb-2 overflow-x-auto hide-scrollbar flex items-center gap-2 text-xs font-extrabold">
+                                    <button type="button" onClick={() => setDietFilter("all")} className={`min-h-[38px] px-3 py-1.5 rounded-xl whitespace-nowrap ${dietFilter === 'all' ? 'bg-brand-dark text-white' : 'bg-stone-100 text-stone-700'}`}>
+                                        All ({filteredCatalog.length})
+                                    </button>
+                                    <button type="button" onClick={() => setDietFilter("veg")} className={`min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl whitespace-nowrap ${dietFilter === 'veg' ? 'bg-emerald-700 text-white' : 'bg-stone-100 text-stone-700'}`}>
+                                        <span className="w-3.5 h-3.5 border-2 border-emerald-600 rounded-[3px] flex items-center justify-center p-0.5 bg-white"><span className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span></span>
+                                        <span>Veg Only</span>
+                                    </button>
+                                    <button type="button" onClick={() => setDietFilter("non-veg")} className={`min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl whitespace-nowrap ${dietFilter === 'non-veg' ? 'bg-rose-700 text-white' : 'bg-stone-100 text-stone-700'}`}>
+                                        <span className="w-3.5 h-3.5 border-2 border-rose-600 rounded-[3px] flex items-center justify-center p-0.5 bg-white"><span className="w-0 h-0 border-l-[3.5px] border-r-[3.5px] border-b-[5px] border-l-transparent border-r-transparent border-b-rose-600"></span></span>
+                                        <span>Non-Veg</span>
+                                    </button>
+                                    <button type="button" onClick={() => setAvailableOnly(!availableOnly)} className={`min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl whitespace-nowrap ${availableOnly ? 'bg-amber-700 text-white' : 'bg-stone-100 text-stone-700'}`}>
+                                        <span>Available Now</span>
+                                    </button>
+                                </div>
+
+                                {/* Category Pills Carousel */}
+                                <div className="px-3.5 pb-2.5 overflow-x-auto hide-scrollbar flex items-center gap-1.5 border-t border-stone-100 pt-1.5">
+                                    {categories.map(cat => (
+                                        <button type="button" key={cat} onClick={() => {
+                                            const el = document.getElementById(`react-sec-${cat.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`);
+                                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                        }} className="px-3 py-1 rounded-full text-xs font-bold bg-stone-100 text-stone-700 hover:bg-stone-200 whitespace-nowrap active:scale-95 transition-all">
+                                            {language === 'bn' && bengaliDict?.categories?.[cat] ? bengaliDict.categories[cat] : cat}
+                                        </button>
+                                    ))}
+                                </div>
+                            </header>
+
+                            {/* 2 Items per row Menu Grid (Lazy-Loaded Images, Surgical Updates) */}
+                            <main className="flex-1 px-3.5 py-4 w-full max-w-2xl mx-auto space-y-8">
+                                {loading && (
+                                    <div className="py-16 text-center">
+                                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-500 border-t-transparent"></div>
+                                        <p className="text-xs font-semibold text-stone-600 mt-3">Loading authentic Mother's Hut menu...</p>
+                                    </div>
+                                )}
+
+                                {Object.entries(groupedCatalog).map(([cat, items]) => (
+                                    <section key={cat} id={`react-sec-${cat.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`} className="mb-6 scroll-mt-44">
+                                        <div className="flex items-center justify-between border-b border-stone-200 pb-1.5 mb-3">
+                                            <h2 className="font-black text-sm text-stone-900 uppercase">
+                                                {language === 'bn' && bengaliDict?.categories?.[cat] ? bengaliDict.categories[cat] : cat}
+                                            </h2>
+                                            <span className="text-[10px] text-stone-500 bg-stone-100 px-2 py-0.5 rounded-full font-bold">{items.length} items</span>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5">
+                                            {items.map(item => {
+                                                const inCartQty = cart[item.id]?.qty || 0;
+                                                return (
+                                                    <div key={item.id} onClick={() => setSpotlightDish(item)} className="bg-white rounded-2xl p-2.5 border border-stone-200/90 shadow-soft hover:shadow-hover active:scale-[0.99] flex flex-col justify-between relative overflow-hidden transition-all cursor-pointer">
+                                                        <div className="w-full h-28 rounded-xl overflow-hidden skeleton-img relative mb-2 shrink-0 bg-stone-100">
+                                                            <img 
+                                                                src={item.image} 
+                                                                alt={item.name} 
+                                                                loading="lazy"
+                                                                decoding="async"
+                                                                className="w-full h-full object-cover transition-opacity duration-200 opacity-0"
+                                                                onLoad={(e) => { e.target.classList.remove('opacity-0'); if(e.target.parentElement) e.target.parentElement.classList.remove('skeleton-img'); }}
+                                                                onError={(e) => { e.target.src = dishFallbackSVG; e.target.classList.remove('opacity-0'); if(e.target.parentElement) e.target.parentElement.classList.remove('skeleton-img'); }}
+                                                            />
+                                                            <div className="absolute top-1.5 left-1.5 bg-white/95 p-1 rounded-md shadow-xs flex items-center gap-1">
+                                                                <span className={`inline-flex items-center justify-center w-3 h-3 border-2 ${item.foodType === 'veg' ? 'border-emerald-600' : 'border-rose-600'} rounded-[3px] bg-white p-0.5`}>
+                                                                    <span className={`w-1.5 h-1.5 ${item.foodType === 'veg' ? 'bg-emerald-600 rounded-full' : 'bg-rose-600'}`}></span>
+                                                                </span>
+                                                            </div>
+                                                            <span className="absolute bottom-1.5 right-1.5 text-[9px] font-bold bg-black/60 text-white px-1.5 py-0.5 rounded-md backdrop-blur-xs">Details</span>
+                                                        </div>
+
+                                                        <div className="flex-1 flex flex-col justify-between min-w-0">
+                                                            <div>
+                                                                <h3 className="font-extrabold text-stone-950 text-xs leading-snug line-clamp-2 mb-1">{item.name}</h3>
+                                                                <p className="text-[10px] text-stone-500 line-clamp-1 mb-2 font-normal">{item.description || 'Authentic kitchen specialty'}</p>
+                                                            </div>
+
+                                                            <div className="flex items-center justify-between pt-1 border-t border-stone-100">
+                                                                <span className="font-black text-brand-700 text-sm">₹{item.price}</span>
+                                                                
+                                                                {inCartQty > 0 ? (
+                                                                    <div className="flex items-center gap-1.5 bg-brand-50 border border-brand-500 rounded-lg p-0.5 text-brand-700">
+                                                                        <button type="button" onClick={(e) => updateCart(item.id, -1, e)} className="w-6 h-6 flex items-center justify-center font-black active:bg-brand-200 rounded text-xs">-</button>
+                                                                        <span className="font-black text-xs px-1">{inCartQty}</span>
+                                                                        <button type="button" onClick={(e) => updateCart(item.id, 1, e)} className="w-6 h-6 flex items-center justify-center font-black active:bg-brand-200 rounded text-xs">+</button>
+                                                                    </div>
+                                                                ) : (
+                                                                    <button type="button" onClick={(e) => updateCart(item.id, 1, e)} className="min-h-[32px] px-2.5 py-1 bg-brand-600 active:bg-brand-700 text-white text-[11px] font-black rounded-lg shadow-xs flex items-center gap-0.5">
+                                                                        <span>ADD</span>
+                                                                        <span className="text-xs">+</span>
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </section>
+                                ))}
+                            </main>
+
+                            {/* Floating Bottom Bar */}
+                            <div className="fixed bottom-3 inset-x-3 z-40 max-w-md mx-auto flex items-center gap-2.5">
+                                <button type="button" onClick={() => setAiModalOpen(true)} className="flex-1 min-h-[50px] px-4 py-2.5 bg-stone-900 active:bg-stone-800 text-white rounded-2xl shadow-float border border-stone-800 flex items-center justify-center gap-2 active:scale-95">
+                                    <div className="relative flex items-center">
+                                        <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                                        <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    </div>
+                                    <span className="font-black text-xs tracking-wider uppercase">Ask AI Waiter</span>
+                                </button>
+
+                                <button type="button" onClick={() => setCartModalOpen(true)} className="flex-1 min-h-[50px] px-4 py-2.5 bg-brand-600 active:bg-brand-700 text-white rounded-2xl shadow-float flex items-center justify-between active:scale-95">
+                                    <div className="flex items-center gap-2">
+                                        <div className="relative">
+                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                            <span className="absolute -top-1.5 -right-2 bg-amber-400 text-stone-950 text-[10px] font-black h-4 w-4 rounded-full flex items-center justify-center animate-cart-pop">{totalQty}</span>
+                                        </div>
+                                        <span className="font-black text-xs tracking-wider uppercase">Plate</span>
+                                    </div>
+                                    <span className="font-black text-sm">₹{grandTotal}</span>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* DISH SPOTLIGHT MODAL */}
+                    {spotlightDish && (
+                        <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-xs z-50 flex flex-col justify-end">
+                            <div className="bg-white rounded-t-3xl shadow-sheet max-h-[85vh] flex flex-col">
+                                <div className="p-3 border-b border-stone-100 flex items-center justify-between">
+                                    <div className="w-12 h-1 bg-stone-200 rounded-full mx-auto -mr-2"></div>
+                                    <button type="button" onClick={() => setSpotlightDish(null)} className="min-w-[44px] min-h-[44px] p-2 text-stone-400 hover:text-stone-700 flex items-center justify-center">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                                    <div className="w-full h-44 rounded-2xl overflow-hidden bg-stone-100 border border-stone-200 relative mb-3">
+                                        <img src={spotlightDish.image} alt={spotlightDish.name} className="w-full h-full object-cover" onError={(e) => e.target.src = dishFallbackSVG} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-base font-black text-stone-900 leading-snug">{spotlightDish.name}</h3>
+                                        <div className="text-xl font-black text-brand-600 mt-0.5">₹{spotlightDish.price} <span className="text-xs text-stone-400 font-normal">incl. tax</span></div>
+                                        <p className="text-xs text-stone-600 mt-2 leading-relaxed">{spotlightDish.description || 'Authentic Highway Heritage recipe prepared fresh.'}</p>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-2 py-1">
+                                        <div className="p-2 bg-stone-50 border border-stone-200 rounded-xl text-center">
+                                            <div className="text-[10px] text-amber-700 font-bold">Prep Time</div>
+                                            <div className="font-black text-xs text-stone-900 mt-0.5">10-15 Min</div>
+                                        </div>
+                                        <div className="p-2 bg-stone-50 border border-stone-200 rounded-xl text-center">
+                                            <div className="text-[10px] text-brand-700 font-bold">Portion</div>
+                                            <div className="font-black text-xs text-stone-900 mt-0.5">Standard</div>
+                                        </div>
+                                        <div className="p-2 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+                                            <div className="text-[10px] text-emerald-800 font-bold">Google Score</div>
+                                            <div className="font-black text-xs text-emerald-950 mt-0.5">4.3 ★ (6.8k)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="p-3.5 bg-stone-50 border-t border-stone-200 shrink-0">
+                                    <button type="button" onClick={() => { updateCart(spotlightDish.id, 1); setSpotlightDish(null); }} className="w-full min-h-[48px] py-3 bg-brand-600 text-white font-black rounded-xl text-xs uppercase tracking-wider shadow-float flex items-center justify-center gap-2">
+                                        <span>Add to Order Plate • ₹{spotlightDish.price}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* CART BOTTOM SHEET */}
+                    {cartModalOpen && (
+                        <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-xs z-50 flex flex-col justify-end">
+                            <div className="bg-white rounded-t-3xl shadow-sheet max-h-[88vh] flex flex-col">
+                                <div className="p-3 border-b border-stone-100 flex items-center justify-between">
+                                    <span className="font-black text-sm text-stone-900">Your Order Plate ({totalQty} items)</span>
+                                    <button type="button" onClick={() => setCartModalOpen(false)} className="min-w-[44px] min-h-[44px] p-2 text-stone-400 flex items-center justify-center">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+
+                                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                                    {cartItems.length === 0 ? (
+                                        <p className="text-center text-xs text-stone-400 py-8">Your plate is currently empty.</p>
+                                    ) : (
+                                        cartItems.map(({ item, qty }) => (
+                                            <div key={item.id} className="flex items-center justify-between gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200/80">
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="font-extrabold text-stone-900 text-xs truncate">{item.name}</h4>
+                                                    <p className="text-xs font-black text-stone-800 mt-0.5">₹{item.price} × {qty} = <span className="text-brand-600">₹{item.price * qty}</span></p>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 bg-white border border-stone-300 rounded-lg p-0.5 font-numeric">
+                                                    <button type="button" onClick={(e) => updateCart(item.id, -1, e)} className="w-6 h-6 flex items-center justify-center font-black rounded text-xs">-</button>
+                                                    <span className="font-black text-xs px-1">{qty}</span>
+                                                    <button type="button" onClick={(e) => updateCart(item.id, 1, e)} className="w-6 h-6 flex items-center justify-center font-black rounded text-xs">+</button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                <div className="p-3.5 bg-stone-50 border-t border-stone-200 space-y-2 shrink-0">
+                                    <div className="space-y-1 text-xs text-stone-600">
+                                        <div className="flex justify-between"><span>Subtotal</span><span className="font-bold text-stone-900">₹{subtotal}</span></div>
+                                        <div className="flex justify-between"><span>GST Taxes (5%)</span><span>₹{taxes}</span></div>
+                                        <div className="flex justify-between font-black text-sm text-stone-900 border-t border-stone-200 pt-1">
+                                            <span>Grand Total</span><span className="text-brand-600 font-black text-base">₹{grandTotal}</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" disabled={totalQty === 0} onClick={() => {
+                                        alert(`Order confirmed for ${serviceMode.toUpperCase()}!\nTotal: ₹${grandTotal}`);
+                                        setCart({});
+                                        setCartModalOpen(false);
+                                    }} className="w-full min-h-[48px] py-3 bg-brand-600 text-white font-black rounded-xl text-xs uppercase tracking-wider disabled:opacity-50">
+                                        Confirm & Place Order
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* AI ASSISTANT MODAL */}
+                    {aiModalOpen && (
+                        <div className="fixed inset-0 bg-stone-900/60 backdrop-blur-xs z-50 flex flex-col justify-end">
+                            <div className="bg-white rounded-t-3xl shadow-sheet h-[88vh] flex flex-col">
+                                <div className="p-3.5 bg-stone-100 border-b border-stone-200 flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-black text-xs text-stone-900">AI Concierge Steward</h3>
+                                            <span className="text-[10px] text-emerald-600 font-bold">Online</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" onClick={() => setAiModalOpen(false)} className="min-w-[44px] min-h-[44px] p-2 text-stone-400 flex items-center justify-center">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+
+                                <div className="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs bg-brand-warm/30">
+                                    {chatMessages.map((msg, idx) => (
+                                        <div key={idx} className={`p-3 rounded-2xl max-w-[90%] leading-relaxed ${msg.sender === 'user' ? 'bg-stone-900 text-white self-end ml-auto' : 'bg-white border border-stone-200 text-stone-800 self-start'}`}>
+                                            {msg.text}
+                                        </div>
+                                    ))}
+                                    {chatLoading && (
+                                        <div className="p-3 bg-white border border-stone-200 text-stone-500 rounded-2xl self-start text-xs flex items-center gap-2">
+                                            <span className="inline-block w-2 h-2 rounded-full bg-brand-500 animate-ping"></span> Checking Mother's Hut menu...
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="p-3 bg-white border-t border-stone-200 flex items-center gap-2">
+                                    <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && sendChat()} placeholder="Ask e.g. 'Price of Karaishutir Kochuri'..." className="flex-1 bg-stone-100 border border-stone-200 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none" />
+                                    <button type="button" onClick={() => sendChat()} className="min-w-[44px] min-h-[44px] bg-brand-dark text-white rounded-xl flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19V6m0 0l-7 7m7-7l7 7"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+</body>
+</html>

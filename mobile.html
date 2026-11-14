@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Mother's Hut | Mobile Heritage Dining</title>
+    <!-- High-Speed Image & Asset Preconnects -->
+    <link rel="dns-prefetch" href="//mothershut.com" />
+    <link rel="preconnect" href="https://mothershut.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Noto+Sans+Bengali:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Leaflet.js Interactive Map CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Roboto"', 'system-ui', 'sans-serif'],
+                        serif: ['"Roboto"', 'system-ui', 'sans-serif'],
+                        brand: ['"Roboto"', 'system-ui', 'sans-serif'],
+                        heading: ['"Roboto"', 'system-ui', 'sans-serif'],
+                        numeric: ['"Roboto"', 'system-ui', 'sans-serif'],
+                        bengali: ['"Noto Sans Bengali"', '"Roboto"', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#ea580c',
+                            600: '#c84c1c',
+                            700: '#9a3412',
+                            dark: '#141210',
+                            warm: '#faf7f2',
+                            border: '#e8e1d5',
+                            card: '#ffffff'
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 14px -2px rgba(28, 25, 23, 0.06), 0 1px 4px -1px rgba(28, 25, 23, 0.04)',
+                        'sheet': '0 -4px 32px 0 rgba(0, 0, 0, 0.18)',
+                        'float': '0 6px 20px 0 rgba(200, 76, 28, 0.25)'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        /* Smooth, non-collapsing mobile scrolling with momentum */
+        html, body {
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: manipulation;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Popup scroll entrance animation for 1-item-per-row cards */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(22px) scale(0.98);
+            transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .reveal-on-scroll.revealed {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Skeleton shimmer placeholder for rapid perceived performance */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton-img {
+            background: linear-gradient(90deg, #f5f5f4 25%, #e7e5e4 50%, #f5f5f4 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+        }
+
+        /* Ambient Dynamic Color Orbs Responsive to Icons */
+        @keyframes float-slow-1 {
+            0%, 100% { transform: translate(0px, 0px) scale(1); }
+            50% { transform: translate(25px, 20px) scale(1.06); }
+        }
+        @keyframes float-slow-2 {
+            0%, 100% { transform: translate(0px, 0px) scale(1.04); }
+            50% { transform: translate(-20px, 18px) scale(0.96); }
+        }
+        .animate-orb-1 { animation: float-slow-1 16s ease-in-out infinite; }
+        .animate-orb-2 { animation: float-slow-2 20s ease-in-out infinite; }
+
+        /* Cart Pop Feedback Animation */
+        @keyframes cart-pop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.22); }
+        }
+        .animate-cart-pop {
+            animation: cart-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Prevent background scroll when modal or bottom sheet is open */
+        body.modal-open {
+            overflow: hidden !important;
+            touch-action: none;
+        }
+
+        /* Native-feeling active feedback */
+        .tap-press:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease;
+        }
+    </style>
+    <!-- Service Worker Registration for Instant Image Cache -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then((reg) => {
+                    console.log('Mobile Image Cache Service Worker registered:', reg.scope);
+                }).catch((err) => {
+                    console.warn('Service Worker registration skipped:', err);
+                });
+            });
+        }
+    </script>
+</head>
+<body class="bg-brand-warm text-stone-800 font-sans antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white pb-24 relative overflow-x-hidden">
+
+    <!-- Ambient Dynamic Background (Matches Desktop Brand Glow) -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-gradient-to-br from-amber-400/15 via-orange-500/10 to-brand-600/15 blur-3xl animate-orb-1"></div>
+        <div class="absolute top-1/3 -right-28 w-80 h-80 rounded-full bg-gradient-to-bl from-emerald-400/10 via-teal-500/10 to-transparent blur-3xl animate-orb-2"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(#d6cbb8_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 1. MOBILE SERVICE DISCOVERY (Dine-In, Home Delivery, Pickup)              -->
+    <!-- ========================================================================= -->
+    <div id="serviceSelectionView" class="min-h-screen flex flex-col justify-between relative z-10 transition-opacity duration-300">
+        <!-- Top Clean Mobile Bar -->
+        <header class="w-full bg-white/95 backdrop-blur-md border-b border-brand-border py-3.5 px-4 flex items-center justify-between sticky top-0 z-20">
+            <div class="flex items-center gap-2.5">
+                <!-- Official Mother's Hut Logo -->
+                <div class="w-9 h-9 rounded-xl overflow-hidden bg-white shadow-xs border border-stone-200/80 p-0.5 shrink-0 flex items-center justify-center">
+                    <img src="logo.png" alt="Mother's Hut Logo" class="w-full h-full object-contain" />
+                </div>
+                <div>
+                    <span class="font-brand font-black text-lg text-brand-dark tracking-tight leading-none block">Mother's Hut</span>
+                    <span class="text-[10px] text-brand-600 font-bold tracking-wide">Heritage Dining</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-heading font-bold text-stone-600">
+                <button onclick="selectServiceMode('dine-in')" class="min-h-[44px] px-3.5 py-2 rounded-xl bg-rose-50 text-rose-700 font-black active:scale-95 transition-transform flex items-center">Menu</button>
+            </div>
+        </header>
+
+        <!-- Center Service Cards -->
+        <main class="flex-1 px-4 py-8 flex flex-col items-center justify-center text-center">
+            <div class="w-20 h-20 mb-3 rounded-2xl bg-white p-2 shadow-soft border border-stone-200/90 flex items-center justify-center">
+                <img src="logo.png" alt="Mother's Hut Official Crest" class="w-full h-full object-contain drop-shadow-sm" />
+            </div>
+
+            <h1 class="text-2xl font-heading font-black text-stone-900 tracking-tight mb-1">
+                Welcome to Mother's Hut
+            </h1>
+            <p class="text-stone-600 text-xs font-normal mb-6 max-w-xs leading-relaxed">
+                Authentic Highway Kitchen Delicacies • Krishnanagar NH-12
+            </p>
+
+            <!-- 3 Service Options Cards with Touch Accessibility -->
+            <div class="space-y-3.5 w-full max-w-sm">
+                <!-- Dine-In Card -->
+                <button onclick="selectServiceMode('dine-in')" class="w-full min-h-[58px] p-4 bg-white rounded-2xl border-2 border-brand-500/20 active:border-brand-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
+                    <div class="w-11 h-11 rounded-xl bg-rose-50 text-brand-600 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h2 class="text-sm font-bold text-stone-900">Dine-In</h2>
+                        <p class="text-[11px] text-stone-500 truncate">Browse menu & order directly to your table</p>
+                    </div>
+                    <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </button>
+
+                <!-- Home Delivery Card -->
+                <button onclick="selectServiceMode('delivery')" class="w-full min-h-[58px] p-4 bg-white rounded-2xl border-2 border-stone-200 active:border-brand-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
+                    <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h2 class="text-sm font-bold text-stone-900">Home Delivery</h2>
+                        <p class="text-[11px] text-stone-500 truncate">Pin location & pick convenient 30-min slot</p>
+                    </div>
+                    <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </button>
+
+                <!-- Pickup / Takeaway Card -->
+                <button onclick="selectServiceMode('takeaway')" class="w-full min-h-[58px] p-4 bg-white rounded-2xl border-2 border-stone-200 active:border-brand-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
+                    <div class="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h2 class="text-sm font-bold text-stone-900">Pickup / Takeaway</h2>
+                        <p class="text-[11px] text-stone-500 truncate">Skip the queue & pick up hot food at counter</p>
+                    </div>
+                    <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </main>
+
+        <footer class="text-center py-4 text-[11px] text-stone-400 font-medium border-t border-brand-border/60">
+            Mother's Hut Heritage Kitchen & Highway Dining • Krishnanagar NH-12
+        </footer>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 2. DELIVERY SCHEDULER & MAP LOCATION VIEW                                 -->
+    <!-- ========================================================================= -->
+    <div id="deliveryScheduleView" class="hidden min-h-screen flex-col justify-between relative z-10 transition-opacity duration-300">
+        <!-- Top Nav -->
+        <header class="w-full bg-white/95 backdrop-blur-md border-b border-brand-border py-3 px-4 flex items-center justify-between sticky top-0 z-20">
+            <div class="flex items-center gap-2">
+                <button onclick="backToServiceSelection()" class="min-w-[44px] min-h-[44px] p-2 text-stone-600 hover:text-stone-900 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <span class="font-heading font-black text-sm text-stone-900">Delivery Details</span>
+            </div>
+        </header>
+
+        <main class="flex-1 px-4 py-4 space-y-4 max-w-lg mx-auto w-full">
+            <!-- Pin on Map Section -->
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Pin Exact Delivery Location</span>
+                    </h3>
+                    <span class="text-[10px] text-stone-400">Drag pin or tap map</span>
+                </div>
+
+                <div id="osm-map" class="w-full h-44 rounded-xl border border-stone-200 overflow-hidden shadow-inner bg-stone-100 relative z-0"></div>
+
+                <input type="hidden" id="deliveryLat" value="22.5726" />
+                <input type="hidden" id="deliveryLng" value="88.3639" />
+
+                <div class="flex items-center justify-between pt-1">
+                    <span class="text-[10px] text-stone-500 font-mono">Lat: <strong id="displayLat" class="text-stone-800">22.5726</strong> | Lng: <strong id="displayLng" class="text-stone-800">88.3639</strong></span>
+                    <button id="confirmLocationBtn" onclick="sendDeliveryLocation()" class="min-h-[44px] px-3.5 py-1.5 bg-stone-900 active:bg-stone-800 text-white text-[11px] font-heading font-black rounded-xl active:scale-95 transition-all">
+                        <span id="confirmLocationBtnText">Confirm Location</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Date & Time Slot -->
+            <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-soft space-y-3">
+                <h3 class="text-xs font-bold text-stone-900">Select Date & Time Slot</h3>
+                <input type="date" id="deliveryDatePicker" class="w-full text-xs font-bold px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl font-sans" />
+                
+                <div class="flex items-center justify-between text-xs pt-1">
+                    <span class="text-stone-500 text-[11px]">Selected Interval:</span>
+                    <span id="selectedSlotBadge" class="font-bold text-brand-600 text-xs">12:30 PM - 01:00 PM</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1" id="timeSlotsContainer"></div>
+            </div>
+
+            <button onclick="confirmDeliveryDetailsAndOpenMenu()" class="w-full min-h-[50px] py-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-2xl font-heading font-black text-sm shadow-float active:scale-95 transition-all flex items-center justify-center gap-2">
+                <span>View Full Menu</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+        </main>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 3. MAIN MOBILE MENU VIEW                                                  -->
+    <!-- ========================================================================= -->
+    <div id="fullMenuExperienceView" class="hidden flex-col min-h-screen">
+        
+        <!-- Mobile Sticky Top Header -->
+        <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-xs border-b border-brand-border">
+            <!-- Micro Top Bar (Crisp Highway Kitchen Identity like Desktop) -->
+            <div class="bg-brand-dark text-amber-100/90 text-[10px] py-1.5 px-3.5 border-b border-stone-800 flex items-center justify-between font-sans">
+                <div class="flex items-center gap-1.5 truncate">
+                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                    <span class="truncate"><strong class="text-amber-300 font-black uppercase text-[9px] mr-1">Kitchen Open:</strong> Dine-In, Highway Takeaway & Rapid Delivery</span>
+                </div>
+                <span class="text-stone-400 shrink-0 text-[10px]">Krishnanagar NH-12</span>
+            </div>
+
+            <div class="px-3.5 py-2.5 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                    <button onclick="backToServiceSelection()" class="min-w-[44px] min-h-[44px] -ml-2 text-stone-600 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <!-- Official Mother's Hut Logo -->
+                    <div class="w-8 h-8 rounded-lg overflow-hidden bg-white shadow-xs border border-stone-200/80 p-0.5 shrink-0 flex items-center justify-center">
+                        <img src="logo.png" alt="Mother's Hut" class="w-full h-full object-contain" />
+                    </div>
+                    <div class="truncate">
+                        <span class="font-brand font-black text-sm text-stone-900 truncate block">Mother's Hut</span>
+                        <span id="mobileTableStatusBadge" class="text-[10px] text-emerald-700 font-extrabold uppercase tracking-wide">Dine-In • Table #4</span>
+                    </div>
+                </div>
+
+                <!-- Call Steward & Language Toggles -->
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <div class="flex items-center text-xs font-bold text-stone-600 bg-stone-100 rounded-lg p-1">
+                        <button id="lang-en" onclick="setLanguage('en')" class="px-1.5 py-0.5 text-stone-900 font-black">EN</button>
+                        <span class="text-stone-300">/</span>
+                        <button id="lang-bn" onclick="setLanguage('bn')" class="px-1.5 py-0.5 text-stone-500 font-bengali font-bold">বাং</button>
+                    </div>
+                    <button onclick="callWaiterPrompt()" class="min-w-[44px] min-h-[44px] p-2 text-rose-600 flex items-center justify-center" title="Call Steward">
+                        <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Menu Drawer Button (Left) & Search Bar (Right) Swapped -->
+            <div class="px-3.5 pb-2.5 pt-0.5 flex items-center gap-2">
+                <!-- Menu Button on the Left -->
+                <div class="relative shrink-0">
+                    <button id="menuDrawerBtn" onclick="toggleCategoryMenu()" class="min-h-[44px] px-3.5 py-2 bg-stone-900 active:bg-stone-800 text-white font-heading font-black text-xs rounded-xl flex items-center gap-1.5 uppercase tracking-wider">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        <span>Menu</span>
+                    </button>
+
+                    <!-- Category Dropdown (Anchored to left) -->
+                    <div id="categoryMenuDropdown" class="hidden absolute left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-stone-200 p-3 z-50 animate-in fade-in zoom-in-95 duration-150">
+                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-100">
+                            <span class="font-heading font-black text-xs uppercase tracking-wider text-stone-900">Categories</span>
+                            <button onclick="toggleCategoryMenu(false)" class="p-1 text-stone-400 hover:text-stone-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <div id="categoryChipsContainer" class="max-h-72 overflow-y-auto space-y-1 pr-1 font-heading"></div>
+                    </div>
+                </div>
+
+                <!-- Search Bar on the Right -->
+                <div class="relative flex-1">
+                    <svg class="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z"/></svg>
+                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Search dishes, desserts..." class="w-full pl-9 pr-8 py-2 bg-stone-100 border border-stone-200 focus:border-brand-500 focus:bg-white rounded-xl text-xs font-sans focus:outline-none transition-all placeholder:text-stone-400" />
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 p-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dietary Filters Strip -->
+            <div class="px-3.5 pb-2 overflow-x-auto hide-scrollbar flex items-center gap-2 text-xs font-heading font-extrabold">
+                <button id="filter-diet-all" onclick="setDietFilter('all')" class="min-h-[38px] px-3 py-1.5 rounded-xl bg-brand-dark text-white whitespace-nowrap shadow-xs">
+                    All (<strong id="totalItemsCount" class="font-numeric">0</strong>)
+                </button>
+                <button id="filter-diet-veg" onclick="setDietFilter('veg')" class="min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-700 hover:bg-emerald-50 whitespace-nowrap">
+                    <span class="w-3.5 h-3.5 border-2 border-emerald-600 rounded-[3px] flex items-center justify-center p-0.5 bg-white"><span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span></span>
+                    <span>Veg Only</span>
+                </button>
+                <button id="filter-diet-non-veg" onclick="setDietFilter('non-veg')" class="min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-700 hover:bg-rose-50 whitespace-nowrap">
+                    <span class="w-3.5 h-3.5 border-2 border-rose-600 rounded-[3px] flex items-center justify-center p-0.5 bg-white"><span class="w-0 h-0 border-l-[3.5px] border-r-[3.5px] border-b-[5px] border-l-transparent border-r-transparent border-b-rose-600"></span></span>
+                    <span>Non-Veg</span>
+                </button>
+                <button id="filter-available" onclick="toggleAvailableOnly()" class="min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-700 hover:bg-amber-50 whitespace-nowrap">
+                    <span id="availCheck" class="w-3.5 h-3.5 rounded border border-stone-300 flex items-center justify-center bg-white text-brand-600 text-[10px]"></span>
+                    <span>Available Now</span>
+                </button>
+            </div>
+
+            <!-- Horizontal Quick Category Pills (Smooth Tap-to-Scroll like Swiggy/Zomato) -->
+            <div id="quickCategoryPillStrip" class="px-3.5 pb-2.5 overflow-x-auto hide-scrollbar flex items-center gap-1.5 border-t border-stone-100 pt-1.5">
+                <!-- Dynamically populated -->
+            </div>
+        </header>
+
+        <!-- Menu Container (Strict 2 Items Per Row on Mobile/Tablet without layout shifts) -->
+        <main class="flex-1 px-3.5 py-4 w-full max-w-2xl mx-auto" id="menuMainSection">
+            <div id="menuContainer" class="space-y-8">
+                <div class="py-16 text-center" id="catalogLoading">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-500 border-t-transparent"></div>
+                    <p class="text-xs font-semibold text-stone-600 mt-3 font-sans">Loading authentic Mother's Hut menu...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 4. FLOATING MOBILE TOUCH ACTIONS (MIN 48x48px ACCESSIBILITY STANDARD)      -->
+    <!-- ========================================================================= -->
+    <div id="mobileBottomActionBar" class="hidden fixed bottom-3 inset-x-3 z-40 max-w-md mx-auto flex items-center gap-2.5">
+        
+        <!-- Large Touch Target 1: AI Concierge / Assistant (Minimum 48x48px) -->
+        <button onclick="openAiModal()" class="flex-1 min-h-[50px] px-4 py-2.5 bg-stone-900 active:bg-stone-800 text-white rounded-2xl shadow-float border border-stone-800 flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer">
+            <div class="relative flex items-center">
+                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                </svg>
+                <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </div>
+            <span class="font-heading font-black text-xs tracking-wider uppercase">Ask AI Waiter</span>
+        </button>
+
+        <!-- Large Touch Target 2: View Order Plate / Cart (Minimum 48x48px) -->
+        <button onclick="openCartModal()" class="flex-1 min-h-[50px] px-4 py-2.5 bg-brand-600 active:bg-brand-700 text-white rounded-2xl shadow-float flex items-center justify-between transition-all active:scale-95 cursor-pointer">
+            <div class="flex items-center gap-2">
+                <div class="relative">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <span id="floatingCartBadge" class="absolute -top-1.5 -right-2 bg-amber-400 text-stone-950 text-[10px] font-black h-4 w-4 rounded-full flex items-center justify-center font-numeric">0</span>
+                </div>
+                <span class="font-heading font-black text-xs tracking-wider uppercase">Plate</span>
+            </div>
+            <span id="floatingCartTotal" class="font-numeric font-black text-sm">₹0</span>
+        </button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 5. STABLE MODALS (NO SCROLL HIJACKING - OVERFLOW HIDDEN ON BODY)           -->
+    <!-- ========================================================================= -->
+
+    <!-- A. DISH SPOTLIGHT BOTTOM-SHEET MODAL -->
+    <div id="dishModalBackdrop" onclick="closeDishModal()" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-xs z-50 transition-opacity"></div>
+    <div id="dishModalSheet" class="hidden fixed inset-x-0 bottom-0 max-h-[85vh] bg-white rounded-t-3xl shadow-sheet z-50 flex flex-col font-sans transition-transform duration-300 transform translate-y-full">
+        <!-- Drag Handle / Dismiss bar -->
+        <div class="p-3 border-b border-stone-100 flex items-center justify-between shrink-0">
+            <div class="w-12 h-1 bg-stone-200 rounded-full mx-auto -mr-2"></div>
+            <button onclick="closeDishModal()" class="min-w-[44px] min-h-[44px] p-2 text-stone-400 hover:text-stone-700 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div id="dishModalBody" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+        <div id="dishModalBottomBar" class="p-3.5 bg-stone-50 border-t border-stone-200 shrink-0"></div>
+    </div>
+
+    <!-- B. ORDER PLATE (CART) BOTTOM-SHEET MODAL -->
+    <div id="cartModalBackdrop" onclick="closeCartModal()" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-xs z-50 transition-opacity"></div>
+    <div id="cartModalSheet" class="hidden fixed inset-x-0 bottom-0 max-h-[88vh] bg-white rounded-t-3xl shadow-sheet z-50 flex flex-col font-sans transition-transform duration-300 transform translate-y-full">
+        <div class="p-3 border-b border-stone-100 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-2">
+                <span class="font-heading font-black text-sm text-stone-900">Your Order Plate</span>
+                <span id="cartModalSubtitle" class="text-xs text-stone-400 font-numeric">0 items</span>
+            </div>
+            <button onclick="closeCartModal()" class="min-w-[44px] min-h-[44px] p-2 text-stone-400 hover:text-stone-700 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <div id="cartModalItems" class="flex-1 overflow-y-auto p-4 space-y-3 font-sans"></div>
+
+        <div class="p-3.5 bg-stone-50 border-t border-stone-200 space-y-2 shrink-0">
+            <div class="space-y-1 text-xs text-stone-600">
+                <div class="flex justify-between">
+                    <span>Subtotal</span>
+                    <span id="billSubtotal" class="font-numeric font-bold text-stone-900">₹0</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>GST Taxes (5%)</span>
+                    <span id="billTaxes" class="font-numeric font-semibold">₹0</span>
+                </div>
+                <div class="flex justify-between font-heading font-black text-sm text-stone-900 border-t border-stone-200 pt-1">
+                    <span>Grand Total</span>
+                    <span id="billGrandTotal" class="text-brand-600 font-numeric font-black text-base">₹0</span>
+                </div>
+            </div>
+            <button onclick="placeOrderSimulation()" id="placeOrderBtn" class="w-full min-h-[48px] py-3 bg-brand-600 active:bg-brand-700 text-white font-heading font-black rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 tracking-wider uppercase">
+                <span>Confirm & Place Order</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- C. AI STEWARD OVERLAY MODAL (NO SCROLL HIJACKING) -->
+    <div id="aiModalBackdrop" onclick="closeAiModal()" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-xs z-50 transition-opacity"></div>
+    <div id="aiModalSheet" class="hidden fixed inset-x-0 bottom-0 h-[88vh] bg-white rounded-t-3xl shadow-sheet z-50 flex flex-col font-sans transition-transform duration-300 transform translate-y-full">
+        <!-- AI Modal Header -->
+        <div class="p-3.5 bg-stone-100 border-b border-stone-200 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-brand-600 text-white flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-heading font-black text-xs text-stone-900">AI Concierge Steward</h3>
+                    <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online
+                    </span>
+                </div>
+            </div>
+            <button onclick="closeAiModal()" class="min-w-[44px] min-h-[44px] p-2 text-stone-400 hover:text-stone-700 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- Conversation History -->
+        <div id="chatHistory" class="flex-1 p-3.5 overflow-y-auto space-y-2.5 text-xs font-sans bg-brand-warm/30">
+            <div class="p-3 bg-white border border-stone-200 text-stone-800 rounded-2xl rounded-tl-sm self-start shadow-xs leading-relaxed max-w-[90%]">
+                <p class="font-heading font-black text-stone-900 mb-0.5">Namaskar! Welcome to Mother's Hut.</p>
+                <p>I am your digital steward. Ask me about authentic recipes, dietary options, spicy preparations, or recommendations!</p>
+            </div>
+        </div>
+
+        <!-- Chat Input Bar (Firmly elevated above keyboard) -->
+        <div class="p-3 bg-white border-t border-stone-200 flex items-center gap-2 shrink-0 shadow-sm">
+            <input type="text" id="chatInput" class="flex-1 bg-stone-100 border border-stone-200 focus:border-amber-500 focus:bg-white rounded-xl px-3.5 py-2.5 text-xs focus:outline-none transition-all placeholder:text-stone-400 font-medium" placeholder="Ask e.g. 'Price of Karaishutir Kochuri'..." />
+            <button id="sendBtn" onclick="sendChatMessage()" class="min-w-[44px] min-h-[44px] bg-brand-dark active:bg-stone-800 text-white rounded-xl flex items-center justify-center transition-all shrink-0">
+                <svg class="w-4 h-4 text-amber-300 translate-x-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19V6m0 0l-7 7m7-7l7 7"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 6. MOBILE JAVASCRIPT CONTROLLER                                           -->
+    <!-- ========================================================================= -->
+    <script>
+        // Convert any string to Title Case (First letter of each word capitalized)
+        function toTitleCase(str) {
+            if (!str) return "";
+            return str.replace(/\b[a-z]/g, function(letter) {
+                return letter.toUpperCase();
+            });
+        }
+
+        const BACKEND_URL = window.location.origin.startsWith("http") ? window.location.origin : "http://127.0.0.1:8000";
+        const IMAGE_BASE_URL = "https://mothershut.com/uploads/menu/";
+
+        let fullCatalog = [];
+        let filteredCatalog = [];
+        let activeDiet = "all";
+        let availableOnly = false;
+        let searchQuery = "";
+        let currentLanguage = "en";
+        let currentTable = "4";
+        let currentServiceMode = "dine-in";
+        let cart = {};
+
+        let selectedDeliveryDate = "";
+        let selectedDeliverySlot = "12:30 PM - 01:00 PM";
+        let deliveryAddress = "9FCM+245, NH 12, beside Indian Oil Petrol Pump, Bhatjangla, West Bengal 741102, India";
+
+        // Badges SVGs
+        const vegBadgeSVG = `<span class="inline-flex items-center justify-center w-3 h-3 border-2 border-emerald-600 rounded-[3px] bg-white shrink-0 p-0.5"><span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span></span>`;
+        const nonVegBadgeSVG = `<span class="inline-flex items-center justify-center w-3 h-3 border-2 border-rose-600 rounded-[3px] bg-white shrink-0 p-0.5"><span class="w-0 h-0 border-l-[3px] border-r-[3px] border-b-[4px] border-l-transparent border-r-transparent border-b-rose-600"></span></span>`;
+        const dishFallbackSVG = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23ea580c' stroke-width='1.5'><path d='M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'/></svg>`;
+
+        // Navigation State Handling
+        function selectServiceMode(mode) {
+            currentServiceMode = mode;
+            if (mode === 'delivery') {
+                document.getElementById("serviceSelectionView").classList.add("hidden");
+                document.getElementById("deliveryScheduleView").classList.remove("hidden");
+                document.getElementById("deliveryScheduleView").classList.add("flex");
+                initDeliveryScheduler();
+            } else {
+                document.getElementById("serviceSelectionView").classList.add("hidden");
+                document.getElementById("deliveryScheduleView").classList.add("hidden");
+                document.getElementById("fullMenuExperienceView").classList.remove("hidden");
+                document.getElementById("fullMenuExperienceView").classList.add("flex");
+                document.getElementById("mobileBottomActionBar").classList.remove("hidden");
+                document.getElementById("mobileBottomActionBar").classList.add("flex");
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            }
+        }
+
+        function backToServiceSelection() {
+            document.getElementById("deliveryScheduleView").classList.add("hidden");
+            document.getElementById("fullMenuExperienceView").classList.add("hidden");
+            document.getElementById("mobileBottomActionBar").classList.add("hidden");
+            document.getElementById("serviceSelectionView").classList.remove("hidden");
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        function confirmDeliveryDetailsAndOpenMenu() {
+            document.getElementById("deliveryScheduleView").classList.add("hidden");
+            document.getElementById("fullMenuExperienceView").classList.remove("hidden");
+            document.getElementById("fullMenuExperienceView").classList.add("flex");
+            document.getElementById("mobileBottomActionBar").classList.remove("hidden");
+            document.getElementById("mobileBottomActionBar").classList.add("flex");
+            document.getElementById("mobileTableStatusBadge").innerText = `DELIVERY • ${selectedDeliverySlot}`;
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        // Map setup
+        let deliveryMap = null;
+        let deliveryMarker = null;
+
+        function initLeafletMap() {
+            const container = document.getElementById("osm-map");
+            if (!container || typeof L === "undefined") return;
+
+            const initialLat = 22.5726;
+            const initialLng = 88.3639;
+
+            if (!deliveryMap) {
+                deliveryMap = L.map('osm-map', { zoomControl: false }).setView([initialLat, initialLng], 13);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 20,
+                    subdomains: 'abcd',
+                    attribution: '© OpenStreetMap © CARTO'
+                }).addTo(deliveryMap);
+
+                deliveryMarker = L.marker([initialLat, initialLng], { draggable: true }).addTo(deliveryMap);
+                deliveryMarker.on('dragend', (e) => {
+                    const pos = e.target.getLatLng();
+                    updateCoordinates(pos.lat, pos.lng);
+                });
+                deliveryMap.on('click', (e) => {
+                    deliveryMarker.setLatLng(e.latlng);
+                    updateCoordinates(e.latlng.lat, e.latlng.lng);
+                });
+            }
+            setTimeout(() => { if (deliveryMap) deliveryMap.invalidateSize(); }, 200);
+        }
+
+        function updateCoordinates(lat, lng) {
+            document.getElementById("deliveryLat").value = parseFloat(lat).toFixed(6);
+            document.getElementById("deliveryLng").value = parseFloat(lng).toFixed(6);
+            document.getElementById("displayLat").innerText = parseFloat(lat).toFixed(4);
+            document.getElementById("displayLng").innerText = parseFloat(lng).toFixed(4);
+        }
+
+        async function sendDeliveryLocation() {
+            const lat = parseFloat(document.getElementById("deliveryLat").value);
+            const lng = parseFloat(document.getElementById("deliveryLng").value);
+            const btnText = document.getElementById("confirmLocationBtnText");
+            btnText.innerText = "Sending...";
+            try {
+                const res = await fetch(`${BACKEND_URL}/location`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ latitude: lat, longitude: lng })
+                });
+                if (res.ok) {
+                    btnText.innerText = "Confirmed ✓";
+                } else {
+                    btnText.innerText = "Error";
+                }
+            } catch (e) {
+                btnText.innerText = "Saved Locally";
+            }
+        }
+
+        function initDeliveryScheduler() {
+            const dateInput = document.getElementById("deliveryDatePicker");
+            const today = new Date().toISOString().split("T")[0];
+            dateInput.min = today;
+            if (!dateInput.value) dateInput.value = today;
+            selectedDeliveryDate = dateInput.value;
+
+            initLeafletMap();
+
+            const container = document.getElementById("timeSlotsContainer");
+            container.innerHTML = "";
+            for (let hour = 12; hour <= 23; hour++) {
+                for (let min of [0, 30]) {
+                    const startH = hour > 12 ? hour - 12 : hour;
+                    const startM = min === 0 ? "00" : "30";
+                    let endH = min === 30 ? (hour + 1 > 12 ? hour + 1 - 12 : hour + 1) : startH;
+                    let endM = min === 30 ? "00" : "30";
+                    const slot = `${String(startH).padStart(2,'0')}:${startM} PM - ${String(endH).padStart(2,'0')}:${endM} PM`;
+                    
+                    const btn = document.createElement("button");
+                    const isSelected = slot === selectedDeliverySlot;
+                    btn.className = `p-2 rounded-xl text-[10px] font-bold text-center border ${isSelected ? 'border-brand-600 bg-brand-50 text-brand-700 font-black' : 'border-stone-200 bg-stone-50 text-stone-700'}`;
+                    btn.innerText = slot;
+                    btn.onclick = () => {
+                        selectedDeliverySlot = slot;
+                        document.getElementById("selectedSlotBadge").innerText = slot;
+                        initDeliveryScheduler();
+                    };
+                    container.appendChild(btn);
+                }
+            }
+        }
+
+        // Fetch Menu Catalog
+        async function fetchMenuData() {
+            try {
+                let res = await fetch(`${BACKEND_URL}/menu`, { cache: "no-store" });
+                if (!res.ok) res = await fetch("menu.json");
+                const rawItems = await res.json();
+                
+                fullCatalog = rawItems.map((raw, idx) => ({
+                    id: raw.id || `item_${idx}`,
+                    name: toTitleCase((raw.name || "").trim()),
+                    description: (raw.description || "").trim(),
+                    category: (raw.category || "Specialties").trim(),
+                    price: Number(raw.price) || 0,
+                    foodType: raw.food_type || (raw.name.toLowerCase().match(/\b(chicken|mutton|fish|egg|prawn)\b/) ? "non-veg" : "veg"),
+                    isAvailable: (raw.availability || "available").toLowerCase() === "available",
+                    image: raw.image_filename ? (raw.image_filename.startsWith("http") ? raw.image_filename : `${IMAGE_BASE_URL}${raw.image_filename}`) : dishFallbackSVG,
+                    hasOptions: Boolean(raw.has_options)
+                }));
+
+                document.getElementById("totalItemsCount").innerText = fullCatalog.length;
+                renderCategoryNav();
+                applyFilters();
+            } catch (e) {
+                console.error("Failed loading menu:", e);
+            }
+        }
+
+        function renderCategoryNav() {
+            const categories = [...new Set(fullCatalog.map(i => i.category))];
+            const container = document.getElementById("categoryChipsContainer");
+            const strip = document.getElementById("quickCategoryPillStrip");
+
+            container.innerHTML = `
+                <button onclick="scrollToCategory('all'); toggleCategoryMenu(false);" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-heading font-black bg-brand-600 text-white flex justify-between tracking-wide">
+                    <span>All Sections</span>
+                    <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-numeric font-bold">${fullCatalog.length}</span>
+                </button>
+            `;
+
+            if (strip) {
+                strip.innerHTML = `
+                    <button onclick="scrollToCategory('all')" id="pill-all" class="px-3 py-1 rounded-full text-xs font-heading font-black bg-brand-600 text-white whitespace-nowrap shadow-xs">
+                        All
+                    </button>
+                `;
+            }
+
+            categories.forEach((cat, idx) => {
+                const count = fullCatalog.filter(i => i.category === cat).length;
+                const safeCatId = `section-${cat.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`;
+                
+                // Drawer list button
+                const btn = document.createElement("button");
+                btn.onclick = () => { scrollToCategory(safeCatId); toggleCategoryMenu(false); };
+                btn.className = "w-full text-left px-3 py-2.5 rounded-xl text-xs font-heading font-bold text-stone-700 hover:bg-stone-100 flex justify-between items-center";
+                btn.innerHTML = `<span>${cat}</span> <span class="text-[10px] text-stone-400 font-numeric font-bold bg-stone-100 px-2 py-0.5 rounded-full">(${count})</span>`;
+                container.appendChild(btn);
+
+                // Quick horizontal scroll pill
+                if (strip) {
+                    const pill = document.createElement("button");
+                    pill.id = `pill-${safeCatId}`;
+                    pill.onclick = () => scrollToCategory(safeCatId);
+                    pill.className = "px-3 py-1 rounded-full text-xs font-heading font-bold bg-stone-100 text-stone-700 hover:bg-stone-200 whitespace-nowrap active:scale-95 transition-all";
+                    pill.innerText = cat;
+                    strip.appendChild(pill);
+                }
+            });
+
+            // Preload first 20 dish images for instant appearance
+            fullCatalog.slice(0, 20).forEach(item => {
+                if (item.image && item.image.startsWith("http")) {
+                    const img = new Image();
+                    img.src = item.image;
+                }
+            });
+        }
+
+        function scrollToCategory(id) {
+            if (id === 'all') { 
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
+                updateActivePill('pill-all');
+                return; 
+            }
+            const el = document.getElementById(id);
+            if (el) {
+                const headerOffset = 210;
+                const elementPosition = el.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                updateActivePill(`pill-${id}`);
+            }
+        }
+
+        function updateActivePill(activePillId) {
+            const pills = document.querySelectorAll("#quickCategoryPillStrip button");
+            pills.forEach(p => {
+                p.className = "px-3 py-1 rounded-full text-xs font-heading font-bold bg-stone-100 text-stone-700 whitespace-nowrap active:scale-95 transition-all";
+            });
+            const active = document.getElementById(activePillId);
+            if (active) {
+                active.className = "px-3 py-1 rounded-full text-xs font-heading font-black bg-brand-600 text-white whitespace-nowrap shadow-xs";
+                active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
+        }
+
+        function toggleCategoryMenu(force) {
+            const el = document.getElementById("categoryMenuDropdown");
+            if (typeof force === "boolean") el.classList.toggle("hidden", !force);
+            else el.classList.toggle("hidden");
+        }
+
+        function applyFilters() {
+            filteredCatalog = fullCatalog.filter(item => {
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    if (!item.name.toLowerCase().includes(q) && !item.category.toLowerCase().includes(q)) return false;
+                }
+                if (activeDiet === 'veg' && item.foodType !== 'veg') return false;
+                if (activeDiet === 'non-veg' && item.foodType !== 'non-veg') return false;
+                if (availableOnly && !item.isAvailable) return false;
+                return true;
+            });
+            renderMenuCatalog(filteredCatalog);
+        }
+
+        function setDietFilter(diet) {
+            activeDiet = diet;
+            document.querySelectorAll("#filter-diet-all, #filter-diet-veg, #filter-diet-non-veg").forEach(b => {
+                b.className = "min-h-[44px] px-3 py-1.5 rounded-xl bg-stone-100 text-stone-700 whitespace-nowrap";
+            });
+            const activeBtn = document.getElementById(`filter-diet-${diet}`);
+            if (activeBtn) activeBtn.className = "min-h-[44px] px-3 py-1.5 rounded-xl bg-brand-dark text-white shadow-xs whitespace-nowrap";
+            applyFilters();
+        }
+
+        function toggleAvailableOnly() {
+            availableOnly = !availableOnly;
+            const btn = document.getElementById("filter-available");
+            const check = document.getElementById("availCheck");
+            if (availableOnly) {
+                btn.className = "min-h-[44px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-700 text-white shadow-xs whitespace-nowrap";
+                check.innerText = "✓";
+            } else {
+                btn.className = "min-h-[44px] flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 text-stone-700 whitespace-nowrap";
+                check.innerText = "";
+            }
+            applyFilters();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.trim();
+            document.getElementById("clearSearchBtn").classList.toggle("hidden", !searchQuery);
+            applyFilters();
+        }
+
+        function clearSearch() {
+            document.getElementById("searchInput").value = "";
+            searchQuery = "";
+            document.getElementById("clearSearchBtn").classList.add("hidden");
+            applyFilters();
+        }
+
+        // Render Menu Catalog with Strict 2 Items Per Row Layout
+        function renderMenuCatalog(items) {
+            const container = document.getElementById("menuContainer");
+            container.innerHTML = "";
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-stone-500 font-sans">
+                        <p class="font-bold text-sm">No dishes found matching criteria.</p>
+                        <button onclick="clearSearch(); setDietFilter('all');" class="mt-3 px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-black">Reset Filters</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const grouped = items.reduce((acc, i) => {
+                if (!acc[i.category]) acc[i.category] = [];
+                acc[i.category].push(i);
+                return acc;
+            }, {});
+
+            for (const [cat, catItems] of Object.entries(grouped)) {
+                const safeCatId = `section-${cat.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`;
+                const section = document.createElement("section");
+                section.id = safeCatId;
+                section.className = "mb-6 scroll-mt-44";
+
+                section.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-stone-200 pb-1.5 mb-3">
+                        <h2 class="font-heading font-black text-sm text-stone-900 tracking-tight uppercase">${cat}</h2>
+                        <span class="text-[10px] text-stone-500 bg-stone-100 px-2 py-0.5 rounded-full font-numeric font-bold">${catItems.length} items</span>
+                    </div>
+                `;
+
+                // 1 ITEM PER ROW MOBILE GRID (Spacious, easy touch targets with scroll animation)
+                const grid = document.createElement("div");
+                grid.className = "grid grid-cols-1 gap-3.5";
+
+                catItems.forEach((item, idx) => {
+                    grid.appendChild(createMobileDishCard(item, idx));
+                });
+
+                section.appendChild(grid);
+                container.appendChild(section);
+            }
+
+            // Setup IntersectionObserver for smooth scroll popup animations
+            setupMobileScrollAnimations();
+        }
+
+        function setupMobileScrollAnimations() {
+            if (!window.IntersectionObserver) {
+                document.querySelectorAll(".reveal-on-scroll").forEach(el => el.classList.add("revealed"));
+                return;
+            }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("revealed");
+                    }
+                });
+            }, { rootMargin: "0px 0px -5% 0px", threshold: 0.08 });
+
+            document.querySelectorAll(".reveal-on-scroll").forEach(el => observer.observe(el));
+        }
+
+        // ============================================================
+        // LAZY LOAD BALANCER & REACT-STYLE SURGICAL DOM PATCHING
+        // ============================================================
+        class LazyLoadBalancer {
+            constructor() {
+                this.pendingUpdates = new Set();
+                this.frameRequested = false;
+            }
+
+            schedule(dishId) {
+                this.pendingUpdates.add(dishId);
+                if (!this.frameRequested) {
+                    this.frameRequested = true;
+                    requestAnimationFrame(() => this.flush());
+                }
+            }
+
+            flush() {
+                this.pendingUpdates.forEach(dishId => {
+                    this.patchDishButton(dishId);
+                });
+                this.pendingUpdates.clear();
+                this.frameRequested = false;
+            }
+
+            patchDishButton(dishId) {
+                const item = fullCatalog.find(d => d.id === dishId);
+                if (!item) return;
+                const qty = cart[dishId]?.qty || 0;
+                
+                // Surgical update of the Top Total Banner on the image
+                const topBanner = document.getElementById(`dish-top-price-${dishId}`);
+                if (topBanner) {
+                    if (qty > 0) {
+                        topBanner.innerHTML = `
+                            <span class="inline-flex items-center gap-1 bg-amber-400 text-stone-950 font-numeric font-black text-[11px] px-2 py-0.5 rounded-full shadow-md animate-cart-pop border border-amber-300">
+                                <span>₹${item.price * qty}</span>
+                                <span class="text-[9px] font-bold text-stone-700">(${qty})</span>
+                            </span>
+                        `;
+                        topBanner.classList.remove("hidden");
+                    } else {
+                        topBanner.innerHTML = "";
+                        topBanner.classList.add("hidden");
+                    }
+                }
+
+                // Surgical update of the Bottom Action Control
+                const container = document.getElementById(`dish-action-container-${dishId}`);
+                if (container) {
+                    container.innerHTML = renderMobileActionButton(item, qty, item.isAvailable);
+                }
+
+                // Surgical update of base unit price tag styling
+                const basePrice = document.getElementById(`dish-base-price-${dishId}`);
+                if (basePrice) {
+                    basePrice.className = qty > 0 
+                        ? "font-numeric font-extrabold text-stone-500 text-xs" 
+                        : "font-numeric font-black text-brand-700 text-sm";
+                }
+
+                // Surgical update in Spotlight Modal if currently viewing this dish
+                const modalBar = document.getElementById("dishModalBottomBar");
+                if (modalBar && currentSpotlightDishId === dishId) {
+                    renderSpotlightAction(item, qty);
+                }
+            }
+        }
+
+        const lazy_load_balancer = new LazyLoadBalancer();
+        let currentSpotlightDishId = null;
+
+        // Dedicated Mobile Dish Card: 1 Item Per Row with Scroll Popup Animation
+        function createMobileDishCard(item, index = 0) {
+            const card = document.createElement("div");
+            card.id = `dish-card-${item.id}`;
+            const inCartQty = cart[item.id]?.qty || 0;
+            const isAvail = item.isAvailable;
+            const badgeSVG = item.foodType === 'veg' ? vegBadgeSVG : nonVegBadgeSVG;
+            const customTag = item.hasOptions ? `<span class="text-[9px] font-bold text-amber-700 bg-amber-50 px-1 py-0.5 rounded border border-amber-200 uppercase">Custom</span>` : '';
+
+            // Staggered popup delay (caps at 240ms)
+            const delayMs = Math.min((index % 5) * 45, 240);
+            card.className = `reveal-on-scroll bg-white rounded-2xl p-3.5 border border-stone-200/90 shadow-soft hover:shadow-hover active:scale-[0.99] flex flex-col justify-between relative overflow-hidden transition-all tap-press ${!isAvail ? 'opacity-70 bg-stone-50' : ''}`;
+            card.style.transitionDelay = `${delayMs}ms`;
+
+            // Tapping card opens the spotlight modal without page scroll displacement
+            card.onclick = (e) => {
+                if (e.target.closest('button')) return;
+                openDishModal(item.id);
+            };
+
+            const topBannerHTML = inCartQty > 0 ? `
+                <span class="inline-flex items-center gap-1 bg-amber-400 text-stone-950 font-numeric font-black text-xs px-2.5 py-0.5 rounded-full shadow-md animate-cart-pop border border-amber-300">
+                    <span>₹${item.price * inCartQty}</span>
+                    <span class="text-[10px] font-bold text-stone-700">(${inCartQty})</span>
+                </span>
+            ` : '';
+
+            card.innerHTML = `
+                <!-- Top Details Row: Name, Badges, Price & Image Side-by-Side -->
+                <div class="flex items-start justify-between gap-3 mb-2.5">
+                    
+                    <!-- Left: Details & Base Price -->
+                    <div class="flex-1 min-w-0 pr-1">
+                        <div class="flex items-center gap-1.5 mb-1">
+                            ${badgeSVG}
+                            ${customTag}
+                            ${!isAvail ? '<span class="text-[9px] font-black bg-stone-200 text-stone-600 px-1.5 py-0.5 rounded uppercase">Closed</span>' : ''}
+                        </div>
+                        <h3 class="font-heading font-extrabold text-stone-950 text-sm leading-snug mb-1 line-clamp-2">
+                            ${item.name}
+                        </h3>
+                        <div class="flex items-baseline gap-1 mb-1.5">
+                            <span id="dish-base-price-${item.id}" class="${inCartQty > 0 ? 'font-numeric font-extrabold text-stone-500 text-xs' : 'font-numeric font-black text-brand-700 text-base'}">₹${item.price}</span>
+                            <span class="text-[10px] text-stone-400 font-normal">incl. tax</span>
+                        </div>
+                        <p class="text-xs text-stone-500 line-clamp-2 font-normal leading-relaxed">
+                            ${item.description || 'Authentic highway recipe prepared fresh.'}
+                        </p>
+                    </div>
+
+                    <!-- Right: Photo Container with Dynamic Top Price Badge -->
+                    <div class="w-28 h-28 shrink-0 relative rounded-2xl overflow-hidden skeleton-img bg-stone-100 shadow-inner">
+                        <img 
+                            src="${item.image}" 
+                            alt="${item.name}" 
+                            loading="lazy"
+                            decoding="async"
+                            class="w-full h-full object-cover transition-opacity duration-200 opacity-0"
+                            onload="this.classList.remove('opacity-0'); if(this.parentElement) this.parentElement.classList.remove('skeleton-img');"
+                            onerror="this.onerror=null; this.src='${dishFallbackSVG}'; this.classList.remove('opacity-0'); if(this.parentElement) this.parentElement.classList.remove('skeleton-img');"
+                        />
+                        
+                        <!-- Dynamic Top Total Price Banner: Live calculated total when user adds items -->
+                        <div id="dish-top-price-${item.id}" class="absolute top-1.5 right-1.5 z-10 transition-all ${inCartQty > 0 ? '' : 'hidden'}">
+                            ${topBannerHTML}
+                        </div>
+
+                        <span class="absolute bottom-1.5 right-1.5 text-[9px] font-bold bg-black/60 text-white px-2 py-0.5 rounded-md backdrop-blur-xs">Details</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: Full-Width Ergonomic Touch Stepper (No Pinpoint Accuracy Required) -->
+                <div id="dish-action-container-${item.id}" class="w-full pt-1 border-t border-stone-100">
+                    ${renderMobileActionButton(item, inCartQty, isAvail)}
+                </div>
+            `;
+            return card;
+        }
+
+        // Full-width, thumb-friendly touch targets with clean, professional number display
+        function renderMobileActionButton(item, qty, isAvail) {
+            if (!isAvail) {
+                return `<button type="button" disabled class="w-full py-2 bg-stone-100 text-stone-400 font-heading font-bold text-xs rounded-xl cursor-not-allowed">Closed</button>`;
+            }
+            if (qty > 0) {
+                return `
+                    <div class="w-full min-h-[40px] bg-brand-50 border-2 border-brand-500 rounded-xl p-0.5 font-numeric flex items-center justify-between shadow-xs">
+                        <!-- Generous Minus Touch Target -->
+                        <button type="button" onclick="event.stopPropagation(); event.preventDefault(); updateCart('${item.id}', -1);" class="w-10 h-8 flex items-center justify-center font-black active:bg-brand-200 text-brand-800 rounded-lg text-base select-none transition-transform active:scale-90 bg-white shadow-xs">
+                            -
+                        </button>
+                        
+                        <!-- Clean, Professional Updated Number Only -->
+                        <div class="flex items-center justify-center px-3 select-none">
+                            <span class="font-numeric font-black text-base text-brand-900">${qty}</span>
+                        </div>
+                        
+                        <!-- Generous Plus Touch Target -->
+                        <button type="button" onclick="event.stopPropagation(); event.preventDefault(); updateCart('${item.id}', 1);" class="w-10 h-8 flex items-center justify-center font-black active:bg-brand-700 bg-brand-600 text-white rounded-lg text-base select-none transition-transform active:scale-90 shadow-xs">
+                            +
+                        </button>
+                    </div>
+                `;
+            }
+            return `
+                <button type="button" onclick="event.stopPropagation(); event.preventDefault(); updateCart('${item.id}', 1);" class="w-full min-h-[38px] py-2 bg-brand-600 active:bg-brand-700 text-white text-xs font-heading font-black rounded-xl shadow-xs transition-transform active:scale-95 flex items-center justify-center gap-1.5 select-none tracking-wide">
+                    <span>ADD TO PLATE</span>
+                    <span class="text-sm font-black">+</span>
+                </button>
+            `;
+        }
+
+        // Cart State & Calculations with LAZY LOAD BALANCER (NO PAGE RELOAD / NO FULL RE-RENDER)
+        function updateCart(dishId, delta) {
+            const item = fullCatalog.find(d => d.id === dishId);
+            if (!item) return;
+
+            if (window.navigator && window.navigator.vibrate) {
+                try { window.navigator.vibrate(delta > 0 ? [30] : [20]); } catch(e){}
+            }
+
+            if (!cart[dishId]) cart[dishId] = { ...item, qty: 0 };
+            cart[dishId].qty += delta;
+            if (cart[dishId].qty <= 0) delete cart[dishId];
+
+            // 1. Surgical update only for this item via lazy_load_balancer (NO reload, NO scroll jump)
+            lazy_load_balancer.schedule(dishId);
+
+            // 2. Update totals & floating badges
+            updateCartSummary();
+
+            // 3. Update cart sheet items if sheet is open
+            renderCartModalItems();
+
+            // 4. Cart badge pop animation
+            const badge = document.getElementById("floatingCartBadge");
+            if (badge) {
+                badge.classList.remove("animate-cart-pop");
+                void badge.offsetWidth; // trigger reflow
+                badge.classList.add("animate-cart-pop");
+            }
+        }
+
+        function updateCartSummary() {
+            const totalQty = Object.values(cart).reduce((sum, i) => sum + i.qty, 0);
+            const subtotal = Object.values(cart).reduce((sum, i) => sum + (i.price * i.qty), 0);
+            const taxes = Math.round(subtotal * 0.05);
+            const grandTotal = subtotal + taxes;
+
+            document.getElementById("floatingCartBadge").innerText = totalQty;
+            document.getElementById("floatingCartTotal").innerText = `₹${grandTotal}`;
+            document.getElementById("cartModalSubtitle").innerText = `${totalQty} items`;
+            document.getElementById("billSubtotal").innerText = `₹${subtotal}`;
+            document.getElementById("billTaxes").innerText = `₹${taxes}`;
+            document.getElementById("billGrandTotal").innerText = `₹${grandTotal}`;
+        }
+
+        // Dish Spotlight Modal Logic (Zero-Scroll-Displacement)
+        function renderSpotlightAction(dish, qty) {
+            const modalBar = document.getElementById("dishModalBottomBar");
+            if (!modalBar) return;
+            if (!dish.isAvailable) {
+                modalBar.innerHTML = `<button type="button" disabled class="w-full min-h-[48px] py-3 bg-stone-200 text-stone-400 font-heading font-black rounded-xl text-xs uppercase tracking-wider cursor-not-allowed">Item Currently Unavailable</button>`;
+                return;
+            }
+            if (qty > 0) {
+                modalBar.innerHTML = `
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2 bg-white border-2 border-brand-600 rounded-xl p-1 font-numeric text-brand-700">
+                            <button type="button" onclick="updateCart('${dish.id}', -1)" class="w-10 h-10 flex items-center justify-center font-black active:bg-brand-100 rounded-lg text-lg">-</button>
+                            <span class="font-black text-base px-3">${qty}</span>
+                            <button type="button" onclick="updateCart('${dish.id}', 1)" class="w-10 h-10 flex items-center justify-center font-black active:bg-brand-100 rounded-lg text-lg">+</button>
+                        </div>
+                        <button type="button" onclick="closeDishModal(); openCartModal();" class="flex-1 min-h-[48px] py-3 bg-brand-600 active:bg-brand-700 text-white font-heading font-black rounded-xl text-xs uppercase tracking-wider shadow-float flex items-center justify-center gap-2">
+                            <span>View Plate (₹${dish.price * qty})</span>
+                        </button>
+                    </div>
+                `;
+            } else {
+                modalBar.innerHTML = `
+                    <button type="button" onclick="updateCart('${dish.id}', 1);" class="w-full min-h-[48px] py-3 bg-brand-600 active:bg-brand-700 text-white font-heading font-black rounded-xl text-xs uppercase tracking-wider shadow-float flex items-center justify-center gap-2">
+                        <span>Add to Order Plate • ₹${dish.price}</span>
+                    </button>
+                `;
+            }
+        }
+
+        function openDishModal(dishId) {
+            currentSpotlightDishId = dishId;
+            const dish = fullCatalog.find(d => d.id === dishId);
+            if (!dish) return;
+
+            const modalBody = document.getElementById("dishModalBody");
+            const modalBar = document.getElementById("dishModalBottomBar");
+            const badgeSVG = dish.foodType === 'veg' ? vegBadgeSVG : nonVegBadgeSVG;
+            const inCartQty = cart[dish.id]?.qty || 0;
+
+            modalBody.innerHTML = `
+                <div class="w-full h-44 rounded-2xl overflow-hidden bg-stone-100 border border-stone-200 relative mb-3">
+                    <img src="${dish.image}" alt="${dish.name}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${dishFallbackSVG}';" />
+                    <div class="absolute top-2 left-2 bg-white/95 px-2 py-0.5 rounded-lg flex items-center gap-1 text-[11px] font-bold">
+                        ${badgeSVG}
+                        <span class="capitalize">${dish.foodType}</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-heading font-black text-stone-900 leading-snug">${toTitleCase(dish.name)}</h3>
+                    <div class="text-xl font-numeric font-black text-brand-600 mt-0.5">₹${dish.price} <span class="text-xs text-stone-400 font-normal">incl. tax</span></div>
+                    <p class="text-xs text-stone-600 mt-2 leading-relaxed">${dish.description || 'Authentic Highway Heritage recipe prepared fresh.'}</p>
+                </div>
+
+                <!-- 3 Metric Pillars: Prep Time, Quantity, Google Maps Rating -->
+                <div class="grid grid-cols-3 gap-2 py-1">
+                    <div class="p-2 bg-stone-50 border border-stone-200 rounded-xl text-center">
+                        <div class="text-[10px] text-amber-700 font-bold">Prep Time</div>
+                        <div class="font-numeric font-black text-xs text-stone-900 mt-0.5">10-15 Min</div>
+                    </div>
+                    <div class="p-2 bg-stone-50 border border-stone-200 rounded-xl text-center">
+                        <div class="text-[10px] text-brand-700 font-bold">Portion</div>
+                        <div class="font-heading font-black text-xs text-stone-900 mt-0.5">Standard</div>
+                    </div>
+                    <div class="p-2 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+                        <div class="text-[10px] text-emerald-800 font-bold">Google Score</div>
+                        <div class="font-numeric font-black text-xs text-emerald-950 mt-0.5">4.3 ★ (6.8k)</div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 text-xs text-stone-700">
+                    <h4 class="font-heading font-black text-[11px] uppercase tracking-wider text-stone-900 mb-1">What It Consists Of</h4>
+                    <p class="leading-relaxed">Stone-ground wholesome ingredients, signature whole spices, pure mustard oil / country ghee preparation.</p>
+                </div>
+            `;
+
+            renderSpotlightAction(dish, inCartQty);
+
+            document.body.classList.add("modal-open");
+            document.getElementById("dishModalBackdrop").classList.remove("hidden");
+            const sheet = document.getElementById("dishModalSheet");
+            sheet.classList.remove("hidden");
+            setTimeout(() => sheet.classList.remove("translate-y-full"), 10);
+        }
+
+        function closeDishModal() {
+            document.body.classList.remove("modal-open");
+            const sheet = document.getElementById("dishModalSheet");
+            sheet.classList.add("translate-y-full");
+            setTimeout(() => {
+                sheet.classList.add("hidden");
+                document.getElementById("dishModalBackdrop").classList.add("hidden");
+            }, 250);
+        }
+
+        // Cart Modal Sheet
+        function openCartModal() {
+            renderCartModalItems();
+            document.body.classList.add("modal-open");
+            document.getElementById("cartModalBackdrop").classList.remove("hidden");
+            const sheet = document.getElementById("cartModalSheet");
+            sheet.classList.remove("hidden");
+            setTimeout(() => sheet.classList.remove("translate-y-full"), 10);
+        }
+
+        function closeCartModal() {
+            document.body.classList.remove("modal-open");
+            const sheet = document.getElementById("cartModalSheet");
+            sheet.classList.add("translate-y-full");
+            setTimeout(() => {
+                sheet.classList.add("hidden");
+                document.getElementById("cartModalBackdrop").classList.add("hidden");
+            }, 250);
+        }
+
+        function renderCartModalItems() {
+            const container = document.getElementById("cartModalItems");
+            const entries = Object.values(cart);
+            if (entries.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-stone-400">
+                        <svg class="w-10 h-10 mx-auto mb-2 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <p class="text-xs font-bold text-stone-600">Your plate is empty</p>
+                    </div>
+                `;
+                return;
+            }
+            container.innerHTML = entries.map(item => `
+                <div class="flex items-center justify-between p-2.5 bg-stone-50 rounded-xl border border-stone-200">
+                    <div class="min-w-0 flex-1 pr-2">
+                        <h4 class="font-heading font-extrabold text-xs text-stone-900 truncate">${item.name}</h4>
+                        <span class="font-numeric font-black text-brand-600 text-xs">₹${item.price * item.qty}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-white border border-stone-300 rounded-lg p-0.5 font-numeric">
+                        <button onclick="updateCart('${item.id}', -1)" class="w-7 h-7 flex items-center justify-center font-black active:bg-stone-100 rounded text-xs">-</button>
+                        <span class="font-black text-xs px-1.5">${item.qty}</span>
+                        <button onclick="updateCart('${item.id}', 1)" class="w-7 h-7 flex items-center justify-center font-black active:bg-stone-100 rounded text-xs">+</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // AI Concierge Bottom-Sheet Modal (Prevents background scrolling)
+        function openAiModal() {
+            document.body.classList.add("modal-open");
+            document.getElementById("aiModalBackdrop").classList.remove("hidden");
+            const sheet = document.getElementById("aiModalSheet");
+            sheet.classList.remove("hidden");
+            setTimeout(() => {
+                sheet.classList.remove("translate-y-full");
+                document.getElementById("chatInput").focus();
+            }, 10);
+        }
+
+        function closeAiModal() {
+            document.body.classList.remove("modal-open");
+            const sheet = document.getElementById("aiModalSheet");
+            sheet.classList.add("translate-y-full");
+            setTimeout(() => {
+                sheet.classList.add("hidden");
+                document.getElementById("aiModalBackdrop").classList.add("hidden");
+            }, 250);
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById("chatInput");
+            const q = input.value.trim();
+            if (!q) return;
+
+            const chatHistory = document.getElementById("chatHistory");
+            const userMsg = document.createElement("div");
+            userMsg.className = "p-3 bg-brand-600 text-white rounded-2xl rounded-tr-sm self-end text-xs shadow-xs max-w-[85%] ml-auto";
+            userMsg.innerText = q;
+            chatHistory.appendChild(userMsg);
+            input.value = "";
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            const botLoading = document.createElement("div");
+            botLoading.className = "p-3 bg-white border border-stone-200 text-stone-500 rounded-2xl rounded-tl-sm self-start text-xs shadow-xs";
+            botLoading.innerText = "Steward is typing...";
+            chatHistory.appendChild(botLoading);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/ask`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question: q })
+                });
+                const data = await res.json();
+                botLoading.innerText = data.answer || "Here are our recommendations from the live menu.";
+            } catch (e) {
+                botLoading.innerText = "I am ready to help! You can ask about popular breakfast dishes, vegetarian choices, or mutton specials.";
+            }
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        document.getElementById("chatInput")?.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendChatMessage();
+        });
+
+        function callWaiterPrompt() {
+            alert("A floor steward has been notified and is coming to Table #4!");
+        }
+
+        function placeOrderSimulation() {
+            const count = Object.values(cart).reduce((sum, i) => sum + i.qty, 0);
+            if (count === 0) return;
+            alert(`Thank you! Your order of ${count} items has been sent directly to the kitchen.`);
+            cart = {};
+            updateCartSummary();
+            closeCartModal();
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.getElementById("lang-en").className = lang === 'en' ? "px-1.5 py-0.5 text-stone-900 font-black" : "px-1.5 py-0.5 text-stone-400";
+            document.getElementById("lang-bn").className = lang === 'bn' ? "px-1.5 py-0.5 text-stone-900 font-black font-bengali" : "px-1.5 py-0.5 text-stone-400 font-bengali";
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            fetchMenuData();
+        });
+    </script>
+
+  <!-- Floating Scroll To Top Button -->
+  <button id="scrollToTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="hidden fixed bottom-24 right-5 z-40 bg-brand-primary text-white p-3.5 rounded-full shadow-2xl hover:bg-brand-primaryDark transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-brand-primary/30 flex items-center justify-center transform hover:scale-105 active:scale-95 border-2 border-white/80" aria-label="Scroll to top">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+    </svg>
+  </button>
+
+</body>
+</html>
