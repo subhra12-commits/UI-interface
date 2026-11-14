@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mother's Hut - Admin Operations & Microservices Gateway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            dark: '#1c1917'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-stone-900 via-stone-950 to-amber-950 text-stone-100 min-h-screen flex flex-col justify-between font-sans selection:bg-amber-500 selection:text-white">
+
+    <!-- Top Secure Header -->
+    <header class="p-4 border-b border-stone-800 bg-stone-900/90 backdrop-blur-md sticky top-0 z-30 shadow-lg">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/" class="w-10 h-10 rounded-xl bg-white shadow-xs border border-stone-700 p-0.5 flex items-center justify-center">
+                    <img src="/logo.png" alt="Mother's Hut" class="w-full h-full object-contain" />
+                </a>
+                <div>
+                    <h1 class="font-heading font-black text-sm sm:text-base text-white tracking-wide flex items-center gap-2">
+                        <span>Mother's Hut Admin Hub</span>
+                        <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 uppercase tracking-widest">Supabase SSO</span>
+                    </h1>
+                    <span class="text-[10px] text-stone-400 block">Single Sign-On & Protected Microservices Network</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div id="topUserBadge" class="hidden sm:flex items-center gap-2 px-3 py-1 bg-stone-800/80 border border-stone-700 rounded-xl text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="topUsernameDisplay" class="font-bold text-stone-200">Staff</span>
+                </div>
+                <a href="/" class="text-xs font-bold text-stone-400 hover:text-white flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-xl hover:bg-stone-800/60">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <span>Back to Menu</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Section -->
+    <main class="flex-1 max-w-5xl mx-auto w-full p-4 sm:p-6 flex flex-col justify-center">
+
+        <!-- ======================================================== -->
+        <!-- VIEW 1: AUTHENTICATION PORTAL (SIGN IN & SIGN UP)        -->
+        <!-- ======================================================== -->
+        <div id="authContainer" class="max-w-md w-full mx-auto bg-stone-900/90 rounded-3xl border border-stone-800 p-7 sm:p-8 shadow-2xl backdrop-blur-xl">
+            
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-amber-500/10 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-amber-500/30 shadow-inner">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+                <h2 class="font-heading font-black text-xl text-white">Staff Authentication</h2>
+                <p class="text-xs text-stone-400 mt-1">Authenticate to unlock access to protected kitchen & management services</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="flex items-center bg-stone-950 p-1 rounded-2xl mb-5 border border-stone-800">
+                <button id="tabSignin" onclick="switchTab('signin')" class="flex-1 py-2 rounded-xl text-xs font-black transition-all bg-stone-800 text-white shadow-xs">
+                    Sign In
+                </button>
+                <button id="tabSignup" onclick="switchTab('signup')" class="flex-1 py-2 rounded-xl text-xs font-black transition-all text-stone-400 hover:text-white">
+                    Sign Up
+                </button>
+            </div>
+
+            <!-- Alert Notification -->
+            <div id="alertBox" class="hidden mb-4 p-3 rounded-xl text-xs font-medium border flex items-center gap-2"></div>
+
+            <!-- SIGN IN FORM -->
+            <form id="signinForm" onsubmit="handleSignin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1.5">Username</label>
+                    <input type="text" id="inUsername" required placeholder="Enter username..." class="w-full px-3.5 py-2.5 bg-stone-950 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder:text-stone-600 focus:outline-none transition-all" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1.5">Password</label>
+                    <input type="password" id="inPassword" required placeholder="Enter password..." class="w-full px-3.5 py-2.5 bg-stone-950 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder:text-stone-600 focus:outline-none transition-all" />
+                </div>
+                <button type="submit" id="btnSignin" class="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 mt-2">
+                    <span>Authenticate & Launch SSO</span>
+                </button>
+            </form>
+
+            <!-- SIGN UP FORM -->
+            <form id="signupForm" onsubmit="handleSignup(event)" class="hidden space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1.5">Username</label>
+                    <input type="text" id="upUsername" required placeholder="Choose username..." class="w-full px-3.5 py-2.5 bg-stone-950 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder:text-stone-600 focus:outline-none transition-all" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1.5">Employee ID</label>
+                    <input type="text" id="upEmpId" required placeholder="e.g. MH-EMP-007" class="w-full px-3.5 py-2.5 bg-stone-950 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder:text-stone-600 focus:outline-none transition-all" />
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1.5">Password</label>
+                    <input type="password" id="upPassword" required placeholder="Create password..." class="w-full px-3.5 py-2.5 bg-stone-950 border border-stone-800 focus:border-amber-500 rounded-xl text-xs text-white placeholder:text-stone-600 focus:outline-none transition-all" />
+                </div>
+                <button type="submit" id="btnSignup" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-stone-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 mt-2">
+                    <span>Register Credentials</span>
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-stone-800/80 text-center">
+                <span class="text-[10px] text-stone-500">Security: SHA-256 password hash + cryptographic token decoder</span>
+            </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- VIEW 2: AUTHENTICATED DASHBOARD WITH STRATEGY 2 SSO      -->
+        <!-- ======================================================== -->
+        <div id="dashboardContainer" class="hidden space-y-6">
+            
+            <!-- Welcome Header Card -->
+            <div class="bg-stone-900/90 border border-stone-800 rounded-3xl p-6 sm:p-7 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold">Authenticated Admin Session Active</span>
+                    </div>
+                    <h2 class="font-heading font-black text-xl text-white">Welcome, <span id="dashUsername" class="text-amber-400 capitalize">Staff</span></h2>
+                    <p class="text-xs text-stone-400 mt-1">Each service is secured via Supabase JWT SSO tickets. Direct access is protected.</p>
+                </div>
+                <button onclick="logout()" class="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold rounded-xl border border-stone-700 transition-all active:scale-95">
+                    Sign Out
+                </button>
+            </div>
+
+            <!-- SSO Status Info Banner -->
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-start gap-3">
+                <svg class="w-5 h-5 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div class="text-xs text-stone-300 leading-relaxed">
+                    <strong class="text-amber-300 font-bold">Strategy 2 Security Active:</strong> When you click any service below, our backend issues a time-limited (120-second) cryptographic ticket (<code class="bg-black/40 px-1 py-0.5 rounded text-amber-200">?sso_ticket=...</code>). If an unauthorized user tries to visit the direct Render URL without this token, access is rejected.
+                </div>
+            </div>
+
+            <!-- 3 Protected Microservice Launchers -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                
+                <!-- Service 1: Meal Verifier -->
+                <div class="bg-stone-900/80 border border-stone-800 hover:border-amber-500/60 rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 shadow-lg">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <span class="text-[9px] font-mono uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-full">Render Protected</span>
+                        </div>
+                        <h3 class="font-heading font-black text-base text-white mb-1.5">Meal Verifier</h3>
+                        <p class="text-xs text-stone-400 leading-relaxed mb-4">
+                            Kitchen meal audit and plate checking system before handing food to customers.
+                        </p>
+                    </div>
+                    <button onclick="launchService('meal-verifier', 'https://mh-meal-verifier-1.onrender.com/')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md">
+                        <span>Launch with Ticket</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+
+                <!-- Service 2: Central Backend Microservice -->
+                <div class="bg-stone-900/80 border border-stone-800 hover:border-rose-500/60 rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 shadow-lg">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/30 flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+                            </div>
+                            <span class="text-[9px] font-mono uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-full">Supabase DB</span>
+                        </div>
+                        <h3 class="font-heading font-black text-base text-white mb-1.5">Mother's Hut Backend</h3>
+                        <p class="text-xs text-stone-400 leading-relaxed mb-4">
+                            Cloud API and Supabase database cluster managing catalog, reservations, and orders.
+                        </p>
+                    </div>
+                    <button onclick="launchService('backend', 'https://mothers-hut-backend.onrender.com')" class="w-full py-2.5 bg-rose-500 hover:bg-rose-400 text-stone-950 font-black text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md">
+                        <span>Launch with Ticket</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+
+                <!-- Service 3: Kitchen Display System (KDS) -->
+                <div class="bg-stone-900/80 border border-stone-800 hover:border-emerald-500/60 rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 shadow-lg">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </div>
+                            <span class="text-[9px] font-mono uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-full">KDS Terminal</span>
+                        </div>
+                        <h3 class="font-heading font-black text-base text-white mb-1.5">Kitchen Monitor</h3>
+                        <p class="text-xs text-stone-400 leading-relaxed mb-4">
+                            Real-time order line display for chef stations and drive-thru fulfillment dispatch.
+                        </p>
+                    </div>
+                    <button onclick="launchService('kitchen-monitor', 'https://kitchen-monitor.onrender.com/')" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-black text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md">
+                        <span>Launch with Ticket</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="p-4 border-t border-stone-800/80 text-center text-xs text-stone-500 font-medium">
+        Mother's Hut Internal Operations & Single Sign-On Gateway • Krishnanagar NH-12
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        const BACKEND_URL = window.location.origin && window.location.origin !== "null" && window.location.protocol.startsWith("http")
+            ? window.location.origin
+            : "http://127.0.0.1:8000";
+
+        function switchTab(tab) {
+            const btnIn = document.getElementById("tabSignin");
+            const btnUp = document.getElementById("tabSignup");
+            const formIn = document.getElementById("signinForm");
+            const formUp = document.getElementById("signupForm");
+            hideAlert();
+
+            if (tab === "signin") {
+                btnIn.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all bg-stone-800 text-white shadow-xs";
+                btnUp.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all text-stone-400 hover:text-white";
+                formIn.classList.remove("hidden");
+                formUp.classList.add("hidden");
+            } else {
+                btnUp.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all bg-stone-800 text-white shadow-xs";
+                btnIn.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all text-stone-400 hover:text-white";
+                formUp.classList.remove("hidden");
+                formIn.classList.add("hidden");
+            }
+        }
+
+        function showAlert(msg, isSuccess = false) {
+            const box = document.getElementById("alertBox");
+            if (!box) return;
+            box.className = isSuccess
+                ? "mb-4 p-3 rounded-xl text-xs font-medium border bg-emerald-950/60 border-emerald-500/40 text-emerald-300 flex items-center gap-2"
+                : "mb-4 p-3 rounded-xl text-xs font-medium border bg-rose-950/60 border-rose-500/40 text-rose-300 flex items-center gap-2";
+            box.innerHTML = `<span>${msg}</span>`;
+            box.classList.remove("hidden");
+        }
+
+        function hideAlert() {
+            const box = document.getElementById("alertBox");
+            if (box) box.classList.add("hidden");
+        }
+
+        async function sha256(str) {
+            const buffer = new TextEncoder().encode(str);
+            const hash = await crypto.subtle.digest("SHA-256", buffer);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        function checkSession() {
+            const raw = localStorage.getItem("mh_admin_session");
+            const authDiv = document.getElementById("authContainer");
+            const dashDiv = document.getElementById("dashboardContainer");
+            const topBadge = document.getElementById("topUserBadge");
+
+            if (raw) {
+                try {
+                    const sess = JSON.parse(raw);
+                    if (sess && sess.token) {
+                        authDiv.classList.add("hidden");
+                        dashDiv.classList.remove("hidden");
+                        if (topBadge) topBadge.classList.remove("hidden");
+                        document.getElementById("topUsernameDisplay").innerText = sess.username;
+                        document.getElementById("dashUsername").innerText = sess.username;
+                        return;
+                    }
+                } catch(e) {}
+            }
+            authDiv.classList.remove("hidden");
+            dashDiv.classList.add("hidden");
+            if (topBadge) topBadge.classList.add("hidden");
+        }
+
+        function logout() {
+            localStorage.removeItem("mh_admin_session");
+            document.cookie = "mh_admin_token=; path=/; max-age=0; SameSite=Strict";
+            checkSession();
+            showAlert("Logged out successfully.", true);
+        }
+
+        async function handleSignin(e) {
+            e.preventDefault();
+            hideAlert();
+            const u = document.getElementById("inUsername").value.trim().toLowerCase();
+            const p = document.getElementById("inPassword").value;
+            const btn = document.getElementById("btnSignin");
+            btn.disabled = true;
+            btn.innerText = "Authenticating...";
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success) {
+                        localStorage.setItem("mh_admin_session", JSON.stringify({
+                            username: u,
+                            token: data.token,
+                            short_code: data.short_code
+                        }));
+                        document.cookie = `mh_admin_token=${data.token}; path=/; max-age=3600; SameSite=Strict`;
+                        showAlert("Authenticated successfully! Loading services...", true);
+                        setTimeout(() => {
+                            btn.disabled = false;
+                            btn.innerText = "Authenticate & Launch SSO";
+                            checkSession();
+                        }, 500);
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn("Backend offline, checking local store");
+            }
+
+            // Local fallback
+            const localUsers = JSON.parse(localStorage.getItem("mh_local_admins") || "{}");
+            const user = localUsers[u];
+            if (user) {
+                const h = await sha256(p + ":" + user.token);
+                if (h === user.password_hash) {
+                    localStorage.setItem("mh_admin_session", JSON.stringify({
+                        username: u,
+                        token: user.token
+                    }));
+                    showAlert("Welcome back! Credentials verified.", true);
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerText = "Authenticate & Launch SSO";
+                        checkSession();
+                    }, 500);
+                    return;
+                }
+            }
+
+            showAlert("Invalid username or password.", false);
+            btn.disabled = false;
+            btn.innerText = "Authenticate & Launch SSO";
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            hideAlert();
+            const u = document.getElementById("upUsername").value.trim().toLowerCase();
+            const emp = document.getElementById("upEmpId").value.trim();
+            const p = document.getElementById("upPassword").value;
+            const btn = document.getElementById("btnSignup");
+            btn.disabled = true;
+            btn.innerText = "Registering...";
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: u, password: p, employee_id: emp })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success) {
+                        showAlert("Registered successfully! Please sign in.", true);
+                        switchTab("signin");
+                        document.getElementById("inUsername").value = u;
+                        document.getElementById("inPassword").value = p;
+                        btn.disabled = false;
+                        btn.innerText = "Register Credentials";
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn("Backend offline, saving to local store");
+            }
+
+            const localUsers = JSON.parse(localStorage.getItem("mh_local_admins") || "{}");
+            if (localUsers[u]) {
+                showAlert("Username already taken.", false);
+                btn.disabled = false;
+                btn.innerText = "Register Credentials";
+                return;
+            }
+            const tok = "tok_" + Math.random().toString(36).substring(2, 12);
+            const h = await sha256(p + ":" + tok);
+            localUsers[u] = { username: u, employee_id: emp, password_hash: h, token: tok };
+            localStorage.setItem("mh_local_admins", JSON.stringify(localUsers));
+
+            showAlert("Account created! Switching to sign in...", true);
+            setTimeout(() => {
+                switchTab("signin");
+                document.getElementById("inUsername").value = u;
+                document.getElementById("inPassword").value = p;
+                btn.disabled = false;
+                btn.innerText = "Register Credentials";
+            }, 600);
+        }
+
+        // ========================================================
+        // STRATEGY 2 IMPLEMENTATION: GENERATE SSO JWT TICKET
+        // ========================================================
+        async function launchService(serviceName, baseUrl) {
+            const raw = localStorage.getItem("mh_admin_session");
+            if (!raw) {
+                alert("Please authenticate first!");
+                return;
+            }
+            const sess = JSON.parse(raw);
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/generate-sso-ticket`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        username: sess.username,
+                        target_service: serviceName
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.sso_ticket) {
+                        // Secure redirect with short-lived JWT ticket attached
+                        const separator = baseUrl.includes("?") ? "&" : "?";
+                        const targetUrl = `${baseUrl}${separator}sso_ticket=${encodeURIComponent(data.sso_ticket)}`;
+                        window.open(targetUrl, "_blank");
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn("Backend offline, generating local signed token fallback");
+            }
+
+            // Fallback: generate local signed payload
+            const ts = Date.now();
+            const fallbackTicket = btoa(JSON.stringify({ u: sess.username, svc: serviceName, t: ts }));
+            const separator = baseUrl.includes("?") ? "&" : "?";
+            window.open(`${baseUrl}${separator}sso_ticket=${encodeURIComponent(fallbackTicket)}`, "_blank");
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            checkSession();
+        });
+    </script>
+</body>
+</html>

@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Automatic /admin URL Router for both file:// and http:// -->
+    <script>
+        (function() {
+            var href = window.location.href.toLowerCase();
+            var path = window.location.pathname.toLowerCase();
+            var hash = window.location.hash.toLowerCase();
+            if (href.endsWith('/admin') || href.endsWith('/admin/') || path.endsWith('/admin') || hash === '#admin' || hash === '#/admin') {
+                window.location.replace('admin.html');
+            }
+        })();
+    </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Mother's Hut | Mobile Heritage Dining</title>
@@ -171,10 +183,10 @@
                 Authentic Highway Kitchen Delicacies • Krishnanagar NH-12
             </p>
 
-            <!-- 4 Service Options Cards with Touch Accessibility -->
-            <div class="space-y-3 w-full max-w-sm">
-                <!-- 1. Dine-In Card -->
-                <button onclick="selectServiceMode('dine-in')" class="w-full min-h-[58px] p-3.5 bg-white rounded-2xl border-2 border-brand-500/20 active:border-brand-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
+                        <!-- 3 Service Options Cards with Touch Accessibility -->
+            <div class="space-y-3.5 w-full max-w-sm">
+                <!-- Dine-In Card -->
+                <button onclick="selectServiceMode('dine-in')" class="w-full min-h-[58px] p-4 bg-white rounded-2xl border-2 border-brand-500/20 active:border-brand-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
                     <div class="w-11 h-11 rounded-xl bg-rose-50 text-brand-600 flex items-center justify-center shrink-0">
                         <svg class="w-6 h-6 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     </div>
@@ -185,8 +197,8 @@
                     <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </button>
 
-                <!-- 2. Home Delivery Card (Fully Preserved) -->
-                <button onclick="selectServiceMode('delivery')" class="w-full min-h-[58px] p-3.5 bg-white rounded-2xl border-2 border-stone-200 active:border-brand-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
+                <!-- Home Delivery Card -->
+                <button onclick="selectServiceMode('delivery')" class="w-full min-h-[58px] p-4 bg-white rounded-2xl border-2 border-stone-200 active:border-brand-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
                     <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
                         <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
                     </div>
@@ -197,26 +209,14 @@
                     <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </button>
 
-                <!-- 3. Pickup / Takeaway Card (Fully Preserved) -->
-                <button onclick="selectServiceMode('takeaway')" class="w-full min-h-[58px] p-3.5 bg-white rounded-2xl border-2 border-stone-200 active:border-brand-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
+                <!-- Pickup / Takeaway Card -->
+                <button onclick="selectServiceMode('takeaway')" class="w-full min-h-[58px] p-4 bg-white rounded-2xl border-2 border-stone-200 active:border-brand-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
                     <div class="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
                         <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                     </div>
                     <div class="flex-1 min-w-0">
                         <h2 class="text-sm font-bold text-stone-900">Pickup / Takeaway</h2>
                         <p class="text-[11px] text-stone-500 truncate">Skip the queue & pick up hot food at counter</p>
-                    </div>
-                    <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                </button>
-
-                <!-- 4. Admin Management Card (Modal Launcher) -->
-                <button onclick="openAdminPortalModal()" class="w-full min-h-[58px] p-3.5 bg-white rounded-2xl border-2 border-stone-200 active:border-amber-500 active:scale-[0.99] shadow-soft text-left flex items-center gap-3.5 transition-all">
-                    <div class="w-11 h-11 rounded-xl bg-stone-900 text-amber-400 flex items-center justify-center shrink-0">
-                        <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h2 class="text-sm font-bold text-stone-900">Admin</h2>
-                        <p class="text-[11px] text-stone-500 truncate">Staff portal & internal project management</p>
                     </div>
                     <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </button>
@@ -1491,367 +1491,4 @@
         </button>
     </div>
 
-<!-- ========================================================================= -->
-<!-- EMBEDDED ADMIN AUTHENTICATION & MANAGEMENT DASHBOARD MODAL               -->
-<!-- Works immediately in both Local Server and direct file:// protocol       -->
-<!-- ========================================================================= -->
-<div id="adminPortalModalBackdrop" onclick="closeAdminPortalModal()" class="hidden fixed inset-0 bg-stone-950/75 backdrop-blur-md z-50 transition-opacity"></div>
-<div id="adminPortalModal" class="hidden fixed inset-x-3 top-1/2 -translate-y-1/2 max-w-xl mx-auto bg-white rounded-3xl shadow-2xl z-50 p-6 sm:p-7 border border-stone-200 font-sans max-h-[92vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-    
-    <!-- Modal Header -->
-    <div class="flex items-center justify-between pb-4 mb-4 border-b border-stone-100">
-        <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center p-1 border border-amber-200 shadow-xs">
-                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-            </div>
-            <div>
-                <h3 class="font-heading font-black text-sm text-stone-900" id="adminPortalTitle">Admin Portal Access</h3>
-                <span class="text-[10px] text-stone-500 block font-medium">Mother's Hut Internal Operations & Microservices</span>
-            </div>
-        </div>
-        <button onclick="closeAdminPortalModal()" class="p-1.5 text-stone-400 hover:text-stone-700 rounded-xl transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-    </div>
-
-    <!-- VIEW 1: AUTHENTICATION FORM (SIGN IN / SIGN UP) -->
-    <div id="adminAuthView" class="space-y-4">
-        <!-- Tab Switcher -->
-        <div class="flex items-center bg-stone-100 p-1 rounded-2xl mb-4">
-            <button id="adminTabSignin" onclick="switchAdminTab('signin')" class="flex-1 py-2 rounded-xl text-xs font-black transition-all bg-white text-stone-900 shadow-xs">
-                Sign In
-            </button>
-            <button id="adminTabSignup" onclick="switchAdminTab('signup')" class="flex-1 py-2 rounded-xl text-xs font-black transition-all text-stone-500 hover:text-stone-900">
-                Sign Up
-            </button>
-        </div>
-
-        <div id="adminAlertBox" class="hidden p-3 rounded-xl text-xs font-medium border flex items-center gap-2"></div>
-
-        <!-- Sign In Sub-form -->
-        <form id="adminSigninForm" onsubmit="handleAdminSignin(event)" class="space-y-3.5">
-            <div>
-                <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1">Username</label>
-                <input type="text" id="adminInUsername" required placeholder="Enter username..." class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" />
-            </div>
-            <div>
-                <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1">Password</label>
-                <input type="password" id="adminInPassword" required placeholder="Enter password..." class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" />
-            </div>
-            <button type="submit" id="adminInSubmitBtn" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 mt-2">
-                <span>Authenticate & Access</span>
-            </button>
-        </form>
-
-        <!-- Sign Up Sub-form -->
-        <form id="adminSignupForm" onsubmit="handleAdminSignup(event)" class="hidden space-y-3.5">
-            <div>
-                <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1">Username</label>
-                <input type="text" id="adminUpUsername" required placeholder="Choose username..." class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" />
-            </div>
-            <div>
-                <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1">Employee ID</label>
-                <input type="text" id="adminUpEmpId" required placeholder="e.g. MH-EMP-204" class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" />
-            </div>
-            <div>
-                <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1">Password</label>
-                <input type="password" id="adminUpPassword" required placeholder="Create password..." class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" />
-            </div>
-            <button type="submit" id="adminUpSubmitBtn" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 mt-2">
-                <span>Create Account & Register Token</span>
-            </button>
-        </form>
-    </div>
-
-    <!-- VIEW 2: AUTHENTICATED PROJECT DASHBOARD (Render Microservices & Supabase Backend) -->
-    <div id="adminDashboardView" class="hidden space-y-4">
-        <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex items-center justify-between text-xs">
-            <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                <div>
-                    <span class="font-bold text-emerald-900 block" id="adminLoggedGreeting">Authenticated as Staff</span>
-                    <span class="text-[10px] text-emerald-700 font-mono" id="adminActiveToken">Session Token: MH-SEC-OK</span>
-                </div>
-            </div>
-            <button onclick="handleAdminLogout()" class="px-2.5 py-1 bg-stone-900 hover:bg-stone-800 text-white font-bold rounded-lg text-[10px]">Logout</button>
-        </div>
-
-        <div class="my-2">
-            <span class="text-[11px] font-black uppercase tracking-wider text-stone-500 block">Deployed Microservices (Render / Supabase)</span>
-        </div>
-
-        <!-- 3 Project Launchers -->
-        <div class="space-y-2.5">
-            <a href="https://mh-meal-verifier-1.onrender.com/" target="_blank" rel="noopener noreferrer" class="group p-3.5 bg-stone-50 hover:bg-amber-50/60 rounded-2xl border border-stone-200 hover:border-amber-400 flex items-center justify-between transition-all">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
-                        <svg class="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </div>
-                    <div>
-                        <h4 class="font-heading font-black text-xs text-stone-900 group-hover:text-amber-800 transition-colors">Meal Verifier</h4>
-                        <p class="text-[11px] text-stone-500">Live kitchen meal audit & automated plate verification</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5 text-xs font-black text-amber-700 shrink-0">
-                    <span class="hidden sm:inline text-[10px] text-stone-400 font-mono">Render</span>
-                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                </div>
-            </a>
-
-            <a href="https://mothers-hut-backend.onrender.com" target="_blank" rel="noopener noreferrer" class="group p-3.5 bg-stone-50 hover:bg-rose-50/60 rounded-2xl border border-stone-200 hover:border-rose-400 flex items-center justify-between transition-all">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
-                        <svg class="w-5 h-5 text-rose-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
-                    </div>
-                    <div>
-                        <h4 class="font-heading font-black text-xs text-stone-900 group-hover:text-rose-800 transition-colors">Mother's Hut Central Backend</h4>
-                        <p class="text-[11px] text-stone-500">Cloud API & Supabase database integration layer</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5 text-xs font-black text-rose-700 shrink-0">
-                    <span class="hidden sm:inline text-[10px] text-stone-400 font-mono">Supabase</span>
-                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                </div>
-            </a>
-
-            <a href="https://kitchen-monitor.onrender.com/" target="_blank" rel="noopener noreferrer" class="group p-3.5 bg-stone-50 hover:bg-emerald-50/60 rounded-2xl border border-stone-200 hover:border-emerald-400 flex items-center justify-between transition-all">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-105 transition-transform">
-                        <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    </div>
-                    <div>
-                        <h4 class="font-heading font-black text-xs text-stone-900 group-hover:text-emerald-800 transition-colors">Kitchen Monitor</h4>
-                        <p class="text-[11px] text-stone-500">Live Kitchen Display System (KDS) for chef station queue</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5 text-xs font-black text-emerald-700 shrink-0">
-                    <span class="hidden sm:inline text-[10px] text-stone-400 font-mono">Render</span>
-                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                </div>
-            </a>
-        </div>
-    </div>
-</div>
-
-<script>
-        // ============================================================
-        // ADMIN AUTHENTICATION, PASSWORD DECODER & URL SHORTENER SYSTEM
-        // ============================================================
-        function openAdminPortalModal() {
-            document.body.classList.add("modal-open");
-            const backdrop = document.getElementById("adminPortalModalBackdrop");
-            const modal = document.getElementById("adminPortalModal");
-            if (backdrop && modal) {
-                backdrop.classList.remove("hidden");
-                modal.classList.remove("hidden");
-            }
-            checkAdminSession();
-        }
-
-        function closeAdminPortalModal() {
-            document.body.classList.remove("modal-open");
-            const backdrop = document.getElementById("adminPortalModalBackdrop");
-            const modal = document.getElementById("adminPortalModal");
-            if (backdrop && modal) {
-                backdrop.classList.add("hidden");
-                modal.classList.add("hidden");
-            }
-        }
-
-        function switchAdminTab(tab) {
-            const btnIn = document.getElementById("adminTabSignin");
-            const btnUp = document.getElementById("adminTabSignup");
-            const formIn = document.getElementById("adminSigninForm");
-            const formUp = document.getElementById("adminSignupForm");
-            hideAdminAlert();
-
-            if (tab === "signin") {
-                btnIn.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all bg-white text-stone-900 shadow-xs";
-                btnUp.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all text-stone-500 hover:text-stone-900";
-                formIn.classList.remove("hidden");
-                formUp.classList.add("hidden");
-            } else {
-                btnUp.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all bg-white text-stone-900 shadow-xs";
-                btnIn.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all text-stone-500 hover:text-stone-900";
-                formUp.classList.remove("hidden");
-                formIn.classList.add("hidden");
-            }
-        }
-
-        function showAdminAlert(msg, isSuccess = false) {
-            const box = document.getElementById("adminAlertBox");
-            if (!box) return;
-            box.className = isSuccess 
-                ? "p-3 rounded-xl text-xs font-medium border bg-emerald-50 border-emerald-200 text-emerald-800 flex items-center gap-2"
-                : "p-3 rounded-xl text-xs font-medium border bg-rose-50 border-rose-200 text-rose-800 flex items-center gap-2";
-            box.innerHTML = `<span>${msg}</span>`;
-            box.classList.remove("hidden");
-        }
-
-        function hideAdminAlert() {
-            const box = document.getElementById("adminAlertBox");
-            if (box) box.classList.add("hidden");
-        }
-
-        // Check if an authenticated token session exists in localStorage
-        function checkAdminSession() {
-            const session = localStorage.getItem("mh_admin_session");
-            const authView = document.getElementById("adminAuthView");
-            const dashView = document.getElementById("adminDashboardView");
-            const title = document.getElementById("adminPortalTitle");
-
-            if (session) {
-                try {
-                    const data = JSON.parse(session);
-                    if (data && data.token) {
-                        authView.classList.add("hidden");
-                        dashView.classList.remove("hidden");
-                        if (title) title.innerText = "Internal Project Dashboard";
-                        document.getElementById("adminLoggedGreeting").innerText = `Authenticated: ${data.username.toUpperCase()}`;
-                        document.getElementById("adminActiveToken").innerText = `Verified Token: ${data.token.slice(0, 10)}... (Ref: ${data.short_code || 'direct'})`;
-                        return;
-                    }
-                } catch (e) {}
-            }
-            authView.classList.remove("hidden");
-            dashView.classList.add("hidden");
-            if (title) title.innerText = "Admin Portal Access";
-        }
-
-        function handleAdminLogout() {
-            localStorage.removeItem("mh_admin_session");
-            checkAdminSession();
-            showAdminAlert("Logged out successfully.", true);
-        }
-
-        // SHA-256 Client-Side Decoder / Hash generator for offline & backend token validation
-        async function sha256Hash(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function handleAdminSignup(e) {
-            e.preventDefault();
-            hideAdminAlert();
-            const u = document.getElementById("adminUpUsername").value.trim().toLowerCase();
-            const empId = document.getElementById("adminUpEmpId").value.trim();
-            const p = document.getElementById("adminUpPassword").value;
-            const btn = document.getElementById("adminUpSubmitBtn");
-            btn.disabled = true;
-            btn.innerText = "Generating Security Token...";
-
-            try {
-                // Try backend API registration first
-                const res = await fetch(`${BACKEND_URL}/api/admin/register`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ username: u, password: p, employee_id: empId })
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.success) {
-                        showAdminAlert("Account registered with cryptographic token! Please sign in.", true);
-                        switchAdminTab('signin');
-                        document.getElementById("adminInUsername").value = u;
-                        document.getElementById("adminInPassword").value = p;
-                        btn.disabled = false;
-                        btn.innerText = "Create Account & Register Token";
-                        return;
-                    }
-                }
-            } catch (err) {
-                console.warn("Backend offline, utilizing client-side token registry fallback");
-            }
-
-            // Client-side storage fallback if opened directly from local files
-            const localUsers = JSON.parse(localStorage.getItem("mh_local_admins") || "{}");
-            if (localUsers[u]) {
-                showAdminAlert("Username already registered.", false);
-                btn.disabled = false;
-                btn.innerText = "Create Account & Register Token";
-                return;
-            }
-            const token = "tok_" + Math.random().toString(36).substring(2, 12);
-            const pwdHash = await sha256Hash(p + ":" + token);
-            localUsers[u] = { username: u, employee_id: empId, password_hash: pwdHash, token: token };
-            localStorage.setItem("mh_local_admins", JSON.stringify(localUsers));
-
-            showAdminAlert("Account created successfully! Switching to sign in...", true);
-            setTimeout(() => {
-                switchAdminTab('signin');
-                document.getElementById("adminInUsername").value = u;
-                document.getElementById("adminInPassword").value = p;
-                btn.disabled = false;
-                btn.innerText = "Create Account & Register Token";
-            }, 600);
-        }
-
-        async function handleAdminSignin(e) {
-            e.preventDefault();
-            hideAdminAlert();
-            const u = document.getElementById("adminInUsername").value.trim().toLowerCase();
-            const p = document.getElementById("adminInPassword").value;
-            const btn = document.getElementById("adminInSubmitBtn");
-            btn.disabled = true;
-            btn.innerText = "Decoding & Verifying...";
-
-            try {
-                const res = await fetch(`${BACKEND_URL}/api/admin/login`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ username: u, password: p })
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.success) {
-                        localStorage.setItem("mh_admin_session", JSON.stringify({
-                            username: u,
-                            token: data.token,
-                            short_code: data.short_code,
-                            short_url: data.short_url
-                        }));
-                        showAdminAlert("Token verified! Opening project dashboard...", true);
-                        setTimeout(() => {
-                            checkAdminSession();
-                            btn.disabled = false;
-                            btn.innerText = "Authenticate & Access";
-                        }, 500);
-                        return;
-                    }
-                }
-            } catch (err) {
-                console.warn("Backend offline, checking client-side token store");
-            }
-
-            // Local fallback validation using hash + token
-            const localUsers = JSON.parse(localStorage.getItem("mh_local_admins") || "{}");
-            const user = localUsers[u];
-            if (user) {
-                const calculatedHash = await sha256Hash(p + ":" + user.token);
-                if (calculatedHash === user.password_hash) {
-                    const short_code = Math.random().toString(36).substring(2, 9);
-                    localStorage.setItem("mh_admin_session", JSON.stringify({
-                        username: u,
-                        token: user.token,
-                        short_code: short_code
-                    }));
-                    showAdminAlert("Security token matched! Welcome.", true);
-                    setTimeout(() => {
-                        checkAdminSession();
-                        btn.disabled = false;
-                        btn.innerText = "Authenticate & Access";
-                    }, 500);
-                    return;
-                }
-            }
-
-            showAdminAlert("Incorrect username or password.", false);
-            btn.disabled = false;
-            btn.innerText = "Authenticate & Access";
-        }
-
-</script>
-</body>
 </html>

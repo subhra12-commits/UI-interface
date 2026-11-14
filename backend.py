@@ -173,10 +173,38 @@ class AdminLoginRequest(BaseModel):
 @api.get("/admin", response_class=HTMLResponse)
 def serve_admin_login():
     try:
-        with open("admin_login.html", "r", encoding="utf-8") as f:
+        with open("admin.html", "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read(), status_code=200)
     except FileNotFoundError:
-        return HTMLResponse(content="<h1>Admin login page not found.</h1>", status_code=404)
+        return HTMLResponse(content="<h1>Admin frontend file (admin.html) not found.</h1>", status_code=404)
+
+class SSOTicketRequest(BaseModel):
+    username: str
+    target_service: str
+
+# Strategy 2: Generate Cryptographically Signed Supabase SSO JWT Ticket
+@api.post("/api/admin/generate-sso-ticket")
+def generate_sso_ticket_endpoint(req: SSOTicketRequest):
+    users = admin_auth._load_json(admin_auth.USER_DB_FILE, {})
+    user = users.get(req.username.strip().lower())
+    emp_id = user.get("employee_id", "EMP-UNKNOWN") if user else "EMP-UNKNOWN"
+    
+    # 120-second validity ticket
+    ticket = admin_auth.generate_supabase_sso_ticket(req.username, emp_id, req.target_service, ttl_seconds=120)
+    return {
+        "success": True,
+        "sso_ticket": ticket,
+        "expires_in": 120,
+        "target_service": req.target_service
+    }
+
+# Endpoint for destination Render apps to verify incoming SSO tickets
+@api.get("/api/admin/verify-sso-ticket")
+def verify_sso_ticket_endpoint(ticket: str):
+    decoded = admin_auth.verify_supabase_sso_ticket(ticket)
+    if not decoded:
+        return {"valid": False, "message": "Invalid or expired ticket"}, 401
+    return {"valid": True, "claims": decoded}
 
 @api.post("/api/admin/register")
 def register_admin_endpoint(data: AdminRegisterRequest):

@@ -4,12 +4,16 @@ import secrets
 import time
 import os
 import json
+import jwt
 from typing import Optional, Dict
 
 USER_DB_FILE = "admin_users.json"
 TOKEN_DB_FILE = "short_urls.json"
 
+# Secret keys for signing and hashing
 SECRET_SALT = os.getenv("AUTH_SECRET_SALT", "mothers_hut_secure_salt_2026")
+# Supabase JWT Secret (can be set in .env or defaults to a high-entropy secret)
+SUPABASE_JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET", "super-secret-mothers-hut-supabase-jwt-key-2026")
 
 def _load_json(file_path: str, default: dict) -> dict:
     if os.path.exists(file_path):
@@ -25,10 +29,6 @@ def _save_json(file_path: str, data: dict):
         json.dump(data, f, indent=2)
 
 def hash_password_with_token(password: str) -> tuple[str, str]:
-    """
-    Creates a deterministic cryptographic hash and security verification token.
-    The token ensures the hash calculation matches on subsequent logins.
-    """
     token = secrets.token_hex(16)
     hashed = hmac.new(
         key=f"{SECRET_SALT}:{token}".encode("utf-8"),
@@ -38,10 +38,6 @@ def hash_password_with_token(password: str) -> tuple[str, str]:
     return hashed, token
 
 def verify_password_with_token(password: str, stored_hash: str, token: str) -> bool:
-    """
-    Recomputes the hash using the provided password and stored token.
-    Validates equality using constant-time comparison.
-    """
     calculated_hash = hmac.new(
         key=f"{SECRET_SALT}:{token}".encode("utf-8"),
         msg=password.encode("utf-8"),
@@ -77,11 +73,43 @@ def authenticate_admin(username: str, password: str) -> Optional[dict]:
         return user_data
     return None
 
+# =========================================================================
+# STRATEGY 2: SUPABASE SHARED SSO JWT TOKEN GENERATION
+# =========================================================================
+def generate_supabase_sso_ticket(username: str, employee_id: str, target_service: str, ttl_seconds: int = 120) -> str:
+    """
+    Generates a cryptographically signed, short-lived (120s) JWT SSO ticket.
+    Follows Supabase JWT standard format (aud=authenticated, role=authenticated/admin)
+    The destination Render microservice validates this ticket using SUPABASE_JWT_SECRET.
+    """
+    now = int(time.time())
+    payload = {
+        "aud": "authenticated",
+        "role": "admin",
+        "sub": username,
+        "user_metadata": {
+            "username": username,
+            "employee_id": employee_id,
+            "system": "mothers_hut_pos"
+        },
+        "target": target_service,
+        "iat": now,
+        "exp": now + ttl_seconds
+    }
+    token = jwt.encode(payload, SUPABASE_JWT_SECRET, algorithm="HS256")
+    return token
+
+def verify_supabase_sso_ticket(token_str: str) -> Optional[dict]:
+    try:
+        decoded = jwt.decode(token_str, SUPABASE_JWT_SECRET, algorithms=["HS256"], audience="authenticated")
+        return decoded
+    except Exception as e:
+        print(f"JWT Verification failed: {e}")
+        return None
+
 # URL Shortener and One-Time/Expiring Session Access
-# Generates short tokens: e.g. /portal/s/x9F2aQ
 def create_short_session_url(username: str, employee_id: str, ttl_seconds: int = 3600) -> str:
     sessions = _load_json(TOKEN_DB_FILE, {})
-    # clean expired sessions
     now = time.time()
     valid_sessions = {k: v for k, v in sessions.items() if v.get("expires_at", 0) > now}
     
@@ -101,7 +129,6 @@ def validate_short_code(short_code: str) -> Optional[dict]:
     if not session:
         return None
     if time.time() > session.get("expires_at", 0):
-        # Expired
         del sessions[short_code]
         _save_json(TOKEN_DB_FILE, sessions)
         return None
