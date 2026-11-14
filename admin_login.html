@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mother's Hut - Administrative Staff Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            dark: '#1c1917'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-amber-50/50 via-stone-50 to-orange-50/40 text-stone-800 min-h-screen flex flex-col justify-between font-sans selection:bg-amber-200">
+
+    <!-- Top Navigation Header -->
+    <header class="p-4 border-b border-stone-200 bg-white/80 backdrop-blur-md flex items-center justify-between max-w-5xl mx-auto w-full">
+        <a href="/" class="flex items-center gap-2.5 text-stone-900 group">
+            <div class="w-9 h-9 rounded-xl bg-white shadow-xs border border-stone-200 p-0.5 flex items-center justify-center">
+                <img src="/logo.png" alt="Mother's Hut" class="w-full h-full object-contain" />
+            </div>
+            <div>
+                <span class="font-heading font-black text-sm block tracking-wide">Mother's Hut</span>
+                <span class="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Internal Admin Access</span>
+            </div>
+        </a>
+        <a href="/" class="text-xs font-bold text-stone-500 hover:text-stone-900 flex items-center gap-1.5 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span>Back to Public Menu</span>
+        </a>
+    </header>
+
+    <!-- Main Authentication Box -->
+    <main class="flex-1 flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-3xl shadow-xl border border-stone-200/90 p-7 sm:p-8 relative overflow-hidden">
+            
+            <!-- Tab Switcher: Sign In / Sign Up -->
+            <div class="flex items-center bg-stone-100 p-1 rounded-2xl mb-6">
+                <button id="tabSigninBtn" onclick="switchAuthTab('signin')" class="flex-1 py-2 rounded-xl text-xs font-black transition-all bg-white text-stone-900 shadow-sm">
+                    Sign In
+                </button>
+                <button id="tabSignupBtn" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-xl text-xs font-black transition-all text-stone-500 hover:text-stone-900">
+                    Sign Up
+                </button>
+            </div>
+
+            <!-- Error / Success Alert Box -->
+            <div id="alertBox" class="hidden mb-4 p-3 rounded-xl text-xs font-medium border flex items-center gap-2"></div>
+
+            <!-- Form Container -->
+            <!-- 1. SIGN IN FORM -->
+            <form id="signinForm" onsubmit="handleSignin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1.5">Username</label>
+                    <input type="text" id="signinUsername" required class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" placeholder="Enter username..." />
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1.5">Password</label>
+                    <input type="password" id="signinPassword" required class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" placeholder="Enter password..." />
+                </div>
+                <button type="submit" id="signinSubmitBtn" class="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <span>Authenticate & Access</span>
+                </button>
+            </form>
+
+            <!-- 2. SIGN UP FORM -->
+            <form id="signupForm" onsubmit="handleSignup(event)" class="hidden space-y-4">
+                <div>
+                    <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1.5">Username</label>
+                    <input type="text" id="signupUsername" required class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" placeholder="Choose username..." />
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1.5">Employee ID</label>
+                    <input type="text" id="signupEmployeeId" required class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" placeholder="e.g. MH-EMP-104" />
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-stone-700 uppercase tracking-wider mb-1.5">Password</label>
+                    <input type="password" id="signupPassword" required class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:outline-none focus:border-amber-500 focus:bg-white transition-all" placeholder="Create password..." />
+                </div>
+                <button type="submit" id="signupSubmitBtn" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <span>Create Account & Register Token</span>
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-stone-100 text-center">
+                <span class="text-[11px] text-stone-400">Cryptographic token authorization with URL protection.</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-4 text-xs text-stone-400 font-medium">
+        Mother's Hut Internal Management Network • Secured Gateway
+    </footer>
+
+    <script>
+        function switchAuthTab(tab) {
+            const signinBtn = document.getElementById('tabSigninBtn');
+            const signupBtn = document.getElementById('tabSignupBtn');
+            const signinForm = document.getElementById('signinForm');
+            const signupForm = document.getElementById('signupForm');
+            hideAlert();
+
+            if (tab === 'signin') {
+                signinBtn.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all bg-white text-stone-900 shadow-sm";
+                signupBtn.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all text-stone-500 hover:text-stone-900";
+                signinForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            } else {
+                signupBtn.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all bg-white text-stone-900 shadow-sm";
+                signinBtn.className = "flex-1 py-2 rounded-xl text-xs font-black transition-all text-stone-500 hover:text-stone-900";
+                signupForm.classList.remove('hidden');
+                signinForm.classList.add('hidden');
+            }
+        }
+
+        function showAlert(msg, isSuccess = false) {
+            const b = document.getElementById('alertBox');
+            b.className = isSuccess 
+                ? "mb-4 p-3 rounded-xl text-xs font-medium border bg-emerald-50 border-emerald-200 text-emerald-800 flex items-center gap-2"
+                : "mb-4 p-3 rounded-xl text-xs font-medium border bg-rose-50 border-rose-200 text-rose-800 flex items-center gap-2";
+            b.innerHTML = `<span>${msg}</span>`;
+            b.classList.remove('hidden');
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').classList.add('hidden');
+        }
+
+        async function handleSignin(e) {
+            e.preventDefault();
+            hideAlert();
+            const u = document.getElementById('signinUsername').value.trim();
+            const p = document.getElementById('signinPassword').value;
+            const btn = document.getElementById('signinSubmitBtn');
+            btn.disabled = true;
+            btn.innerText = "Authenticating...";
+
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                const data = await res.json();
+                if (res.ok && data.success && data.short_url) {
+                    showAlert("Authentication verified! Redirecting to secure portal...", true);
+                    // Set auth cookie
+                    document.cookie = `mh_admin_token=${data.token}; path=/; max-age=3600; SameSite=Strict`;
+                    setTimeout(() => {
+                        window.location.href = data.short_url;
+                    }, 500);
+                } else {
+                    showAlert(data.message || "Invalid username or password.", false);
+                    btn.disabled = false;
+                    btn.innerText = "Authenticate & Access";
+                }
+            } catch (err) {
+                showAlert("Error connecting to server. Please try again.", false);
+                btn.disabled = false;
+                btn.innerText = "Authenticate & Access";
+            }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            hideAlert();
+            const u = document.getElementById('signupUsername').value.trim();
+            const empId = document.getElementById('signupEmployeeId').value.trim();
+            const p = document.getElementById('signupPassword').value;
+            const btn = document.getElementById('signupSubmitBtn');
+            btn.disabled = true;
+            btn.innerText = "Creating Account...";
+
+            try {
+                const res = await fetch('/api/admin/register', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ username: u, password: p, employee_id: empId })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showAlert("Registration complete! Switching to login...", true);
+                    setTimeout(() => {
+                        switchAuthTab('signin');
+                        document.getElementById('signinUsername').value = u;
+                        document.getElementById('signinPassword').value = p;
+                        btn.disabled = false;
+                        btn.innerText = "Create Account & Register Token";
+                    }, 800);
+                } else {
+                    showAlert(data.message || "Signup failed.", false);
+                    btn.disabled = false;
+                    btn.innerText = "Create Account & Register Token";
+                }
+            } catch (err) {
+                showAlert("Error connecting to server.", false);
+                btn.disabled = false;
+                btn.innerText = "Create Account & Register Token";
+            }
+        }
+    </script>
+</body>
+</html>
