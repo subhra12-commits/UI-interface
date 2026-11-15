@@ -14,6 +14,7 @@ from typing import List, Optional
 
 # Import Custom Admin Auth & Security Middleware
 import supabase_client
+import master_sync_service
 import admin_auth
 from auth_middleware import SecureAdminMiddleware
 
@@ -545,6 +546,46 @@ def get_all_orders():
     # Otherwise return local active memory store sorted by timestamp desc
     local_list = sorted(list(active_orders.values()), key=lambda x: x.get("ordered_at", ""), reverse=True)
     return {"orders": local_list, "source": "local"}
+
+
+@api.post("/api/sync-master")
+def trigger_master_sync():
+    """
+    Triggers 5-minute interval synchronization to Master Supabase database.
+    Updates `total_orders` and `customer_count` for all recent intervals.
+    """
+    synced = master_sync_service.sync_all_recent_intervals(hours_back=24)
+    return {
+        "status": "success",
+        "synced_intervals": synced,
+        "message": f"Successfully synchronized {synced} five-minute interval(s) to Master Supabase master_metrics."
+    }
+
+
+def _master_sync_worker():
+    """Background worker that continuously syncs at 5-minute boundaries (:00, :05, :10, etc.)."""
+    import threading
+    while True:
+        try:
+            # Sync current and recent intervals
+            master_sync_service.sync_all_recent_intervals(hours_back=2)
+            
+            # Sleep until next 5-minute wall clock mark (minutes ending in 0 or 5)
+            now = datetime.now(timezone.utc)
+            minutes_to_next = 5 - (now.minute % 5)
+            seconds_to_next = (minutes_to_next * 60) - now.second
+            if seconds_to_next <= 0:
+                seconds_to_next = 300
+            time.sleep(seconds_to_next)
+        except Exception as e:
+            print(f"[MasterSyncWorker] Error: {e}")
+            time.sleep(60)
+
+
+# Start background thread automatically
+import threading
+_sync_thread = threading.Thread(target=_master_sync_worker, daemon=True)
+_sync_thread.start()
 
 
 if __name__ == "__main__":
