@@ -12,6 +12,7 @@ import time
 from typing import List, Optional
 
 # Import Custom Admin Auth & Security Middleware
+import supabase_client
 import admin_auth
 from auth_middleware import SecureAdminMiddleware
 
@@ -347,26 +348,54 @@ Answer:"""
 
     return {"question": query.question, "answer": answer}
 
-# --- ORDERS & TOKENS ---
+# --- PRODUCTION ORDERS & TOKEN GENERATING SYSTEM ---
 class OrderItem(BaseModel):
     id: str
     name: str
     price: float
     qty: int
+    prep_time: Optional[str] = "15 Mins"
 
 class OrderRequest(BaseModel):
+    customer_name: Optional[str] = "Valued Guest"
+    phone_number: Optional[str] = ""
+    date_of_birth: Optional[str] = None
+    group_size: Optional[int] = 1
     items: List[OrderItem]
     subtotal: float
     taxes: float
     grand_total: float
-    service_mode: Optional[str] = "dine-in"
+    service_mode: Optional[str] = "dine-in"   # 'dine-in', 'takeaway', 'delivery'
     table_number: Optional[str] = "4"
     special_note: Optional[str] = ""
+    first_visit_date: Optional[str] = None
+    estimated_prep_mins: Optional[int] = 15
+
+class OrderUpdateItemsRequest(BaseModel):
+    token: str
+    additional_items: List[OrderItem]
+    staff_notes: Optional[str] = ""
 
 active_orders = {}
 
+def calculate_estimated_prep_time(items: List[OrderItem]) -> int:
+    """Calculates overall kitchen prep time based on highest latency item in cart."""
+    max_mins = 10
+    for item in items:
+        name_lower = item.name.lower()
+        if any(w in name_lower for w in ["biryani", "mutton", "thali", "fish", "prawn", "roast"]):
+            max_mins = max(max_mins, 20)
+        elif any(w in name_lower for w in ["bhature", "luchi", "curry", "paneer", "chicken", "paratha"]):
+            max_mins = max(max_mins, 15)
+        elif any(w in name_lower for w in ["chai", "coffee", "lassi", "beverage", "dessert", "sweet", "juice"]):
+            max_mins = max(max_mins, 8)
+        else:
+            max_mins = max(max_mins, 12)
+    return max_mins
+
 @api.post("/order")
 def create_order(order: OrderRequest):
+    # Unique high-visibility visual token (e.g. MH-4821)
     for _ in range(50):
         rand_suffix = f"{random.randint(1000, 9999)}"
         token = f"MH-{rand_suffix}"
@@ -375,24 +404,47 @@ def create_order(order: OrderRequest):
     else:
         token = f"MH-{int(time.time() * 1000) % 100000}"
 
+    current_dt = datetime.now()
+    date_str = current_dt.strftime("%Y-%m-%d")
+    timestamp_str = current_dt.strftime("%Y-%m-%d %H:%M:%S")
+    order_id = f"MH-{current_dt.strftime('%Y%m%d')}-{token.split('-')[-1]}"
+
+    # Calculate preparation time
+    prep_mins = order.estimated_prep_mins or calculate_estimated_prep_time(order.items)
+
     order_record = {
+        "order_id": order_id,
         "token": token,
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "service_mode": order.service_mode,
-        "table_number": order.table_number,
+        "customer_name": (order.customer_name or "").strip() or "Valued Guest",
+        "phone_number": (order.phone_number or "").strip() or "N/A",
+        "date_of_birth": (order.date_of_birth or "").strip() or None,
+        "group_size": max(1, order.group_size or 1),
+        "service_mode": (order.service_mode or "dine-in").lower(),
+        "table_number": str(order.table_number or "4") if order.service_mode == "dine-in" else "Takeaway / Drive-Thru",
+        "first_visit_date": order.first_visit_date or date_str,
+        "ordered_at": timestamp_str,
+        "estimated_prep_mins": prep_mins,
         "items": [item.dict() for item in order.items],
         "item_count": sum(i.qty for i in order.items),
         "subtotal": order.subtotal,
         "taxes": order.taxes,
         "grand_total": order.grand_total,
-        "special_note": order.special_note,
+        "special_note": order.special_note or "",
         "status": "Sent to Kitchen"
     }
+
+    # 1. Save to in-memory active store
     active_orders[token] = order_record
-    print(f"New Order Confirmed! Token: {token} | Total: ₹{order.grand_total} | Items: {order_record['item_count']}")
+
+    # 2. Persist to Supabase Database (public.orders)
+    supabase_result = supabase_client.insert_order(order_record)
+    order_record["supabase_status"] = supabase_result.get("status")
+
+    print(f"Production Order Confirmed! ID: {order_id} | Token: {token} | Origin: {order.service_mode} | Customer: {order_record['customer_name']} | Group: {order_record['group_size']} | Total: ₹{order.grand_total} | Supabase: {supabase_result.get('status')}")
 
     return {
         "status": "success",
+        "order_id": order_id,
         "token": token,
         "order": order_record
     }
@@ -402,3 +454,93 @@ def get_order_by_token(token: str):
     if token in active_orders:
         return active_orders[token]
     return {"status": "error", "message": "Order token not found"}, 404
+
+@api.get("/order/table/{table_num}")
+def get_order_by_table(table_num: str):
+    """Find active dine-in order and token for a specific table."""
+    clean_table = str(table_num).strip().replace("T-", "").replace("Table #", "").replace("Table ", "")
+    # Check local active orders
+    for token, ord_rec in active_orders.items():
+        if ord_rec.get("service_mode") == "dine-in":
+            tbl = str(ord_rec.get("table_number", "")).strip()
+            if tbl == clean_table or tbl == f"Table #{clean_table}":
+                return {"status": "success", "order": ord_rec}
+    
+    # Check Supabase
+    supabase_orders = supabase_client.get_orders_from_supabase(limit=25)
+    for ord_rec in supabase_orders:
+        if ord_rec.get("service_mode") == "dine-in":
+            tbl = str(ord_rec.get("table_number", "")).strip()
+            if tbl == clean_table or tbl == f"Table #{clean_table}":
+                return {"status": "success", "order": ord_rec}
+
+    return {"status": "not_found", "message": f"No active order found for Table #{clean_table}"}, 404
+
+@api.post("/order/add-items")
+def add_items_to_order(req: OrderUpdateItemsRequest):
+    """Appends newly added dishes to an existing table token & recalculates bill."""
+    token = req.token.strip()
+    target_order = active_orders.get(token)
+
+    # If not found locally, fetch from Supabase
+    if not target_order:
+        sb_orders = supabase_client.get_orders_from_supabase(limit=50)
+        for o in sb_orders:
+            if o.get("token") == token or o.get("order_id") == token:
+                target_order = o
+                break
+
+    if not target_order:
+        return {"status": "error", "message": f"Token {token} not found"}, 404
+
+    # Merge items list
+    existing_items = list(target_order.get("items", []))
+    for add_it in req.additional_items:
+        # Check if item already exists to increment qty
+        found = False
+        for ex in existing_items:
+            if ex.get("id") == add_it.id or ex.get("name") == add_it.name:
+                ex["qty"] = int(ex.get("qty", 1)) + int(add_it.qty)
+                found = True
+                break
+        if not found:
+            existing_items.append(add_it.dict())
+
+    # Recalculate bill
+    subtotal = sum(float(i.get("price", 0)) * int(i.get("qty", 1)) for i in existing_items)
+    taxes = round(subtotal * 0.05, 2)
+    grand_total = round(subtotal + taxes, 2)
+    new_prep_time = calculate_estimated_prep_time([OrderItem(**i) if isinstance(i, dict) else i for i in existing_items])
+
+    # Update in-memory record
+    target_order["items"] = existing_items
+    target_order["item_count"] = sum(int(i.get("qty", 1)) for i in existing_items)
+    target_order["subtotal"] = subtotal
+    target_order["taxes"] = taxes
+    target_order["grand_total"] = grand_total
+    target_order["estimated_prep_mins"] = max(target_order.get("estimated_prep_mins", 15), new_prep_time)
+    active_orders[token] = target_order
+
+    # Update in Supabase
+    sb_res = supabase_client.update_order_items_in_supabase(token, existing_items, subtotal, taxes, grand_total, new_prep_time)
+
+    print(f"Token {token} updated! Added {len(req.additional_items)} item(s). New Grand Total: ₹{grand_total} | Supabase: {sb_res.get('status')}")
+
+    return {
+        "status": "success",
+        "message": f"Token {token} updated successfully with new items",
+        "order": target_order,
+        "supabase_result": sb_res
+    }
+
+@api.get("/orders")
+def get_all_orders():
+    """Retrieve orders list in tabular format for kitchen & admin intelligence."""
+    # Attempt to fetch from Supabase first
+    supabase_orders = supabase_client.get_orders_from_supabase(limit=100)
+    if supabase_orders:
+        return {"orders": supabase_orders, "source": "supabase"}
+    
+    # Otherwise return local active memory store sorted by timestamp desc
+    local_list = sorted(list(active_orders.values()), key=lambda x: x.get("ordered_at", ""), reverse=True)
+    return {"orders": local_list, "source": "local"}

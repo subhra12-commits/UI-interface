@@ -39,21 +39,21 @@
                     },
                     colors: {
                         brand: {
-                            50: '#fff7ed',
-                            100: '#ffedd5',
-                            500: '#ea580c',
-                            600: '#c84c1c', // Heritage Terracotta
-                            700: '#9a3412',
-                            dark: '#141210', // Deep Rich Roasted Charcoal
-                            warm: '#faf7f2', // Soft warm linen paper canvas
-                            border: '#e8e1d5',
-                            card: '#ffffff'
+                            50: '#FDF5E6',
+                            100: '#FFF9EE',
+                            500: '#E5A73B',
+                            600: '#5A0D14', // Primary Mother's Hut Maroon
+                            700: '#3E060B', // Deep Maroon
+                            dark: '#3B1715', // Primary Body Ink
+                            warm: '#FDF5E6', // Warm Cream Canvas
+                            border: '#EAD9BE', // Primary Card Border
+                            card: '#FFF9EE'
                         }
                     },
                     boxShadow: {
-                        'soft': '0 2px 14px -2px rgba(28, 25, 23, 0.06), 0 1px 4px -1px rgba(28, 25, 23, 0.04)',
-                        'hover': '0 12px 28px -4px rgba(28, 25, 23, 0.1), 0 4px 8px -2px rgba(28, 25, 23, 0.04)',
-                        'panel': '0 4px 24px -2px rgba(28, 25, 23, 0.1)'
+                        'soft': '0 6px 22px -6px rgba(90, 13, 20, 0.10)',
+                        'hover': '0 14px 30px -8px rgba(90, 13, 20, 0.17)',
+                        'panel': '0 8px 32px -4px rgba(90, 13, 20, 0.15)'
                     }
                 }
             }
@@ -168,73 +168,139 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- ENTRY EXPERIENCE 1: WELCOME SERVICE DISCOVERY (SCREENSHOT 2026-11-14 103445) -->
+    <!-- ENTRY EXPERIENCE 1: WELCOME SERVICE DISCOVERY (HERITAGE S-CURVE ARCHITECTURE) -->
     <!-- ========================================================================= -->
-    <div id="serviceSelectionView" class="min-h-screen flex flex-col justify-between relative z-10 transition-opacity duration-300">
-        <!-- Top Clean Bar -->
-        <header class="w-full bg-white/90 backdrop-blur-md border-b border-brand-border py-4 px-6 sm:px-12 flex items-center justify-between">
+    <div id="serviceSelectionView" class="min-h-screen flex flex-col justify-between relative z-10 transition-opacity duration-300 bg-[#FDF5E6]">
+        
+        <!-- Top Clean Bar Matching Admin & Brand Design -->
+        <header class="w-full bg-[#FFF9EE]/90 backdrop-blur-md border-b border-[#EAD9BE] py-3.5 px-6 sm:px-12 flex items-center justify-between relative z-20 shadow-xs">
             <div class="flex items-center gap-3">
-                <img src="logo.png" alt="Mother's Hut" class="w-10 h-10 object-contain drop-shadow-sm" />
-                <span class="font-brand font-black text-xl text-brand-dark tracking-wide">Mother's Hut</span>
+                <div class="w-9 h-9 rounded-xl overflow-hidden bg-white shadow-xs border border-[#EAD9BE] p-1 flex items-center justify-center">
+                    <img src="logo.png" alt="Mother's Hut" class="w-full h-full object-contain" />
+                </div>
+                <div>
+                    <span class="font-bold text-lg text-[#5A0D14] tracking-tight leading-none block">Mother's Hut</span>
+                    <span class="text-[10px] text-[#E5A73B] font-semibold tracking-wide">Heritage Dining</span>
+                </div>
             </div>
-            <div class="flex items-center gap-6 text-xs font-heading font-bold text-stone-600">
-                <button onclick="selectServiceMode('dine-in')" class="hover:text-brand-600 transition-colors">Home</button>
-                <button onclick="selectServiceMode('dine-in')" class="px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 transition-colors font-black">Menu</button>
-                <div class="flex items-center gap-1.5 text-stone-500">
+            <div class="flex items-center gap-5 text-xs font-bold text-[#4D302C]">
+                <button onclick="selectServiceMode('dine-in')" class="hover:text-[#5A0D14] transition-colors">Home</button>
+                <button onclick="selectServiceMode('dine-in')" class="px-3.5 py-1.5 rounded-full bg-[#5A0D14] text-[#FDF5E6] hover:bg-[#73121B] transition-colors font-bold shadow-xs">Menu</button>
+                <div class="flex items-center gap-1.5 text-[#6B4C46]">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                 </div>
-                <div class="flex items-center gap-1 text-stone-700">
-                    <svg class="w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    <span>Guest</span>
+                <div class="flex items-center gap-1.5 text-[#3B1715]">
+                    <div class="w-7 h-7 rounded-full bg-[#5A0D14] text-[#FDF5E6] flex items-center justify-center text-[10px] font-bold shadow-xs">
+                        G
+                    </div>
+                    <span class="hidden sm:inline">Guest</span>
                 </div>
             </div>
         </header>
 
-        <!-- Center Service Cards Mesh -->
-        <main class="flex-1 max-w-4xl mx-auto px-4 py-12 sm:py-16 flex flex-col items-center justify-center text-center">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 mb-4 rounded-2xl overflow-hidden bg-white p-2 shadow-sm border border-stone-200/80">
-                <img src="logo.png" alt="Mother's Hut Emblem" class="w-full h-full object-contain" />
+        <!-- TOP S-CURVE HERO SECTION WITH HERO1.JPG FADED BACKGROUND -->
+        <section class="relative shrink-0 overflow-hidden bg-[#FDF5E6] pt-6 pb-14 sm:pt-8 sm:pb-16 border-b border-[#EAD9BE]/50">
+            
+            <!-- hero1.jpg faded background image on top right of the curve -->
+            <div class="pointer-events-none absolute inset-y-0 right-0 w-full sm:w-[68%] lg:w-[60%] overflow-hidden">
+                <img src="hero1.jpg" alt="Mother's Hut Heritage Dining Ambiance" class="h-full w-full object-cover object-[25%_45%] opacity-35 sm:opacity-55 scale-[1.12]" />
+                <div class="absolute inset-0 bg-gradient-to-r from-[#FDF5E6] via-[#FDF5E6]/80 to-transparent sm:via-[#FDF5E6]/50 sm:to-[#FDF5E6]/10" aria-hidden="true"></div>
+                <div class="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-[#FDF5E6]/60 to-transparent" aria-hidden="true"></div>
+                <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#FDF5E6] via-[#FDF5E6]/70 to-transparent" aria-hidden="true"></div>
             </div>
 
-            <h1 class="text-3xl sm:text-4xl font-serif font-black text-stone-900 tracking-tight mb-2">
-                Welcome to Mother's Hut
-            </h1>
-            <p class="text-stone-600 text-sm sm:text-base font-normal mb-10 max-w-md">
-                How would you like to enjoy your meal today?
-            </p>
+            <!-- Botanical Leaves Watermark Accent -->
+            <svg viewBox="0 0 180 140" fill="none" class="pointer-events-none absolute -top-2 -left-2 h-24 w-32 opacity-70 lg:h-28 lg:w-36" aria-hidden="true">
+                <path d="M8 10C38 22 68 48 92 84C72 78 46 66 26 42C16 30 10 18 8 10Z" fill="#D7A352" fill-opacity="0.34" />
+                <path d="M52 4C68 24 80 54 84 88C68 72 56 48 52 4Z" fill="#D7A352" fill-opacity="0.26" />
+                <path d="M4 54C32 52 62 62 88 86C62 90 32 82 4 54Z" fill="#D7A352" fill-opacity="0.22" />
+                <path d="M104 20C110 44 106 72 94 94C90 70 94 42 104 20Z" fill="#D7A352" fill-opacity="0.2" />
+            </svg>
 
-                        <!-- 3 Service Options Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-                <!-- Dine-In Card -->
-                <button onclick="selectServiceMode('dine-in')" class="group p-6 sm:p-7 bg-white rounded-3xl border-2 border-brand-500/20 hover:border-brand-500 shadow-soft hover:shadow-hover text-left flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-14 h-14 rounded-2xl bg-rose-50 text-brand-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-7 h-7 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            <div class="relative z-10 max-w-4xl mx-auto px-4 flex flex-col items-center text-center">
+                <!-- Center Official Logo Emblem -->
+                <div class="w-16 h-16 sm:w-20 sm:h-20 mb-3.5 rounded-2xl overflow-hidden bg-white p-2 shadow-[0_8px_20px_rgba(90,13,20,0.12)] border border-[#E8AE47]/40 ring-2 ring-[#E8AE47]/50">
+                    <img src="logo.png" alt="Mother's Hut Emblem" class="w-full h-full object-contain" />
+                </div>
+
+                <h1 class="text-3xl sm:text-4xl font-bold text-[#5A0D14] tracking-tight mb-1">
+                    Welcome to Mother's Hut
+                </h1>
+                <p class="text-[#4A2520] text-sm sm:text-base italic font-normal mb-1.5 max-w-md">
+                    How would you like to enjoy your meal today?
+                </p>
+
+                <!-- Dual Gold Underscore Wave -->
+                <svg viewBox="0 0 340 22" fill="none" class="h-3 w-56 sm:w-72" aria-hidden="true">
+                    <path d="M2 16C92 6 205 6 334 10" stroke="#E5A73B" stroke-width="3.5" stroke-linecap="round" />
+                    <path d="M196 14C244 12 292 14 336 18" stroke="#F3C76A" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+
+            <!-- Bottom S-Curve Divider Dividing Upper Hero Section from Lower Widgets -->
+            <svg viewBox="0 0 1200 84" preserveAspectRatio="none" class="pointer-events-none absolute inset-x-0 bottom-0 h-8 sm:h-10 w-full" aria-hidden="true">
+                <path d="M0 64C290 74 520 58 760 28C940 6 1085 6 1200 14V84H0V64Z" fill="#5A0D14" />
+                <path d="M0 64C290 74 520 58 760 28C940 6 1085 6 1200 14" stroke="#E5A73B" stroke-width="4.5" fill="none" />
+                <path d="M0 68C320 78 620 68 890 52C1040 43 1135 48 1200 58V84H0V68Z" fill="#FDF5E6" />
+            </svg>
+        </section>
+
+        <!-- BELOW THE CURVE: 3 SERVICE OPTIONS CARDS MATCHING ADMIN AESTHETIC -->
+        <main class="flex-1 max-w-5xl mx-auto px-4 py-8 sm:py-12 flex flex-col items-center justify-center text-center w-full relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                
+                <!-- Dine-In Card with Double-Ring Badge & Leaf Watermark -->
+                <button onclick="selectServiceMode('dine-in')" class="group relative p-6 sm:p-7 bg-[#FFF9EE] rounded-3xl border border-[#EAD9BE] hover:border-[#E8AE47] shadow-[0_6px_22px_-6px_rgba(90,13,20,0.10)] hover:shadow-[0_14px_30px_-8px_rgba(90,13,20,0.17)] text-left flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                    <!-- Subtle leaf watermark in bottom corner -->
+                    <svg viewBox="0 0 120 110" fill="none" class="pointer-events-none absolute right-1 bottom-0 h-16 w-16 opacity-40 group-hover:opacity-70 transition-opacity" aria-hidden="true">
+                        <path d="M112 104C94 84 82 58 80 28C96 42 108 68 112 104Z" fill="#D8B37C" fill-opacity="0.3" />
+                        <path d="M98 106C76 92 56 72 44 46C68 54 88 76 98 106Z" fill="#D8B37C" fill-opacity="0.25" />
+                    </svg>
+
+                    <!-- Double-Ring Badge Icon -->
+                    <div class="w-14 h-14 rounded-2xl bg-[#5A0D14] text-[#FFF4DF] flex items-center justify-center mb-4 shadow-[0_6px_18px_rgba(59,6,11,0.25)] border-2 border-[#FFF4DF] ring-2 ring-[#E8AE47]/70 group-hover:scale-105 transition-transform">
+                        <svg class="w-7 h-7 text-[#FFF4DF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     </div>
-                    <h2 class="text-lg font-bold text-stone-900 mb-1 group-hover:text-brand-600 transition-colors">Dine-In</h2>
-                    <p class="text-xs text-stone-500 leading-relaxed font-normal">Sitting at a table? Browse the menu and order directly to your table.</p>
+                    <div class="mb-2 h-[3px] w-8 rounded-full bg-[#E5A73B]"></div>
+                    <h2 class="text-xl font-bold text-[#5A0D14] mb-1.5">Dine-In</h2>
+                    <p class="text-xs text-[#4D302C] leading-relaxed font-normal">Sitting at a table? Browse the menu and order directly to your table.</p>
                 </button>
 
-                <!-- Home Delivery Card -->
-                <button onclick="selectServiceMode('delivery')" class="group p-6 sm:p-7 bg-white rounded-3xl border-2 border-stone-200/80 hover:border-brand-500 shadow-soft hover:shadow-hover text-left flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                <!-- Home Delivery Card with Double-Ring Badge & Leaf Watermark -->
+                <button onclick="selectServiceMode('delivery')" class="group relative p-6 sm:p-7 bg-[#FFF9EE] rounded-3xl border border-[#EAD9BE] hover:border-[#E8AE47] shadow-[0_6px_22px_-6px_rgba(90,13,20,0.10)] hover:shadow-[0_14px_30px_-8px_rgba(90,13,20,0.17)] text-left flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                    <svg viewBox="0 0 120 110" fill="none" class="pointer-events-none absolute right-1 bottom-0 h-16 w-16 opacity-40 group-hover:opacity-70 transition-opacity" aria-hidden="true">
+                        <path d="M112 104C94 84 82 58 80 28C96 42 108 68 112 104Z" fill="#D8B37C" fill-opacity="0.3" />
+                        <path d="M98 106C76 92 56 72 44 46C68 54 88 76 98 106Z" fill="#D8B37C" fill-opacity="0.25" />
+                    </svg>
+
+                    <!-- Double-Ring Badge Icon -->
+                    <div class="w-14 h-14 rounded-2xl bg-[#5A0D14] text-[#FFF4DF] flex items-center justify-center mb-4 shadow-[0_6px_18px_rgba(59,6,11,0.25)] border-2 border-[#FFF4DF] ring-2 ring-[#E8AE47]/70 group-hover:scale-105 transition-transform">
+                        <svg class="w-7 h-7 text-[#FFF4DF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
                     </div>
-                    <h2 class="text-lg font-bold text-stone-900 mb-1 group-hover:text-brand-600 transition-colors">Home Delivery</h2>
-                    <p class="text-xs text-stone-500 leading-relaxed font-normal">Craving comfort? We will deliver your favorite meals straight to your door.</p>
+                    <div class="mb-2 h-[3px] w-8 rounded-full bg-[#E5A73B]"></div>
+                    <h2 class="text-xl font-bold text-[#5A0D14] mb-1.5">Home Delivery</h2>
+                    <p class="text-xs text-[#4D302C] leading-relaxed font-normal">Craving comfort? We will deliver your favorite meals straight to your door.</p>
                 </button>
 
-                <!-- Pickup / Takeaway Card -->
-                <button onclick="selectServiceMode('takeaway')" class="group p-6 sm:p-7 bg-white rounded-3xl border-2 border-stone-200/80 hover:border-brand-500 shadow-soft hover:shadow-hover text-left flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1">
-                    <div class="w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <!-- Pickup / Takeaway Card with Double-Ring Badge & Leaf Watermark -->
+                <button onclick="selectServiceMode('takeaway')" class="group relative p-6 sm:p-7 bg-[#FFF9EE] rounded-3xl border border-[#EAD9BE] hover:border-[#E8AE47] shadow-[0_6px_22px_-6px_rgba(90,13,20,0.10)] hover:shadow-[0_14px_30px_-8px_rgba(90,13,20,0.17)] text-left flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                    <svg viewBox="0 0 120 110" fill="none" class="pointer-events-none absolute right-1 bottom-0 h-16 w-16 opacity-40 group-hover:opacity-70 transition-opacity" aria-hidden="true">
+                        <path d="M112 104C94 84 82 58 80 28C96 42 108 68 112 104Z" fill="#D8B37C" fill-opacity="0.3" />
+                        <path d="M98 106C76 92 56 72 44 46C68 54 88 76 98 106Z" fill="#D8B37C" fill-opacity="0.25" />
+                    </svg>
+
+                    <!-- Double-Ring Badge Icon -->
+                    <div class="w-14 h-14 rounded-2xl bg-[#5A0D14] text-[#FFF4DF] flex items-center justify-center mb-4 shadow-[0_6px_18px_rgba(59,6,11,0.25)] border-2 border-[#FFF4DF] ring-2 ring-[#E8AE47]/70 group-hover:scale-105 transition-transform">
+                        <svg class="w-7 h-7 text-[#FFF4DF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                     </div>
-                    <h2 class="text-lg font-bold text-stone-900 mb-1 group-hover:text-brand-600 transition-colors">Pickup / Takeaway</h2>
-                    <p class="text-xs text-stone-500 leading-relaxed font-normal">On the go? Order ahead and pick up your hot food at the highway counter.</p>
+                    <div class="mb-2 h-[3px] w-8 rounded-full bg-[#E5A73B]"></div>
+                    <h2 class="text-xl font-bold text-[#5A0D14] mb-1.5">Pickup / Takeaway</h2>
+                    <p class="text-xs text-[#4D302C] leading-relaxed font-normal">On the go? Order ahead and pick up your hot food at the highway counter.</p>
                 </button>
             </div>
         </main>
 
-        <footer class="text-center py-6 text-xs text-stone-400 font-medium border-t border-brand-border/60">
+        <footer class="text-center py-5 text-xs text-[#6B4C46] font-medium border-t border-[#EAD9BE]/60 bg-[#FFF9EE]/50">
             Mother's Hut Heritage Kitchen & Highway Dining • Krishnanagar NH-12
         </footer>
     </div>
@@ -390,29 +456,29 @@
     <div id="fullMenuExperienceView" class="hidden flex-col min-h-screen">
     <header class="sticky top-0 z-40 bg-white shadow-sm border-b border-brand-border">
         
-        <!-- Top Announcement & Quick Action Bar -->
-        <div class="bg-brand-dark text-amber-100/90 text-xs py-2 px-4 border-b border-stone-800 flex items-center justify-between gap-3 font-sans">
+        <!-- Top Announcement & Quick Action Bar (Refined Luxury Theme) -->
+        <div class="bg-gradient-to-r from-[#5A0D14] via-[#520B11] to-[#3E060B] text-[#FDF5E6]/95 text-xs py-2 px-4 border-b border-[#E8AE47]/30 flex items-center justify-between gap-3 font-sans shadow-xs">
             <div class="flex items-center gap-2 truncate">
-                <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                <span id="announcementText" class="truncate font-medium">
-                    <strong class="font-extrabold text-amber-300 tracking-wide uppercase text-[11px] font-heading mr-1">Kitchen Open:</strong> Dine-In, Highway Takeaway & Rapid Drive-Thru Available
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 ring-2 ring-emerald-400/30"></span>
+                <span id="announcementText" class="truncate font-medium text-[#FDF5E6]">
+                    <strong class="font-extrabold text-[#E8AE47] tracking-wider uppercase text-[11px] font-heading mr-1.5">Kitchen Open:</strong> Dine-In, Highway Takeaway & Rapid Drive-Thru Available
                 </span>
-                <span class="text-amber-300 font-extrabold underline cursor-pointer ml-1 shrink-0 font-heading hover:text-white" onclick="openTableModal()">Set Table #</span>
+                <span class="text-[#E8AE47] hover:text-[#F3C76A] font-extrabold underline decoration-[#E8AE47]/60 cursor-pointer ml-1 shrink-0 font-heading transition-colors" onclick="openTableModal()">Set Table #</span>
             </div>
             
             <!-- Senior Mode & Quick Waiter Help -->
-            <div class="flex items-center gap-3 shrink-0">
-                <button onclick="toggleSeniorMode()" id="seniorModeToggleBtn" class="flex items-center gap-1.5 text-amber-300 hover:text-amber-200 font-bold text-xs transition-colors active:scale-95 tracking-wide bg-transparent border-0 p-0 shadow-none cursor-pointer" title="Easier to read with larger text">
-                    <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                    <span id="seniorBtnLabel">Easy Senior Mode: <strong class="uppercase font-black text-amber-400">OFF</strong></span>
+            <div class="flex items-center gap-3.5 shrink-0">
+                <button onclick="toggleSeniorMode()" id="seniorModeToggleBtn" class="flex items-center gap-1.5 text-[#E8AE47] hover:text-[#F6C361] font-bold text-xs transition-colors active:scale-95 tracking-wide bg-transparent border-0 p-0 shadow-none cursor-pointer" title="Easier to read with larger text">
+                    <svg class="w-4 h-4 text-[#E8AE47]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    <span id="seniorBtnLabel">Easy Senior Mode: <strong class="uppercase font-black text-[#F6C361]">OFF</strong></span>
                 </button>
-                <span class="text-stone-600 text-xs">•</span>
-                <button onclick="callWaiterPrompt()" class="flex items-center gap-1.5 text-rose-400 hover:text-rose-300 font-bold text-xs transition-colors active:scale-95 tracking-wide bg-transparent border-0 p-0 shadow-none cursor-pointer" title="Call floor steward to your table">
+                <span class="text-[#E8AE47]/40 text-xs">•</span>
+                <button onclick="callWaiterPrompt()" class="flex items-center gap-1.5 text-rose-300 hover:text-rose-200 font-bold text-xs transition-colors active:scale-95 tracking-wide bg-transparent border-0 p-0 shadow-none cursor-pointer" title="Call floor steward to your table">
                     <div class="relative flex items-center">
-                        <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        <svg class="w-4 h-4 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                         <span class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping"></span>
                     </div>
-                    <span>Call Waiter</span>
+                    <span class="font-bold">Call Waiter</span>
                 </button>
             </div>
         </div>
@@ -433,89 +499,91 @@
             </button>
         </div>
 
-        <!-- Primary Navbar -->
-        <div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-            
-            <!-- Brand Logo & Identity with Mother's Hut Logo Image -->
-            <div class="flex items-center gap-3.5">
-                <button onclick="backToServiceSelection()" class="p-2 -ml-2 text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-xl transition-all flex items-center justify-center cursor-pointer" title="Back to service selection (Dine-In, Delivery, Pickup)">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-                </button>
-                <div class="flex items-center gap-3 cursor-pointer" onclick="backToServiceSelection()">
-                    <div class="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-transparent shrink-0">
-                        <img src="logo.png" alt="Mother's Hut Logo" class="w-full h-full object-contain filter drop-shadow-sm" onerror="this.parentElement.innerHTML='<div class=\'w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-amber-600 flex items-center justify-center text-white font-black text-2xl\'>M</div>';" />
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-brand text-xl sm:text-2xl font-black tracking-wider text-brand-dark leading-none">Mother's Hut</span>
-                            <span class="hidden sm:inline-block text-[11px] font-semibold text-brand-700 tracking-wider">Est. Highway Heritage</span>
-                        </div>
-                        <p class="text-xs text-stone-500 font-medium tracking-wide mt-0.5 flex items-center gap-1.5 font-sans">
-                            <span class="text-emerald-700 font-extrabold font-heading bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 cursor-pointer hover:underline" id="tableStatusBadge" onclick="openTableModal()">Table #4</span>
-                            <span>•</span>
-                            <span class="font-bengali text-stone-700 font-bold">খাঁটি স্বাদ ও আতিথেয়তা</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Service Mode Switcher (Dine-In / Takeaway / Delivery) -->
-            <div class="hidden md:flex items-center p-1 bg-stone-100 rounded-xl border border-stone-200/80 shadow-inner text-xs font-heading font-extrabold">
-                <button id="mode-dine-in" onclick="setServiceMode('dine-in')" class="px-3.5 py-1.5 rounded-lg bg-white text-brand-600 shadow-sm transition-all flex items-center gap-1.5 font-black tracking-wide">
-                    <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                    <span>Dine-In</span>
-                </button>
-                <button id="mode-takeaway" onclick="setServiceMode('takeaway')" class="px-3.5 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 transition-all flex items-center gap-1.5 tracking-wide">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    <span>Takeaway</span>
-                </button>
-                <button id="mode-delivery" onclick="setServiceMode('delivery')" class="px-3.5 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 transition-all flex items-center gap-1.5 tracking-wide">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    <span>Delivery</span>
-                </button>
-            </div>
-
-            <!-- Right Actions: Language, AI Waiter, and Order Plate (Unboxed, seamlessly blended with navbar) -->
-            <div class="flex items-center gap-3 sm:gap-5">
+        <!-- Primary Navbar (Luxury Warm Palette Blended) -->
+        <div class="bg-[#FFF9EE]/95 backdrop-blur-md border-b border-[#EAD9BE] shadow-xs">
+            <div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
                 
-                <!-- Language Toggle (Clean text blend) -->
-                <div class="flex items-center gap-1 text-xs font-bold text-stone-600">
-                    <button id="lang-en" onclick="setLanguage('en')" class="px-1.5 py-0.5 text-stone-900 font-black cursor-pointer hover:text-brand-600 transition-colors">EN</button>
-                    <span class="text-stone-300">/</span>
-                    <button id="lang-bn" onclick="setLanguage('bn')" class="px-1.5 py-0.5 text-stone-500 font-bengali font-bold cursor-pointer hover:text-brand-600 transition-colors">বাং</button>
+                <!-- Brand Logo & Identity with Mother's Hut Logo Image -->
+                <div class="flex items-center gap-3.5">
+                    <button onclick="backToServiceSelection()" class="p-2 -ml-2 text-[#7A5448] hover:text-[#5A0D14] hover:bg-[#F9EFE0] rounded-xl transition-all flex items-center justify-center cursor-pointer" title="Back to service selection (Dine-In, Delivery, Pickup)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="backToServiceSelection()">
+                        <div class="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-[#EAD9BE] shadow-xs p-1 shrink-0">
+                            <img src="logo.png" alt="Mother's Hut Logo" class="w-full h-full object-contain filter drop-shadow-sm" onerror="this.parentElement.innerHTML='<div class=\'w-11 h-11 rounded-xl bg-gradient-to-br from-[#5A0D14] to-[#E5A73B] flex items-center justify-center text-white font-black text-2xl\'>M</div>';" />
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-brand text-xl sm:text-2xl font-black tracking-wider text-[#5A0D14] leading-none">Mother's Hut</span>
+                                <span class="hidden sm:inline-block text-[11px] font-bold text-[#E5A73B] tracking-wider uppercase">Est. Highway Heritage</span>
+                            </div>
+                            <p class="text-xs text-[#6B4C46] font-medium tracking-wide mt-1 flex items-center gap-1.5 font-sans">
+                                <span class="text-[#5A0D14] font-extrabold font-heading bg-[#F9EFE0] px-2 py-0.5 rounded-full border border-[#EAD9BE] cursor-pointer hover:border-[#E5A73B] transition-colors" id="tableStatusBadge" onclick="openTableModal()">Table #4</span>
+                                <span class="text-[#DFC9A4]">•</span>
+                                <span class="font-bengali text-[#4D302C] font-bold">খাঁটি স্বাদ ও আতিথেয়তা</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Call Waiter (Unboxed, clean blend with rose icon accent) -->
-                <button onclick="callWaiterPrompt()" class="hidden sm:flex items-center gap-1.5 text-rose-600 hover:text-rose-700 font-bold text-xs transition-colors active:scale-95 bg-transparent border-0 p-0 shadow-none cursor-pointer" title="Call floor steward to your table">
-                    <div class="relative flex items-center">
-                        <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                        <span class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
-                    </div>
-                    <span class="hidden lg:inline tracking-wide font-bold">Call Waiter</span>
-                </button>
+                <!-- Service Mode Switcher (Dine-In / Takeaway / Delivery) -->
+                <div class="hidden md:flex items-center p-1 bg-[#F9EFE0] rounded-xl border border-[#EAD9BE] shadow-inner text-xs font-heading font-extrabold">
+                    <button id="mode-dine-in" onclick="setServiceMode('dine-in')" class="px-3.5 py-1.5 rounded-lg bg-[#5A0D14] text-[#FDF5E6] shadow-sm transition-all flex items-center gap-1.5 font-black tracking-wide">
+                        <svg class="w-3.5 h-3.5 text-[#E8AE47]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        <span>Dine-In</span>
+                    </button>
+                    <button id="mode-takeaway" onclick="setServiceMode('takeaway')" class="px-3.5 py-1.5 rounded-lg text-[#6B4C46] hover:text-[#5A0D14] hover:bg-[#FFF9EE]/70 transition-all flex items-center gap-1.5 tracking-wide">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <span>Takeaway</span>
+                    </button>
+                    <button id="mode-delivery" onclick="setServiceMode('delivery')" class="px-3.5 py-1.5 rounded-lg text-[#6B4C46] hover:text-[#5A0D14] hover:bg-[#FFF9EE]/70 transition-all flex items-center gap-1.5 tracking-wide">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span>Delivery</span>
+                    </button>
+                </div>
 
-                <!-- Ask AI Waiter (Unboxed, clean blend with matching Order Plate icon aesthetic) -->
-                <button onclick="toggleRightSection('ai')" id="headerAiBtn" class="flex items-center gap-2 text-stone-900 hover:text-brand-600 font-bold text-xs sm:text-sm transition-colors active:scale-95 bg-transparent border-0 p-0 shadow-none cursor-pointer tracking-wide">
-                    <div class="relative">
-                        <svg class="w-5 h-5 text-brand-600 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                        </svg>
-                        <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-500"></span>
+                <!-- Right Actions: Language, AI Waiter, and Order Plate -->
+                <div class="flex items-center gap-3 sm:gap-5">
+                    
+                    <!-- Language Toggle (Pill styled warm container) -->
+                    <div class="flex items-center gap-1 text-xs font-bold text-[#6B4C46] bg-[#F9EFE0] px-1.5 py-1 rounded-lg border border-[#EAD9BE]">
+                        <button id="lang-en" onclick="setLanguage('en')" class="px-2 py-0.5 rounded-md bg-[#5A0D14] text-[#FDF5E6] font-black cursor-pointer shadow-xs transition-colors">EN</button>
+                        <span class="text-[#DFC9A4]">/</span>
+                        <button id="lang-bn" onclick="setLanguage('bn')" class="px-2 py-0.5 rounded-md text-[#6B4C46] hover:text-[#5A0D14] font-bengali font-bold cursor-pointer transition-colors">বাং</button>
                     </div>
-                    <span id="aiTriggerText" class="hidden sm:inline font-extrabold text-stone-900 hover:text-brand-600">Ask AI Waiter</span>
-                </button>
 
-                <!-- Order Plate (Unboxed, clean blend with matching clean SVG icon) -->
-                <button onclick="toggleRightSection('cart')" id="headerCartBtn" class="flex items-center gap-2 text-stone-900 hover:text-brand-600 font-bold text-xs sm:text-sm transition-colors active:scale-95 bg-transparent border-0 p-0 shadow-none cursor-pointer tracking-wide">
-                    <div class="relative">
-                        <svg class="w-5 h-5 text-brand-600 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                        </svg>
-                        <span id="cartCountBadge" class="hidden absolute -top-1.5 -right-2 bg-brand-600 text-white text-[9px] font-black h-3.5 w-3.5 rounded-full flex items-center justify-center">0</span>
-                    </div>
-                    <span class="hidden sm:inline font-extrabold" id="cartLabelText">Order Plate</span>
-                    <span id="cartTotalHeader" class="text-brand-600 font-black ml-0.5 text-sm sm:text-base tracking-tight">₹0</span>
-                </button>
+                    <!-- Call Waiter -->
+                    <button onclick="callWaiterPrompt()" class="hidden sm:flex items-center gap-1.5 text-[#8C211D] hover:text-[#5A0D14] font-bold text-xs transition-colors active:scale-95 bg-[#FDF1ED] hover:bg-[#FDEBE8] border border-[#DFB5A8] px-3 py-1.5 rounded-xl cursor-pointer shadow-xs" title="Call floor steward to your table">
+                        <div class="relative flex items-center">
+                            <svg class="w-4 h-4 text-[#8C211D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <span class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#8C211D] animate-ping"></span>
+                        </div>
+                        <span class="hidden lg:inline tracking-wide font-extrabold text-[#5A0D14]">Call Waiter</span>
+                    </button>
+
+                    <!-- Ask AI Waiter -->
+                    <button onclick="toggleRightSection('ai')" id="headerAiBtn" class="flex items-center gap-2 text-[#3B1715] hover:text-[#5A0D14] font-bold text-xs sm:text-sm transition-colors active:scale-95 bg-[#FFF9EE] hover:bg-[#F9EFE0] border border-[#EAD9BE] px-3.5 py-2 rounded-xl shadow-xs cursor-pointer tracking-wide">
+                        <div class="relative">
+                            <svg class="w-5 h-5 text-[#5A0D14] transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                            </svg>
+                            <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-white"></span>
+                        </div>
+                        <span id="aiTriggerText" class="hidden sm:inline font-extrabold text-[#5A0D14]">Ask AI Waiter</span>
+                    </button>
+
+                    <!-- Order Plate -->
+                    <button onclick="toggleRightSection('cart')" id="headerCartBtn" class="flex items-center gap-2 text-[#3B1715] hover:text-[#5A0D14] font-bold text-xs sm:text-sm transition-colors active:scale-95 bg-[#FFF9EE] hover:bg-[#F9EFE0] border border-[#EAD9BE] px-3.5 py-2 rounded-xl shadow-xs cursor-pointer tracking-wide">
+                        <div class="relative">
+                            <svg class="w-5 h-5 text-[#5A0D14] transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                            </svg>
+                            <span id="cartCountBadge" class="hidden absolute -top-1.5 -right-2 bg-[#5A0D14] text-[#E8AE47] font-numeric text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center ring-1 ring-[#E8AE47]">0</span>
+                        </div>
+                        <span class="hidden sm:inline font-extrabold text-[#5A0D14]" id="cartLabelText">Order Plate</span>
+                        <span id="cartTotalHeader" class="text-[#5A0D14] font-black ml-0.5 text-sm sm:text-base tracking-tight font-numeric">₹0</span>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1424,14 +1492,18 @@
             const badgeSVG = dish.foodType === 'veg' ? vegBadgeSVG : nonVegBadgeSVG;
 
             container.innerHTML = `
-                <!-- Dish Header Banner Image -->
-                <div class="rounded-2xl overflow-hidden bg-stone-100 border border-stone-200/80 shadow-sm relative h-48 sm:h-52">
+                <!-- Dish Header Banner Image (Clickable for Deep Zoom) -->
+                <div class="rounded-2xl overflow-hidden bg-stone-100 border border-[#EAD9BE] shadow-sm relative h-48 sm:h-52 group/img cursor-pointer" onclick="openImageZoomModal('${dish.image}', '${dish.name.replace(/'/g, "\\'")}')">
                     <img 
                         src="${dish.image}" 
                         alt="${dish.name}" 
-                        class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                        class="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-105"
                         onerror="this.onerror=null; this.src='${dishFallbackSVG}';"
                     />
+                    <div class="absolute bottom-2.5 right-2.5 bg-[#230608]/80 hover:bg-[#5A0D14] text-[#E8AE47] text-[10px] font-bold px-2.5 py-1 rounded-lg backdrop-blur-md flex items-center gap-1 border border-[#E8AE47]/30 shadow-md transition-colors pointer-events-none">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+                        <span>Click to Zoom</span>
+                    </div>
                     <div class="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-lg border border-stone-200/90 shadow-sm flex items-center gap-1.5 text-xs font-bold font-heading text-stone-900">
                         ${badgeSVG}
                         <span class="capitalize">${dish.foodType}</span>
@@ -1878,71 +1950,97 @@
             const inCartQty = cart[item.id]?.qty || 0;
             const isAvailable = item.isAvailable;
 
-            // Progressive cascading entrance animation
             const delayMs = Math.min((itemIdx % 6) * 60, 360);
-            card.className = `bg-white rounded-3xl p-5 border border-stone-200/90 shadow-soft hover:shadow-hover transition-all duration-300 flex gap-4 relative overflow-hidden group reveal-on-scroll cursor-pointer ${!isAvailable ? 'opacity-70 bg-stone-50' : ''}`;
+            card.className = `group relative flex h-full flex-col sm:flex-row overflow-hidden rounded-2xl border border-[#EAD9BE] bg-[#FFF9EE] shadow-[0_6px_22px_-6px_rgba(90,13,20,0.10)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-8px_rgba(90,13,20,0.17)] reveal-on-scroll cursor-pointer ${!isAvailable ? 'opacity-70 bg-stone-50' : ''}`;
             card.style.transitionDelay = `${delayMs}ms`;
             card.onclick = (e) => {
-                // If user clicks directly on add/remove quantity buttons, don't hijack
                 if (e.target.closest('button') || e.target.closest('.tm-add-btn')) return;
                 inspectDish(item.id);
             };
             
             const badgeSVG = item.foodType === 'veg' ? vegBadgeSVG : nonVegBadgeSVG;
             const customBadge = item.hasOptions 
-                ? `<span class="text-[10px] font-heading font-bold text-brand-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md uppercase tracking-wider">${currentLanguage === 'bn' ? i18n.bn.customizable : i18n.en.customizable}</span>` 
+                ? `<span class="text-[9px] font-bold text-[#E5A73B] bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md uppercase tracking-wider">${currentLanguage === 'bn' ? i18n.bn.customizable : i18n.en.customizable}</span>` 
                 : '';
 
             let availabilityTag = '';
             if (!isAvailable) {
-                availabilityTag = `<span class="text-[10px] font-heading font-extrabold text-stone-500 bg-stone-200 px-2 py-0.5 rounded-md uppercase tracking-wider">${item.availability === 'out_of_stock' ? 'Out of Stock' : 'Unavailable'}</span>`;
+                availabilityTag = `<span class="text-[9px] font-bold text-stone-500 bg-stone-200 px-2 py-0.5 rounded-md uppercase tracking-wider">${item.availability === 'out_of_stock' ? 'Out of Stock' : 'Unavailable'}</span>`;
             }
 
             const topBadgeHTML = inCartQty > 0 ? `
-                <span class="inline-flex items-center gap-1 bg-amber-400 text-stone-950 font-numeric font-black text-xs px-2.5 py-0.5 rounded-full shadow-md animate-cart-pop border border-amber-300">
+                <span class="inline-flex items-center gap-1 bg-[#E5A73B] text-[#3B0B0F] font-numeric font-black text-xs px-2.5 py-0.5 rounded-full shadow-md animate-cart-pop border border-amber-300">
                     <span>₹${item.price * inCartQty}</span>
                     <span class="text-[10px] font-bold text-stone-700">(${inCartQty})</span>
                 </span>
             ` : '';
 
             card.innerHTML = `
-                <!-- Left Details -->
-                <div class="flex-1 flex flex-col justify-between min-w-0 pr-2">
-                    <div>
-                        <div class="flex items-center gap-1.5 mb-1.5">
-                            ${badgeSVG}
-                            ${customBadge}
-                            ${availabilityTag}
-                        </div>
-                        <h3 class="font-heading font-extrabold text-stone-950 text-base leading-snug line-clamp-2 group-hover:text-brand-600 transition-colors tracking-tight">
-                            ${toTitleCase(item.name)}
-                        </h3>
-                        <div class="font-numeric font-black text-brand-700 text-lg sm:text-xl mt-1 tracking-tight flex items-baseline gap-1">
-                            <span>₹${item.price}</span>
-                            <span class="text-[11px] font-sans font-medium text-stone-400">incl. tax</span>
-                        </div>
-                        ${item.description ? `<p class="font-sans text-xs text-stone-600 font-normal mt-1.5 line-clamp-2 leading-relaxed">${item.description}</p>` : ''}
-                    </div>
-                </div>
-
-                <!-- Right Image & Action Button -->
-                <div class="w-32 h-32 shrink-0 flex flex-col items-center justify-between relative">
-                    <div class="w-full h-28 rounded-2xl overflow-hidden bg-stone-100 border border-stone-200/80 shadow-inner relative">
+                <!-- Left Image Section with S-Curve Divider (Exact proportions from Screenshot 2026-11-15 131228) -->
+                <div class="relative h-40 sm:h-auto sm:min-h-[148px] sm:w-[38%] xl:w-[39%] shrink-0 bg-[#43070C] overflow-hidden">
+                    <div class="absolute inset-0 overflow-hidden">
                         <img 
                             src="${item.image}" 
                             alt="${item.name}" 
                             loading="lazy"
-                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.04] cursor-pointer"
+                            onclick="event.stopPropagation(); openImageZoomModal('${item.image}', '${item.name.replace(/'/g, "\\'")}')"
                             onerror="this.onerror=null; this.src='${dishFallbackSVG}';"
                         />
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-[#3B060B]/40 via-transparent to-transparent" aria-hidden="true"></div>
+
+                        <!-- Mobile Horizontal Wave Curve Mask -->
+                        <svg viewBox="0 0 400 26" preserveAspectRatio="none" class="pointer-events-none absolute inset-x-0 -bottom-px h-5 w-full sm:hidden" aria-hidden="true">
+                            <path d="M0 15C110 4 155 4 200 13S290 22 400 11V26H0V15Z" fill="#FFF9EE" />
+                            <path d="M0 15C110 4 155 4 200 13S290 22 400 11" stroke="#E8AE47" stroke-width="4.5" fill="none" stroke-linecap="round" />
+                        </svg>
+
+                        <!-- Desktop Vertical S-Curve Divider Mask with #E8AE47 Gold Rim -->
+                        <svg viewBox="0 0 64 220" preserveAspectRatio="none" class="pointer-events-none absolute top-0 -right-px hidden h-full w-11 sm:block" aria-hidden="true">
+                            <path d="M22 0C40 42 40 76 31 110S22 178 40 220H64V0H22Z" fill="#FFF9EE" />
+                            <path d="M22 0C40 42 40 76 31 110S22 178 40 220" stroke="#E8AE47" stroke-width="7" fill="none" stroke-linecap="round" />
+                        </svg>
+
                         <!-- Dynamic Top Total Price Badge on Dish Banner -->
-                        <div id="desktop-top-price-${item.id}" class="absolute top-1.5 right-1.5 z-10 transition-all ${inCartQty > 0 ? '' : 'hidden'}">
+                        <div id="desktop-top-price-${item.id}" class="absolute top-2 left-2 z-10 transition-all ${inCartQty > 0 ? '' : 'hidden'}">
                             ${topBadgeHTML}
                         </div>
                     </div>
 
-                    <!-- Ergonomic Larger Action Button Container -->
-                    <div class="absolute -bottom-2 z-10 w-28" id="desktop-dish-action-${item.id}">
+                    <!-- Floating Double-Ring Badge Icon on the S-Curve (Showing Veg/Non-Veg icon) -->
+                    <div class="pointer-events-none absolute right-4 -bottom-3.5 z-20 sm:top-1/2 sm:right-[18px] sm:bottom-auto sm:translate-x-1/2 sm:-translate-y-1/2">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-2xl border-2 border-[#FFF4DF] bg-[#5A0D14] shadow-[0_6px_18px_rgba(59,6,11,0.30)] ring-2 ring-[#E8AE47]/70 transition-transform duration-200 group-hover:scale-105" aria-hidden="true">
+                            ${badgeSVG}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Content Section -->
+                <div class="relative flex flex-1 flex-col justify-between p-4 sm:py-4 sm:pr-5 sm:pl-7 min-w-0">
+                    <!-- Leaf Watermark in bottom right -->
+                    <svg viewBox="0 0 120 110" fill="none" class="pointer-events-none absolute right-1 bottom-0 h-14 w-14 opacity-30" aria-hidden="true">
+                        <path d="M112 104C94 84 82 58 80 28C96 42 108 68 112 104Z" fill="#D8B37C" fill-opacity="0.3" />
+                        <path d="M98 106C76 92 56 72 44 46C68 54 88 76 98 106Z" fill="#D8B37C" fill-opacity="0.25" />
+                    </svg>
+
+                    <div class="relative z-10 my-auto">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <div class="h-[3px] w-7 rounded-full bg-[#E5A73B]" aria-hidden="true"></div>
+                            ${customBadge}
+                            ${availabilityTag}
+                        </div>
+                        <h3 class="font-bold text-base sm:text-[17px] leading-snug text-[#5A0D14] group-hover:text-[#73121B] transition-colors line-clamp-1">
+                            ${toTitleCase(item.name)}
+                        </h3>
+                        <div class="font-numeric font-black text-[#5A0D14] text-lg sm:text-xl mt-1 tracking-tight flex items-baseline gap-1.5">
+                            <span>₹${item.price}</span>
+                            <span class="text-[11px] font-sans font-normal text-[#6B4C46]">incl. tax</span>
+                        </div>
+                        ${item.description ? `<p class="text-xs text-[#4D302C] mt-1.5 line-clamp-2 leading-relaxed font-normal">${item.description}</p>` : ''}
+                    </div>
+
+                    <!-- Action Button Container matching the "Open ->" pill button position -->
+                    <div class="relative z-10 mt-3 pt-2" id="desktop-dish-action-${item.id}">
                         ${renderCardActionButton(item, inCartQty, isAvailable)}
                     </div>
                 </div>
@@ -2180,8 +2278,8 @@
                 const btn = document.getElementById(`mode-${m}`);
                 if (btn) {
                     btn.className = m === mode 
-                        ? "px-3.5 py-1.5 rounded-lg bg-white text-brand-600 shadow-sm transition-all flex items-center gap-1.5 font-black tracking-wide"
-                        : "px-3.5 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 transition-all flex items-center gap-1.5 tracking-wide";
+                        ? "px-3.5 py-1.5 rounded-lg bg-[#5A0D14] text-[#FDF5E6] shadow-sm transition-all flex items-center gap-1.5 font-black tracking-wide"
+                        : "px-3.5 py-1.5 rounded-lg text-[#6B4C46] hover:text-[#5A0D14] hover:bg-[#FFF9EE]/70 transition-all flex items-center gap-1.5 tracking-wide";
                 }
             });
 
@@ -2212,27 +2310,111 @@
             document.getElementById("tableModalBackdrop").classList.add("hidden");
         }
 
-        async function placeOrderSimulation() {
+        // --- PRODUCTION CUSTOMER DETAILS & TOKEN WORKFLOW ---
+        function openCustomerDetailsModal() {
             const items = Object.values(cart);
             const count = items.reduce((sum, e) => sum + e.qty, 0);
-            if (count === 0) return;
+            if (count === 0) {
+                alert("Your plate is empty! Please add items before placing order.");
+                return;
+            }
 
-            const note = (document.getElementById("orderSpecialNote")?.value || "").trim();
-            const subtotal = items.reduce((sum, e) => sum + (e.price * e.qty), 0);
+            // Set modal dynamic labels based on service mode (Dine-In or Takeaway)
+            const originTitle = currentServiceMode === 'dine-in' ? 'Dine-In Guest Details' : (currentServiceMode === 'takeaway' ? 'Highway Takeaway Details' : 'Home Delivery Details');
+            const originSubtitle = currentServiceMode === 'dine-in' 
+                ? 'Please provide your name, phone & party size for table token service' 
+                : 'Please provide contact information for rapid counter collection';
+
+            if (document.getElementById("orderModalTitle")) document.getElementById("orderModalTitle").innerText = originTitle;
+            if (document.getElementById("orderModalSubtitle")) document.getElementById("orderModalSubtitle").innerText = originSubtitle;
+            if (document.getElementById("custOriginBadge")) document.getElementById("custOriginBadge").innerText = currentServiceMode;
+            if (document.getElementById("custTableBadge")) {
+                document.getElementById("custTableBadge").innerText = currentServiceMode === 'dine-in' ? `(Table #${currentTable})` : `(Express Counter)`;
+            }
+
+            document.getElementById("customerDetailsModalBackdrop").classList.remove("hidden");
+            document.getElementById("customerDetailsModal").classList.remove("hidden");
+        }
+
+        function closeCustomerDetailsModal() {
+            document.getElementById("customerDetailsModalBackdrop").classList.add("hidden");
+            document.getElementById("customerDetailsModal").classList.add("hidden");
+        }
+
+        function adjustGroupSize(delta) {
+            const input = document.getElementById("custGroupSizeInput");
+            if (!input) return;
+            let val = parseInt(input.value || "1", 10) + delta;
+            if (val < 1) val = 1;
+            if (val > 50) val = 50;
+            input.value = val;
+        }
+
+        function placeOrderSimulation() {
+            // First prompt customer for details
+            openCustomerDetailsModal();
+        }
+
+        async function handleCustomerFormSubmit(e) {
+            e.preventDefault();
+            const rawEntries = Object.values(cart);
+            if (rawEntries.length === 0) return;
+
+            // Normalize items to guarantee valid name, price, qty (Fixes NaN)
+            const normalizedItems = rawEntries.map(entry => {
+                const it = entry.item || entry;
+                const price = Number(it.price) || 0;
+                const qty = Number(entry.qty) || Number(it.qty) || 1;
+                const name = it.name || "Dish Item";
+                const id = it.id || entry.id || String(Math.random());
+                return { id, name, price, qty };
+            });
+
+            const count = normalizedItems.reduce((sum, i) => sum + i.qty, 0);
+            const subtotal = normalizedItems.reduce((sum, i) => sum + (i.price * i.qty), 0);
             const taxes = Math.round(subtotal * 0.05);
             const grandTotal = subtotal + taxes;
 
+            const name = (document.getElementById("custNameInput")?.value || "").trim() || "Valued Guest";
+            const phone = (document.getElementById("custPhoneInput")?.value || "").trim() || "N/A";
+            const dob = (document.getElementById("custDobInput")?.value || "").trim() || null;
+            const groupSize = parseInt(document.getElementById("custGroupSizeInput")?.value || "1", 10);
+            const userNote = (document.getElementById("custSpecialNoteInput")?.value || document.getElementById("orderSpecialNote")?.value || "").trim();
+
+            // Compute estimated prep time based on items
+            let maxPrepMins = 12;
+            normalizedItems.forEach(i => {
+                const nl = (i.name || "").toLowerCase();
+                if (nl.includes("biryani") || nl.includes("mutton") || nl.includes("thali") || nl.includes("fish")) maxPrepMins = Math.max(maxPrepMins, 20);
+                else if (nl.includes("bhature") || nl.includes("luchi") || nl.includes("curry") || nl.includes("paneer")) maxPrepMins = Math.max(maxPrepMins, 15);
+                else if (nl.includes("chai") || nl.includes("beverage") || nl.includes("lassi") || nl.includes("sweet")) maxPrepMins = Math.max(maxPrepMins, 8);
+            });
+
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const fullDateTime = `${now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}, ${timeStr}`;
+
             const payload = {
-                items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+                customer_name: name,
+                phone_number: phone,
+                date_of_birth: dob,
+                group_size: groupSize,
+                items: normalizedItems,
                 subtotal: subtotal,
                 taxes: taxes,
                 grand_total: grandTotal,
-                service_mode: "dine-in",
-                table_number: String(currentTable || "4"),
-                special_note: note
+                service_mode: currentServiceMode,
+                table_number: currentServiceMode === 'dine-in' ? String(currentTable || "4") : "Counter Pickup",
+                special_note: userNote,
+                first_visit_date: dateStr,
+                estimated_prep_mins: maxPrepMins
             };
 
             let token = "MH-" + Math.floor(1000 + Math.random() * 9000);
+            let orderId = `MH-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${token.split('-')[1]}`;
+            let prepMinsResult = maxPrepMins;
+
             try {
                 const res = await fetch(`${BACKEND_URL}/order`, {
                     method: "POST",
@@ -2242,13 +2424,24 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (data.token) token = data.token;
+                    if (data.order_id) orderId = data.order_id;
+                    if (data.order && data.order.estimated_prep_mins) prepMinsResult = data.order.estimated_prep_mins;
                 }
             } catch (err) {
-                console.warn("Backend order endpoint offline, using local token generator:", err);
+                console.warn("Backend order endpoint offline, using client token & Supabase direct log:", err);
             }
 
-            // Populate Token Modal
+            // Populate Rich Production Token Modal
             document.getElementById("tokenNumberDisplay").innerText = token;
+            if (document.getElementById("tokenOrderIdDisplay")) document.getElementById("tokenOrderIdDisplay").innerText = orderId;
+            if (document.getElementById("tokenOriginBadge")) {
+                document.getElementById("tokenOriginBadge").innerText = currentServiceMode === 'dine-in' ? `Dine-In • Table #${currentTable}` : `${currentServiceMode.toUpperCase()} • Counter`;
+            }
+            if (document.getElementById("tokenGuestName")) document.getElementById("tokenGuestName").innerText = name;
+            if (document.getElementById("tokenGroupCount")) document.getElementById("tokenGroupCount").innerText = groupSize;
+            if (document.getElementById("tokenPrepTimeDisplay")) document.getElementById("tokenPrepTimeDisplay").innerText = `${prepMinsResult} Mins`;
+            if (document.getElementById("tokenDateTimeDisplay")) document.getElementById("tokenDateTimeDisplay").innerText = fullDateTime;
+            if (document.getElementById("tokenPhoneDisplay")) document.getElementById("tokenPhoneDisplay").innerText = phone;
             document.getElementById("tokenItemCount").innerText = `${count} items`;
             document.getElementById("tokenSubtotal").innerText = `₹${subtotal}`;
             document.getElementById("tokenTaxes").innerText = `₹${taxes}`;
@@ -2256,20 +2449,22 @@
 
             const listContainer = document.getElementById("tokenItemsList");
             if (listContainer) {
-                listContainer.innerHTML = items.map(i => `
-                    <div class="flex justify-between py-0.5">
-                        <span class="truncate pr-2">${i.qty}x ${toTitleCase(i.name)}</span>
-                        <span class="font-numeric font-bold shrink-0">₹${i.price * i.qty}</span>
+                listContainer.innerHTML = normalizedItems.map(i => `
+                    <div class="flex justify-between py-1 border-b border-stone-100 last:border-b-0">
+                        <span class="truncate pr-2 font-medium">${i.qty}x ${toTitleCase(i.name)}</span>
+                        <span class="font-numeric font-bold shrink-0 text-[#5A0D14]">₹${Number(i.price * i.qty).toFixed(0)}</span>
                     </div>
                 `).join("");
             }
 
-            // Reset cart
+            // Close input form & reset cart
+            closeCustomerDetailsModal();
             cart = {};
             if (document.getElementById("orderSpecialNote")) document.getElementById("orderSpecialNote").value = "";
+            if (document.getElementById("custSpecialNoteInput")) document.getElementById("custSpecialNoteInput").value = "";
             syncCartUI();
 
-            // Display modal
+            // Display Production Token modal
             document.getElementById("orderTokenModalBackdrop").classList.remove("hidden");
             document.getElementById("orderTokenModal").classList.remove("hidden");
         }
@@ -2308,13 +2503,13 @@
             const bnBtn = document.getElementById("lang-bn");
             if (enBtn) {
                 enBtn.className = lang === 'en' 
-                    ? "px-2.5 py-1 rounded-md bg-white text-stone-900 shadow-sm font-black"
-                    : "px-2.5 py-1 rounded-md text-stone-500 hover:text-stone-800";
+                    ? "px-2 py-0.5 rounded-md bg-[#5A0D14] text-[#FDF5E6] font-black cursor-pointer shadow-xs transition-colors"
+                    : "px-2 py-0.5 rounded-md text-[#6B4C46] hover:text-[#5A0D14] font-bold cursor-pointer transition-colors";
             }
             if (bnBtn) {
                 bnBtn.className = lang === 'bn' 
-                    ? "px-2.5 py-1 rounded-md bg-white text-stone-900 shadow-sm font-black font-bengali"
-                    : "px-2.5 py-1 rounded-md text-stone-500 hover:text-stone-800 font-bengali";
+                    ? "px-2 py-0.5 rounded-md bg-[#5A0D14] text-[#FDF5E6] font-black font-bengali cursor-pointer shadow-xs transition-colors"
+                    : "px-2 py-0.5 rounded-md text-[#6B4C46] hover:text-[#5A0D14] font-bengali font-bold cursor-pointer transition-colors";
             }
 
             if (lang === 'bn') {
@@ -2603,7 +2798,56 @@
             document.querySelectorAll(".liveTableNum").forEach(el => el.innerText = currentTable);
             fetchMenuData();
         });
-    </script>
+    
+        // --- Image Zoom & Lightbox Controller ---
+        let isImageMagnified = false;
+        function openImageZoomModal(imgSrc, title = 'Dish Presentation') {
+            const modal = document.getElementById('imageZoomModal');
+            const img = document.getElementById('zoomModalImage');
+            const titleEl = document.getElementById('zoomModalTitle');
+            const magnifyBtn = document.getElementById('zoomScaleLabel');
+            if (!modal || !img) return;
+
+            img.src = imgSrc;
+            if (titleEl) titleEl.innerText = title;
+            isImageMagnified = false;
+            img.style.transform = 'scale(1)';
+            img.className = 'max-w-full max-h-[68vh] object-contain rounded-xl shadow-2xl transition-transform duration-300 cursor-zoom-in ease-out';
+            if (magnifyBtn) magnifyBtn.innerText = 'Zoom 1.5x';
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageZoomModal() {
+            const modal = document.getElementById('imageZoomModal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function toggleZoomMagnify() {
+            const img = document.getElementById('zoomModalImage');
+            const magnifyBtn = document.getElementById('zoomScaleLabel');
+            if (!img) return;
+
+            isImageMagnified = !isImageMagnified;
+            if (isImageMagnified) {
+                img.style.transform = 'scale(1.75)';
+                img.className = 'max-w-full max-h-[68vh] object-contain rounded-xl shadow-2xl transition-transform duration-300 cursor-zoom-out ease-out';
+                if (magnifyBtn) magnifyBtn.innerText = 'Reset (1x)';
+            } else {
+                img.style.transform = 'scale(1)';
+                img.className = 'max-w-full max-h-[68vh] object-contain rounded-xl shadow-2xl transition-transform duration-300 cursor-zoom-in ease-out';
+                if (magnifyBtn) magnifyBtn.innerText = 'Zoom 1.5x';
+            }
+        }
+
+        // Close zoom modal on Escape key
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeImageZoomModal();
+        });
+</script>
     <!-- Floating Scroll To Top Button (Smooth Instant Elevation) -->
     <button id="scrollToTopBtn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" class="hidden fixed bottom-6 right-6 z-50 p-3 bg-stone-900/90 hover:bg-brand-600 text-white rounded-2xl shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 border border-stone-700/50 cursor-pointer" title="Scroll to Top">
         <svg class="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2612,26 +2856,130 @@
     </button>
 
     <!-- Token Order Confirmation Modal -->
-    <div id="orderTokenModalBackdrop" onclick="closeOrderTokenModal()" class="hidden fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 transition-opacity"></div>
-    <div id="orderTokenModal" class="hidden fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-md mx-auto bg-white rounded-3xl shadow-2xl z-50 p-6 border border-stone-200 font-sans text-center animate-in fade-in zoom-in-95 duration-200">
-        <div class="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-        </div>
-        <span class="text-[11px] font-heading font-black tracking-widest text-emerald-800 uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">Order Confirmed & Sent to Kitchen</span>
-        <h3 class="font-heading font-black text-xl text-stone-900 mt-2">Drive-Thru / Dine-In Token</h3>
-        <p class="text-xs text-stone-500 mt-1">Please show this token number at the collection counter or drive-thru window.</p>
-        
-        <!-- Big High-Visibility Token Banner -->
-        <div class="my-4 py-3.5 px-4 bg-stone-900 text-white rounded-2xl border-2 border-amber-400 shadow-md">
-            <span class="text-[10px] font-black tracking-widest uppercase text-amber-300 block">Token Number</span>
-            <span id="tokenNumberDisplay" class="font-mono text-3xl font-black tracking-wider text-white">MH-0000</span>
+    
+    <!-- Customer Details & Party Size Modal (Before Generating Token) -->
+    <div id="customerDetailsModalBackdrop" onclick="closeCustomerDetailsModal()" class="hidden fixed inset-0 bg-[#230608]/80 backdrop-blur-md z-50 transition-opacity"></div>
+    <div id="customerDetailsModal" class="hidden fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-md mx-auto bg-[#FFF9EE] rounded-3xl shadow-2xl z-50 p-6 border-2 border-[#E8AE47] font-sans text-stone-900 animate-in fade-in zoom-in-95 duration-200">
+        <div class="flex items-center justify-between border-b border-[#EAD9BE] pb-3 mb-4">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-[#5A0D14] text-[#E8AE47] flex items-center justify-center font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-heading font-black text-lg text-[#5A0D14] leading-tight" id="orderModalTitle">Dine-In Guest Details</h3>
+                    <p class="text-[11px] text-[#6B4C46] font-medium" id="orderModalSubtitle">Please provide your details for token & table service</p>
+                </div>
+            </div>
+            <button onclick="closeCustomerDetailsModal()" class="w-8 h-8 rounded-full bg-[#F9EFE0] text-[#6B4C46] hover:text-[#5A0D14] flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
         </div>
 
-        <!-- Order Breakdown -->
-        <div class="bg-stone-50 rounded-2xl p-3.5 border border-stone-200 text-left text-xs space-y-2 mb-4">
-            <div class="flex justify-between text-stone-600 font-medium">
-                <span>Items Ordered:</span>
-                <span id="tokenItemCount" class="font-numeric font-bold text-stone-900">0 items</span>
+        <form id="customerOrderForm" onsubmit="handleCustomerFormSubmit(event)" class="space-y-3.5">
+            <div>
+                <label class="block text-xs font-bold text-[#5A0D14] mb-1">Your Full Name *</label>
+                <input type="text" id="custNameInput" required placeholder="e.g. Rahul Sen" class="w-full px-3.5 py-2.5 bg-white border border-[#EAD9BE] focus:border-[#5A0D14] focus:ring-1 focus:ring-[#5A0D14] rounded-xl text-sm font-sans focus:outline-none" />
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-[#5A0D14] mb-1">Phone Number (For Order Updates) *</label>
+                <input type="tel" id="custPhoneInput" required pattern="[0-9]{10}" placeholder="10-digit mobile number" class="w-full px-3.5 py-2.5 bg-white border border-[#EAD9BE] focus:border-[#5A0D14] focus:ring-1 focus:ring-[#5A0D14] rounded-xl text-sm font-sans focus:outline-none" />
+            </div>
+
+            <!-- Date of Birth (Birthday Rewards Offer) -->
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="block text-xs font-bold text-[#5A0D14]">Date of Birth (Optional)</label>
+                    <span class="text-[10px] font-bold text-[#E5A73B] bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">Birthday Rewards</span>
+                </div>
+                <input type="date" id="custDobInput" class="w-full px-3.5 py-2 bg-white border border-[#EAD9BE] focus:border-[#5A0D14] focus:ring-1 focus:ring-[#5A0D14] rounded-xl text-xs font-sans focus:outline-none text-stone-700" />
+                <p class="text-[11px] text-[#6B4C46] mt-1 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 text-[#E8AE47] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4m-14 0v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+                    <span>Share your birthday to unlock exclusive dining offers and treats on your next visit.</span>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-[#5A0D14] mb-1">Number of Persons *</label>
+                    <div class="flex items-center border border-[#EAD9BE] bg-white rounded-xl overflow-hidden p-1">
+                        <button type="button" onclick="adjustGroupSize(-1)" class="w-8 h-8 rounded-lg bg-[#F9EFE0] text-[#5A0D14] font-black flex items-center justify-center text-sm hover:bg-[#EAD9BE]">-</button>
+                        <input type="number" id="custGroupSizeInput" min="1" max="50" value="2" readonly class="w-full text-center font-bold text-sm bg-transparent outline-none border-none text-[#5A0D14]" />
+                        <button type="button" onclick="adjustGroupSize(1)" class="w-8 h-8 rounded-lg bg-[#F9EFE0] text-[#5A0D14] font-black flex items-center justify-center text-sm hover:bg-[#EAD9BE]">+</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-[#5A0D14] mb-1">Service Origin</label>
+                    <div class="px-3 py-2 bg-[#F9EFE0] rounded-xl border border-[#EAD9BE] text-xs font-bold text-[#5A0D14] flex items-center gap-1.5 h-[42px]">
+                        <span id="custOriginBadge" class="capitalize font-black tracking-wide">Dine-In</span>
+                        <span id="custTableBadge" class="text-[10px] text-[#6B4C46]">(Table #4)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Special Chef Note -->
+            <div>
+                <label class="block text-xs font-bold text-[#5A0D14] mb-1">Special Cooking Request (Optional)</label>
+                <input type="text" id="custSpecialNoteInput" placeholder="Less spicy, no onion/garlic, extra cutlery..." class="w-full px-3 py-2 bg-white border border-[#EAD9BE] rounded-xl text-xs font-sans focus:outline-none focus:border-[#5A0D14]" />
+            </div>
+
+            <button type="submit" id="submitCustomerOrderBtn" class="w-full mt-2 py-3 bg-[#5A0D14] hover:bg-[#73121B] text-[#FDF5E6] font-heading font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-[#E8AE47]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Confirm & Generate Official Token</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Order Token Modal (Production Level Token for Dine-In & Takeaway with Supabase persistence) -->
+    <div id="orderTokenModalBackdrop" onclick="closeOrderTokenModal()" class="hidden fixed inset-0 bg-[#230608]/85 backdrop-blur-md z-50 transition-opacity"></div>
+    <div id="orderTokenModal" class="hidden fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-lg mx-auto bg-[#FFF9EE] rounded-3xl shadow-[0_25px_60px_-15px_rgba(35,6,8,0.7)] z-50 p-6 border-2 border-[#E8AE47] font-sans text-center animate-in fade-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
+        
+        <!-- Header Badge -->
+        <div class="flex items-center justify-between border-b border-[#EAD9BE] pb-3 mb-3">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-[#5A0D14] p-1 flex items-center justify-center border border-[#E8AE47]">
+                    <img src="logo.png" alt="Logo" class="w-full h-full object-contain" />
+                </div>
+                <div class="text-left">
+                    <span class="font-brand font-black text-sm text-[#5A0D14] block leading-none">Mother's Hut</span>
+                    <span class="text-[9px] text-[#E5A73B] font-bold uppercase tracking-wider">Kitchen Order Ticket</span>
+                </div>
+            </div>
+            <span id="tokenOriginBadge" class="text-[10px] font-heading font-black tracking-wider uppercase bg-[#5A0D14] text-[#E8AE47] px-2.5 py-1 rounded-full border border-[#E8AE47]">
+                Dine-In • Table #4
+            </span>
+        </div>
+
+        <!-- Big High-Visibility Token Banner -->
+        <div class="my-3 py-3.5 px-4 bg-gradient-to-r from-[#5A0D14] via-[#520B11] to-[#3E060B] text-[#FDF5E6] rounded-2xl border-2 border-[#E8AE47] shadow-md relative overflow-hidden">
+            <div class="flex justify-between items-center text-[10px] font-black uppercase text-[#E8AE47] mb-0.5">
+                <span>Kitchen Display Token</span>
+                <span id="tokenOrderIdDisplay" class="font-mono text-white/80">MH-20261115-0000</span>
+            </div>
+            <span id="tokenNumberDisplay" class="font-mono text-4xl font-black tracking-widest text-[#FDF5E6] block py-1">MH-0000</span>
+            <div class="flex items-center justify-between text-[11px] text-[#FDF5E6]/90 border-t border-[#E8AE47]/30 pt-1.5 mt-1">
+                <span>Guest: <strong id="tokenGuestName" class="text-[#E8AE47]">Valued Guest</strong> (<span id="tokenGroupCount">2</span> Persons)</span>
+                <span>Est. Prep: <strong id="tokenPrepTimeDisplay" class="text-emerald-400">15 Mins</strong></span>
+            </div>
+        </div>
+
+        <!-- Order Information Table -->
+        <div class="bg-white rounded-2xl p-3.5 border border-[#EAD9BE] text-left text-xs space-y-2 mb-3 shadow-inner">
+            <div class="grid grid-cols-2 gap-2 pb-2 border-b border-stone-100 text-[11px]">
+                <div>
+                    <span class="text-stone-400 block text-[10px]">Order Date & Time</span>
+                    <strong id="tokenDateTimeDisplay" class="text-[#3B1715] font-semibold">15 Nov 2026, 17:00</strong>
+                </div>
+                <div class="text-right">
+                    <span class="text-stone-400 block text-[10px]">Phone Number</span>
+                    <strong id="tokenPhoneDisplay" class="text-[#3B1715] font-mono">9876543210</strong>
+                </div>
+            </div>
+
+            <div class="flex justify-between text-[#6B4C46] font-bold text-[11px] pt-1">
+                <span>Items Ordered (<strong id="tokenItemCount">0 items</strong>):</span>
+                <span>Price</span>
             </div>
             <div id="tokenItemsList" class="max-h-36 overflow-y-auto space-y-1 py-1 border-y border-stone-200 text-stone-700 text-[11px]">
                 <!-- Item rows inserted here -->
@@ -2644,15 +2992,67 @@
                 <span>Taxes (5% GST):</span>
                 <span id="tokenTaxes" class="font-numeric font-semibold">₹0</span>
             </div>
-            <div class="flex justify-between font-heading font-black text-sm text-stone-900 border-t border-stone-200 pt-1.5">
-                <span>Total Amount to Pay:</span>
-                <span id="tokenGrandTotal" class="font-numeric font-black text-brand-600 text-base">₹0</span>
+            <div class="flex justify-between font-heading font-black text-sm text-[#5A0D14] border-t border-[#EAD9BE] pt-1.5">
+                <span>Grand Total:</span>
+                <span id="tokenGrandTotal" class="font-numeric font-black text-[#5A0D14] text-base">₹0</span>
+            </div>
+            <div id="tokenSupabaseNotice" class="text-[10px] text-center text-emerald-700 bg-emerald-50 rounded-lg py-1 border border-emerald-200 font-medium flex items-center justify-center gap-1">
+                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span>Synchronized to Mother's Hut Supabase Production Database</span>
             </div>
         </div>
 
-        <button onclick="closeOrderTokenModal()" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-heading font-black text-xs rounded-xl uppercase tracking-wider shadow-md transition-all active:scale-95">
+        <button onclick="closeOrderTokenModal()" class="w-full py-3 bg-[#5A0D14] hover:bg-[#73121B] text-[#FDF5E6] font-heading font-black text-xs rounded-xl uppercase tracking-wider shadow-md transition-all active:scale-95 cursor-pointer">
             Done & Return to Menu
         </button>
     </div>
 
 </html>
+    <!-- Image Zoom Modal (Interactive Lightbox & Deep Zoom) -->
+    <div id="imageZoomModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-[#230608]/85 backdrop-blur-md transition-opacity" onclick="closeImageZoomModal()"></div>
+        
+        <!-- Modal Window -->
+        <div class="relative z-10 max-w-4xl w-full bg-[#FFF9EE] rounded-3xl overflow-hidden border-2 border-[#E8AE47] shadow-[0_25px_60px_-15px_rgba(35,6,8,0.7)] flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95 duration-200">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-[#5A0D14] via-[#520B11] to-[#3E060B] px-5 py-3.5 flex items-center justify-between border-b border-[#E8AE47]/30 text-[#FDF5E6]">
+                <div class="flex items-center gap-2.5 truncate">
+                    <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center border border-[#E8AE47]/40 text-[#E8AE47]">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+                    </div>
+                    <span id="zoomModalTitle" class="font-heading font-black text-sm sm:text-base tracking-wide truncate">Dish Presentation</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleZoomMagnify()" id="zoomMagnifyBtn" class="px-3 py-1 bg-white/10 hover:bg-white/20 text-[#E8AE47] hover:text-white rounded-lg text-xs font-bold transition-all border border-[#E8AE47]/30 flex items-center gap-1 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span id="zoomScaleLabel">Zoom 1.5x</span>
+                    </button>
+                    <button onclick="closeImageZoomModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-[#FDF5E6] hover:text-[#E8AE47] flex items-center justify-center transition-colors cursor-pointer border border-white/10" title="Close preview">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Image Canvas (Pan / Zoomable) -->
+            <div class="relative flex-1 overflow-auto bg-[#32060A]/90 p-4 flex items-center justify-center min-h-[300px] max-h-[72vh] select-none" id="zoomCanvasContainer">
+                <img 
+                    id="zoomModalImage" 
+                    src="" 
+                    alt="Dish Preview" 
+                    class="max-w-full max-h-[68vh] object-contain rounded-xl shadow-2xl transition-transform duration-300 cursor-zoom-in ease-out"
+                    onclick="toggleZoomMagnify()"
+                />
+            </div>
+
+            <!-- Modal Footer Note -->
+            <div class="px-5 py-2.5 bg-[#FFF9EE] border-t border-[#EAD9BE] flex items-center justify-between text-xs text-[#6B4C46] font-medium">
+                <span class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-[#E8AE47]"></span>
+                    Click image or toggle button to magnify authentic culinary presentation.
+                </span>
+                <button onclick="closeImageZoomModal()" class="text-[#5A0D14] hover:underline font-bold font-heading">Close</button>
+            </div>
+        </div>
+    </div>
+

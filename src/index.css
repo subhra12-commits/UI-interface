@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --mh-maroon: #5a0d14;
+    --mh-maroon-dark: #43070c;
+    --mh-maroon-hover: #70121b;
+    --mh-cream: #fdf5e6;
+    --mh-cream-card: #fffaf0;
+    --mh-gold: #eab349;
+    --mh-gold-deep: #d39229;
+    --mh-ink: #3b1715;
+    --mh-muted: #6b4c46;
+  }
+
+  html,
+  body {
+    font-family: "Roboto", system-ui, -apple-system, sans-serif;
+    background-color: var(--mh-cream);
+    color: var(--mh-ink);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    font-family: "Roboto", system-ui, -apple-system, sans-serif;
+  }
+}
+
+@keyframes mh-spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes mh-progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-mh-spin {
+  animation: mh-spin-slow 1.6s linear infinite;
+}
+
+.animate-mh-progress {
+  animation: mh-progress-indeterminate 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-mh-spin,
+  .animate-mh-progress {
+    animation: none;
+  }
+}

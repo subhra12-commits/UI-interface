@@ -1,0 +1,6 @@
+{
+  "name": "Mother's Hut Workspace",
+  "description": "Mother's Hut Restaurant Intelligence Workspace — unified operations portal for Meal Verifier System, Kitchen Hygiene Monitoring, Customer Grouping & Marketing Strategy Manager, and Mother's Hut Food Managing Platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
