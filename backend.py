@@ -544,3 +544,9 @@ def get_all_orders():
     # Otherwise return local active memory store sorted by timestamp desc
     local_list = sorted(list(active_orders.values()), key=lambda x: x.get("ordered_at", ""), reverse=True)
     return {"orders": local_list, "source": "local"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("backend:api", host="0.0.0.0", port=port, reload=True)

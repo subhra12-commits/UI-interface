@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: mothers-hut-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend:api --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://postgres.xrjpheqinpsnvnqvcdtk:%23Subhradeepsaha@aws-0-ap-south-1.pooler.supabase.com:6543/postgres
+      - key: SUPABASE_URL
+        value: https://xrjpheqinpsnvnqvcdtk.supabase.co
+      - key: API_URL
+        value: https://openrouter.ai/api/v1/chat/completions
+      - key: API_KEY
+        value: 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
