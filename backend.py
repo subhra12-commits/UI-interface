@@ -1,8 +1,6 @@
 import json
 import requests
 from datetime import datetime, timezone
-import chromadb
-from chromadb.utils import embedding_functions
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
@@ -11,6 +9,16 @@ import os
 import random
 import time
 from typing import List, Optional
+
+# Optional Vector DB / ChromaDB import (fallback to local keyword search if chromadb not installed)
+try:
+    import chromadb
+    from chromadb.utils import embedding_functions
+    HAVE_CHROMADB = True
+except ImportError:
+    chromadb = None
+    embedding_functions = None
+    HAVE_CHROMADB = False
 
 # Import Custom Admin Auth & Security Middleware
 import supabase_client
@@ -44,32 +52,41 @@ OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
 if API_KEY.startswith("sk-or-v1-sk-or-v1-"):
     API_KEY = "sk-or-v1-" + API_KEY[len("sk-or-v1-sk-or-v1-"):]
 
-# --- DATABASE SETUP ---
-chroma_client = chromadb.Client()
-try:
-    better_embeddings = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="BAAI/bge-small-en-v1.5")
-    collection = chroma_client.get_or_create_collection(
-        name="drive_thru_menu_v8", 
-        embedding_function=better_embeddings
-    )
-except Exception as e:
-    collection = chroma_client.get_or_create_collection(name="drive_thru_menu_v8")
+# --- MENU DATABASE & SEARCH SETUP ---
+collection = None
+local_menu_items = []
 
-if collection.count() == 0:
-    try:
+try:
+    if os.path.exists("menu.json"):
         with open("menu.json", "r", encoding="utf-8") as file:
-            menu_items = json.load(file)
-            
-        collection.add(
-            documents=[item["text"] for item in menu_items],
-            metadatas=[item["metadata"] for item in menu_items],
-            ids=[item["id"] for item in menu_items]
-        )
-        print("Successfully loaded menu into database!")
-    except FileNotFoundError:
-        print("Warning: menu.json not found.")
+            local_menu_items = json.load(file)
+except Exception as e:
+    print(f"Notice reading menu.json: {e}")
+
+if HAVE_CHROMADB:
+    try:
+        chroma_client = chromadb.Client()
+        try:
+            better_embeddings = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="BAAI/bge-small-en-v1.5")
+            collection = chroma_client.get_or_create_collection(
+                name="drive_thru_menu_v8", 
+                embedding_function=better_embeddings
+            )
+        except Exception:
+            collection = chroma_client.get_or_create_collection(name="drive_thru_menu_v8")
+
+        if collection.count() == 0 and local_menu_items:
+            collection.add(
+                documents=[item["text"] for item in local_menu_items],
+                metadatas=[item["metadata"] for item in local_menu_items],
+                ids=[item["id"] for item in local_menu_items]
+            )
+            print("Successfully loaded menu into ChromaDB collection!")
     except Exception as err:
-        print(f"Warning adding items to collection: {err}")
+        print(f"Notice initializing ChromaDB: {err}. Using local search fallback.")
+        collection = None
+else:
+    print("Notice: chromadb not installed. Drive-thru assistant will use lightweight fallback search.")
 
 # --- FASTAPI SETUP ---
 api = FastAPI(title="Mother's Hut Restaurant & Admin Platform")
@@ -274,8 +291,25 @@ def ask_endpoint(query: UserQuery):
     active_api_url = os.getenv("API_URL", "") or API_URL
     active_model = os.getenv("DRIVE_THRU_MODEL", "") or MODEL_NAME
 
-    results = collection.query(query_texts=[query.question], n_results=6)
-    retrieved_docs = results["documents"][0] if results["documents"] else []
+    # Retrieve relevant menu context
+    if collection is not None:
+        try:
+            results = collection.query(query_texts=[query.question], n_results=6)
+            retrieved_docs = results["documents"][0] if results["documents"] else []
+        except Exception:
+            retrieved_docs = []
+    else:
+        # Fallback keyword matching when ChromaDB is not installed
+        q_lower = query.question.lower()
+        matched = []
+        for itm in local_menu_items:
+            txt = itm.get("text", "")
+            if any(term in txt.lower() for term in q_lower.split() if len(term) > 2):
+                matched.append(txt)
+            if len(matched) >= 6:
+                break
+        retrieved_docs = matched if matched else [itm.get("text", "") for itm in local_menu_items[:6]]
+
     context = "\n".join(retrieved_docs)
     
     prompt = f"""You are an ultra-fast drive-through assistant for Mother's Hut restaurant.
@@ -582,10 +616,13 @@ def _master_sync_worker():
             time.sleep(60)
 
 
-# Start background thread automatically
-import threading
-_sync_thread = threading.Thread(target=_master_sync_worker, daemon=True)
-_sync_thread.start()
+# Lifespan event handler for FastAPI
+@api.on_event("startup")
+def startup_event():
+    import threading
+    _sync_thread = threading.Thread(target=_master_sync_worker, daemon=True)
+    _sync_thread.start()
+    print("Master Supabase 5-minute background sync thread started.")
 
 
 if __name__ == "__main__":
