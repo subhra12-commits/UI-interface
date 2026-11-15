@@ -16,9 +16,22 @@ import logging
 from datetime import datetime, timezone, timedelta
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from dotenv import load_dotenv
 
-load_dotenv()
+# Optional dotenv loader for local dev (built-in file loader fallback so python-dotenv is not required)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    if os.path.exists(".env"):
+        try:
+            with open(".env", "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        os.environ.setdefault(k.strip(), v.strip().strip("'\""))
+        except Exception:
+            pass
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("master_sync")
