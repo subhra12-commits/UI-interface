@@ -191,6 +191,7 @@ class AdminLoginRequest(BaseModel):
     password: str
 
 @api.get("/admin", response_class=HTMLResponse)
+@api.get("/admin.html", response_class=HTMLResponse)
 def serve_admin_login():
     try:
         with open("admin.html", "r", encoding="utf-8") as f:

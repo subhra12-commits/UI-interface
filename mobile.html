@@ -4,12 +4,25 @@
     <!-- Automatic /admin URL Router for both file:// and http:// -->
     <script>
         (function() {
-            var href = window.location.href.toLowerCase();
-            var path = window.location.pathname.toLowerCase();
-            var hash = window.location.hash.toLowerCase();
-            if (href.endsWith('/admin') || href.endsWith('/admin/') || path.endsWith('/admin') || hash === '#admin' || hash === '#/admin') {
-                window.location.replace('admin.html');
+            function checkAdminRedirect() {
+                var href = window.location.href.toLowerCase();
+                var path = window.location.pathname.toLowerCase();
+                var hash = window.location.hash.toLowerCase();
+                if (
+                    href.endsWith('/admin') || 
+                    href.endsWith('/admin/') || 
+                    path.endsWith('/admin') || 
+                    path.endsWith('/admin/') || 
+                    hash === '#admin' || 
+                    hash === '#/admin' ||
+                    hash.startsWith('#/admin') ||
+                    hash.startsWith('#admin')
+                ) {
+                    window.location.replace('admin.html');
+                }
             }
+            checkAdminRedirect();
+            window.addEventListener('hashchange', checkAdminRedirect);
         })();
     </script>
 
