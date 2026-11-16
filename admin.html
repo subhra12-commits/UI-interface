@@ -174,8 +174,10 @@
                     <span class="text-base font-bold tracking-tight">Mother's Hut</span>
                 </div>
             </div>
-            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-[#5A0D14] text-[#FDF5E6] shadow-md ring-2 ring-white/80 text-xs font-bold">
-                <span id="userInitialMobile">A</span>
+            <div id="mobileWelcomeGroup" class="hidden items-center gap-1.5">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-[#5A0D14] text-[#FDF5E6] shadow-md ring-2 ring-white/80 text-xs font-bold">
+                    <span id="userInitialMobile">A</span>
+                </div>
             </div>
         </header>
 
@@ -243,7 +245,7 @@
         <!-- ======================================================== -->
         <!-- MAIN SECTION                                             -->
         <!-- ======================================================== -->
-        <main class="relative flex flex-1 flex-col justify-center px-4 py-3 sm:px-7 lg:px-10 lg:py-5 xl:px-12">
+        <main class="relative flex flex-1 flex-col justify-center px-3.5 py-3 sm:px-7 lg:px-10 lg:py-5 xl:px-12">
             
             <!-- Bottom Left Botanical Leaves Watermark -->
             <svg viewBox="0 0 180 140" fill="none" class="pointer-events-none fixed bottom-0 left-60 hidden h-28 w-36 -rotate-90 opacity-45 lg:block" aria-hidden="true">
@@ -256,7 +258,7 @@
             <!-- ======================================================== -->
             <!-- VIEW 1: AUTHENTICATION CONTAINER (WHEN LOGGED OUT)       -->
             <!-- ======================================================== -->
-            <div id="authContainer" class="max-w-md w-full mx-auto bg-[#FFF9EE] rounded-3xl border border-[#EAD9BE] p-8 shadow-xl relative z-10 my-4">
+            <div id="authContainer" class="max-w-md w-full mx-auto bg-[#FFF9EE] rounded-3xl border border-[#EAD9BE] p-5 sm:p-8 shadow-xl relative z-10 my-3 sm:my-4">
                 
                 <div class="text-center mb-6">
                     <div class="w-20 h-20 rounded-2xl bg-white p-2 shadow-xs border border-[#EAD9BE] mx-auto mb-3 flex items-center justify-center">
@@ -348,7 +350,7 @@
                             </div>
 
                             <!-- Floating Double-Ring Badge Icon on the S-Curve -->
-                            <div class="pointer-events-none absolute right-5 -bottom-4 z-20 sm:top-1/2 sm:right-[22px] sm:bottom-auto sm:translate-x-1/2 sm:-translate-y-1/2">
+                            <div class="pointer-events-none absolute right-4 -bottom-4 z-20 sm:top-1/2 sm:right-[22px] sm:bottom-auto sm:translate-x-1/2 sm:-translate-y-1/2">
                                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-[#FFF4DF] bg-[#5A0D14] shadow-[0_6px_18px_rgba(59,6,11,0.30)] ring-2 ring-[#E8AE47]/70 transition-transform duration-200 group-hover:scale-105" aria-hidden="true">
                                     <svg class="h-6 w-6 text-[#FFF4DF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                                 </div>
@@ -356,7 +358,7 @@
                         </div>
 
                         <!-- Right Content -->
-                        <div class="relative flex flex-1 flex-col justify-between px-4 pt-6 pb-4 sm:py-4 sm:pr-5 sm:pl-7 lg:py-4.5 lg:pr-6 lg:pl-8">
+                        <div class="relative flex flex-1 flex-col justify-between px-4 pt-5 pb-4 sm:py-4 sm:pr-5 sm:pl-7 lg:py-4.5 lg:pr-6 lg:pl-8">
                             <!-- Leaf Watermark in bottom right -->
                             <svg viewBox="0 0 120 110" fill="none" class="pointer-events-none absolute right-1 bottom-0 h-14 w-14 opacity-80" aria-hidden="true">
                                 <path d="M112 104C94 84 82 58 80 28C96 42 108 68 112 104Z" fill="#D8B37C" fill-opacity="0.26" />
@@ -405,7 +407,7 @@
                             </div>
 
                             <!-- Floating Double-Ring Badge Icon on the S-Curve -->
-                            <div class="pointer-events-none absolute right-5 -bottom-4 z-20 sm:top-1/2 sm:right-[22px] sm:bottom-auto sm:translate-x-1/2 sm:-translate-y-1/2">
+                            <div class="pointer-events-none absolute right-4 -bottom-4 z-20 sm:top-1/2 sm:right-[22px] sm:bottom-auto sm:translate-x-1/2 sm:-translate-y-1/2">
                                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-[#FFF4DF] bg-[#5A0D14] shadow-[0_6px_18px_rgba(59,6,11,0.30)] ring-2 ring-[#E8AE47]/70 transition-transform duration-200 group-hover:scale-105" aria-hidden="true">
                                     <div class="relative flex items-center justify-center">
                                         <svg class="h-6 w-6 text-[#FFF4DF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
@@ -416,7 +418,7 @@
                         </div>
 
                         <!-- Right Content -->
-                        <div class="relative flex flex-1 flex-col justify-between px-4 pt-6 pb-4 sm:py-4 sm:pr-5 sm:pl-7 lg:py-4.5 lg:pr-6 lg:pl-8">
+                        <div class="relative flex flex-1 flex-col justify-between px-4 pt-5 pb-4 sm:py-4 sm:pr-5 sm:pl-7 lg:py-4.5 lg:pr-6 lg:pl-8">
                             <!-- Leaf Watermark in bottom right -->
                             <svg viewBox="0 0 120 110" fill="none" class="pointer-events-none absolute right-1 bottom-0 h-14 w-14 opacity-80" aria-hidden="true">
                                 <path d="M112 104C94 84 82 58 80 28C96 42 108 68 112 104Z" fill="#D8B37C" fill-opacity="0.26" />
@@ -469,7 +471,7 @@
                             </div>
 
                             <!-- Floating Double-Ring Badge Icon on the S-Curve -->
-                            <div class="pointer-events-none absolute right-5 -bottom-4 z-20 sm:top-1/2 sm:right-[22px] sm:bottom-auto sm:translate-x-1/2 sm:-translate-y-1/2">
+                            <div class="pointer-events-none absolute right-4 -bottom-4 z-20 sm:top-1/2 sm:right-[22px] sm:bottom-auto sm:translate-x-1/2 sm:-translate-y-1/2">
                                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-[#FFF4DF] bg-[#5A0D14] shadow-[0_6px_18px_rgba(59,6,11,0.30)] ring-2 ring-[#E8AE47]/70 transition-transform duration-200 group-hover:scale-105" aria-hidden="true">
                                     <div class="relative flex items-center justify-center">
                                         <svg class="h-5 w-5 -translate-x-0.5 translate-y-0.5 text-[#FFF4DF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -480,7 +482,7 @@
                         </div>
 
                         <!-- Right Content -->
-                        <div class="relative flex flex-1 flex-col justify-between px-4 pt-6 pb-4 sm:py-4 sm:pr-5 sm:pl-7 lg:py-4.5 lg:pr-6 lg:pl-8">
+                        <div class="relative flex flex-1 flex-col justify-between px-4 pt-5 pb-4 sm:py-4 sm:pr-5 sm:pl-7 lg:py-4.5 lg:pr-6 lg:pl-8">
                             <!-- Leaf Watermark in bottom right -->
                             <svg viewBox="0 0 120 110" fill="none" class="pointer-events-none absolute right-1 bottom-0 h-14 w-14 opacity-80" aria-hidden="true">
                                 <path d="M112 104C94 84 82 58 80 28C96 42 108 68 112 104Z" fill="#D8B37C" fill-opacity="0.26" />
@@ -529,7 +531,7 @@
                             </div>
 
                             <!-- Floating Double-Ring Badge Icon on the S-Curve -->
-                            <div class="pointer-events-none absolute right-5 -bottom-4 z-20 sm:top-1/2 sm:right-[22px] sm:bottom-auto sm:translate-x-1/2 sm:-translate-y-1/2">
+                            <div class="pointer-events-none absolute right-4 -bottom-4 z-20 sm:top-1/2 sm:right-[22px] sm:bottom-auto sm:translate-x-1/2 sm:-translate-y-1/2">
                                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-[#FFF4DF] bg-[#5A0D14] shadow-[0_6px_18px_rgba(59,6,11,0.30)] ring-2 ring-[#E8AE47]/70 transition-transform duration-200 group-hover:scale-105" aria-hidden="true">
                                     <svg viewBox="0 0 28 28" class="h-6 w-6" fill="none" aria-hidden="true">
                                         <rect x="3.5" y="5.5" width="16" height="19" rx="3.5" stroke="#FFF4DF" stroke-width="2" />
@@ -542,7 +544,7 @@
                         </div>
 
                         <!-- Right Content -->
-                        <div class="relative flex flex-1 flex-col justify-between px-4 pt-6 pb-4 sm:py-4 sm:pr-5 sm:pl-7 lg:py-4.5 lg:pr-6 lg:pl-8">
+                        <div class="relative flex flex-1 flex-col justify-between px-4 pt-5 pb-4 sm:py-4 sm:pr-5 sm:pl-7 lg:py-4.5 lg:pr-6 lg:pl-8">
                             <!-- Leaf Watermark in bottom right -->
                             <svg viewBox="0 0 120 110" fill="none" class="pointer-events-none absolute right-1 bottom-0 h-14 w-14 opacity-80" aria-hidden="true">
                                 <path d="M112 104C94 84 82 58 80 28C96 42 108 68 112 104Z" fill="#D8B37C" fill-opacity="0.26" />
@@ -697,6 +699,11 @@
                         const initial = (sess.username || "A").charAt(0).toUpperCase();
                         if (initialDesktop) initialDesktop.innerText = initial;
                         if (initialMobile) initialMobile.innerText = initial;
+                        const mobileGroup = document.getElementById("mobileWelcomeGroup");
+                        if (mobileGroup) {
+                            mobileGroup.classList.remove("hidden");
+                            mobileGroup.classList.add("flex");
+                        }
                         return;
                     }
                 } catch(e) {}
@@ -704,6 +711,11 @@
             authDiv.classList.remove("hidden");
             dashDiv.classList.add("hidden");
             if (desktopGroup) desktopGroup.classList.add("hidden");
+            const mobileGroup = document.getElementById("mobileWelcomeGroup");
+            if (mobileGroup) {
+                mobileGroup.classList.add("hidden");
+                mobileGroup.classList.remove("flex");
+            }
         }
 
         function logout() {
@@ -1149,7 +1161,7 @@
 
     <!-- Live Orders & Tokens Supabase Modal -->
     <div id="liveTokensModalBackdrop" onclick="closeLiveTokensModal()" class="hidden fixed inset-0 bg-[#230608]/85 backdrop-blur-md z-50 transition-opacity"></div>
-    <div id="liveTokensModal" class="hidden fixed inset-x-4 top-8 sm:top-12 bottom-8 sm:bottom-12 max-w-6xl mx-auto bg-[#FFF9EE] rounded-3xl shadow-[0_25px_60px_-15px_rgba(35,6,8,0.7)] z-50 p-6 border-2 border-[#E8AE47] font-sans flex flex-col animate-in fade-in zoom-in-95 duration-200">
+    <div id="liveTokensModal" class="hidden fixed inset-x-2 sm:inset-x-4 top-4 sm:top-12 bottom-4 sm:bottom-12 max-w-6xl mx-auto bg-[#FFF9EE] rounded-3xl shadow-[0_25px_60px_-15px_rgba(35,6,8,0.7)] z-50 p-3.5 sm:p-6 border-2 border-[#E8AE47] font-sans flex flex-col animate-in fade-in zoom-in-95 duration-200">
         
         <!-- Modal Header -->
         <div class="flex items-center justify-between border-b border-[#EAD9BE] pb-4 mb-4">
@@ -1210,7 +1222,7 @@
 
     <!-- Staff Token & Order Modifier Modal -->
     <div id="staffModifyModalBackdrop" onclick="closeStaffModifyModal()" class="hidden fixed inset-0 bg-[#230608]/90 backdrop-blur-md z-[60] transition-opacity"></div>
-    <div id="staffModifyModal" class="hidden fixed inset-x-4 top-10 max-w-xl mx-auto bg-[#FFF9EE] rounded-3xl shadow-[0_25px_60px_-15px_rgba(35,6,8,0.8)] z-[60] p-6 border-2 border-[#E8AE47] font-sans flex flex-col max-h-[88vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+    <div id="staffModifyModal" class="hidden fixed inset-x-2 sm:inset-x-4 top-5 sm:top-10 max-w-xl mx-auto bg-[#FFF9EE] rounded-3xl shadow-[0_25px_60px_-15px_rgba(35,6,8,0.8)] z-[60] p-4 sm:p-6 border-2 border-[#E8AE47] font-sans flex flex-col max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
         
         <div class="flex items-center justify-between border-b border-[#EAD9BE] pb-3 mb-4">
             <div class="flex items-center gap-2.5">
