@@ -2,6 +2,7 @@ import json
 import requests
 from datetime import datetime, timezone
 from fastapi import FastAPI, Request, Response
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from pydantic import BaseModel
@@ -102,6 +103,10 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
+# Serve static images directory if present
+if os.path.exists("images"):
+    api.mount("/images", StaticFiles(directory="images"), name="images")
+
 class UserQuery(BaseModel):
     question: str
 
@@ -149,6 +154,18 @@ def serve_desktop_explicit():
 def serve_logo():
     if os.path.exists("logo.png"):
         return FileResponse("logo.png", media_type="image/png")
+    return HTMLResponse(status_code=404)
+
+@api.get("/hero1.jpg")
+def serve_hero1():
+    if os.path.exists("hero1.jpg"):
+        return FileResponse("hero1.jpg", media_type="image/jpeg")
+    return HTMLResponse(status_code=404)
+
+@api.get("/hero2.jpg")
+def serve_hero2():
+    if os.path.exists("hero2.jpg"):
+        return FileResponse("hero2.jpg", media_type="image/jpeg")
     return HTMLResponse(status_code=404)
 
 @api.get("/bengali.json")
